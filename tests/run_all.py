@@ -121,6 +121,7 @@ def main():
 			("test_translation.py", {}),
 			("test_security.py", {}),
 			("test_nvda_runtime.py", {}),
+			("test_performance.py", {}),
 		):
 			suites.append(runSuite(xvfb + [wxPython, "-X", "utf8", "-u", os.path.join("tests", script)], env=env))
 	else:

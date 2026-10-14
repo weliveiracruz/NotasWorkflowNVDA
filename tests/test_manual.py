@@ -84,10 +84,10 @@ def run():
 	R.check("DOC-03 the four lanes are explained", all(lane in md for lane in lanes), lanes)
 	formats = [po[k] for k in ("Bold", "Italic", "Strikethrough", "Inline code", "Heading 2", "Heading 3", "Bulleted list", "Numbered list", "Quote", "Divider")]
 	R.check("DOC-03 every format of the Formatting menu is explained", all(f in md for f in formats), [f for f in formats if f not in md])
-	options = [po[k] for k in ("All notes", "Loose notes", "Recent notes", "Lanes (tree)", "Table", "Saved", "Unsaved changes…", "Not saved", "Without folder")]
-	R.check("DOC-03 every option of Show, View and Save status is explained", all(o in md for o in options), [o for o in options if o not in md])
-	columns = [po[k] for k in ("Title", "Status", "Notebook", "Tags", "Updated on", "Excerpt", "Relevance")]
-	R.check("DOC-03 every column of the tables is explained", all(c in md for c in columns), [c for c in columns if c not in md])
+	options = [plain(po[k]) for k in ("All notes", "Loose notes", "Recent notes", "Saved", "Unsaved changes…", "Not saved", "Without folder", "Loose note (no notebook or folder)", "&Note…", "Note&book…", "&Folder…")]
+	R.check("DOC-03 every option of Show, Create, Location and Save status is explained", all(o in md for o in options), [o for o in options if o not in md])
+	columns = [po[k] for k in ("Title", "Updated on", "Excerpt", "Relevance")]
+	R.check("DOC-03 every column of the search results is explained", all(c in md for c in columns), [c for c in columns if c not in md])
 
 	# -- DOC-04 shortcuts ------------------------------------------------------------------------------------
 	gestures = defaultGestures()
@@ -105,6 +105,16 @@ def run():
 	marks = set(re.findall(r'w:bookmarkStart w:id="\d+" w:name="(\w+)"', document))
 	R.check("DOC-05 the table of contents links to every chapter", links and all(a in marks for a in links), len(links))
 	R.check("DOC-05 no image without description (the manual has no images)", "<w:drawing" not in document and "<pic:" not in document)
+
+	# -- DOC-06 only this add-on ------------------------------------------------------------------------------------
+	userTexts = {"docs/manual/MANUAL.md": md}
+	for rel in ("readme.md", "docs/pt_BR/readme.md", "addon/manifest.ini", "addon/locale/pt_BR/manifest.ini"):
+		with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+			userTexts[rel] = f.read()
+	userTexts["translations"] = "\n".join(po.values())
+	pattern = re.compile(r"\bweb\b|aplica[cç][aã]o web|TipTap|localStorage", re.I)
+	found = ["%s: %s" % (name, m.group(0)) for name, text in userTexts.items() for m in pattern.finditer(text)]
+	R.check("DOC-06 the user texts do not mention another platform (manual, readmes, manifests, interface)", not found, found[:5])
 
 
 if __name__ == "__main__":

@@ -7,18 +7,20 @@
 <body>
 <main>
 <h1>Notas Workflow NVDA</h1>
-<p>Complemento do NVDA com o mesmo fluxo de trabalho da aplicação web Notas Workflow: folhas organizadas em raias de status (A fazer, Em andamento, Bloqueada, Concluída), agrupadas em cadernos e pastas, com tags, conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, sem navegador.</p>
+<p>Complemento do NVDA para organizar folhas (anotações e tarefas) em raias de status (A fazer, Em andamento, Bloqueada, Concluída), agrupadas em cadernos e pastas, com tags, conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido com dezenas de milhares de folhas.</p>
 <h2>A janela principal</h2>
 <p>Pressione <strong>NVDA+Alt+N</strong> (ou menu do NVDA, Ferramentas, <strong>Notas Workflow NVDA…</strong>). A janela tem:</p>
 <ul>
-<li><strong>Mostrar</strong>: todas as folhas, folhas soltas (sem caderno), folhas recentes (as 10 alteradas por último), um caderno ou uma pasta.</li>
-<li><strong>Visualização</strong>: <strong>Raias (árvore)</strong>, com um ramo por raia ("A fazer, 3 folhas"), ou <strong>Tabela</strong>, com as colunas Título, Status, Caderno, Tags e Atualizada em.</li>
-<li><strong>Folhas</strong>: a lista em si. Enter abre a folha, Delete exclui (depois de confirmar), <strong>Alt+Shift+Seta para a direita</strong> move para a raia seguinte e <strong>Alt+Shift+Seta para a esquerda</strong> para a anterior.</li>
-<li>Botões <strong>Nova folha…</strong>, <strong>Abrir</strong>, <strong>Mover para…</strong> (menu com as outras raias), <strong>Mudar caderno…</strong>, <strong>Excluir</strong>, <strong>Buscar…</strong>, <strong>Cadernos e pastas…</strong> e <strong>Fechar</strong> (Esc).</li>
+<li><strong>Mostrar</strong>: todas as folhas, folhas soltas (sem caderno nem pasta), folhas recentes (as 10 alteradas por último), um caderno ou uma pasta.</li>
+<li><strong>Folhas</strong>: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). Enter abre a folha, Delete exclui (depois de confirmar), <strong>Alt+Shift+Seta para a direita</strong> e <strong>Alt+Shift+Seta para a esquerda</strong> mudam o status. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.</li>
+<li><strong>Criar…</strong>: um menu para criar uma folha, um caderno ou uma pasta.</li>
+<li><strong>Atualizar o status da tarefa…</strong>: um menu com os outros status.</li>
+<li><strong>Mover para…</strong>: move a folha para um caderno, direto para uma pasta ou a deixa solta.</li>
+<li><strong>Excluir</strong>, <strong>Buscar…</strong>, <strong>Cadernos e pastas…</strong> e <strong>Fechar</strong> (Esc).</li>
 </ul>
 <h2>Folhas</h2>
-<p><strong>Nova folha</strong> (NVDA+Alt+F ou o botão Nova folha…) pede o título, o caderno e o status e depois abre a janela da folha. A janela da folha tem título, caderno, status, tags (separadas por vírgula) e o conteúdo. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.</p>
-<p>O conteúdo é texto com uma marcação leve, os mesmos formatos do editor web:</p>
+<p><strong>Criar… &gt; Folha…</strong> (ou NVDA+Alt+F de qualquer lugar) pede o título, o local (solta, uma pasta ou um caderno) e o status e depois abre a janela da folha. A janela da folha tem título, local, status, tags (separadas por vírgula) e o conteúdo. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.</p>
+<p>O conteúdo é texto com uma marcação leve:</p>
 <table>
 <tr><th>Digite</th><th>Para ter</th></tr>
 <tr><td><code>## Título</code> ou <code>### Título</code></td><td>Título 2 ou 3</td></tr>
@@ -33,24 +35,24 @@
 </table>
 <p>O botão <strong>Formatação…</strong> abre um menu com todos os formatos; ele vale para o texto selecionado ou para a linha atual, e escolher de novo remove o formato.</p>
 <h2>Busca</h2>
-<p><strong>NVDA+Alt+B</strong> (ou Buscar… na janela) procura no título, no conteúdo e nas tags, sem diferenciar acentos e maiúsculas, enquanto você digita. Os resultados mostram título, trecho, relevância e data; Enter abre a folha.</p>
+<p><strong>NVDA+Alt+B</strong> (ou Buscar… na janela) procura no título, no conteúdo e nas tags, sem diferenciar acentos e maiúsculas, enquanto você digita. Os resultados mostram título, trecho, relevância e data; Enter abre a folha. A busca leva uma fração de segundo mesmo com 100 mil folhas.</p>
 <h2>Cadernos e pastas</h2>
-<p>A janela <strong>Cadernos e pastas…</strong> mostra cada pasta com os seus cadernos e um ramo "Sem pasta". Ela cria cadernos (dentro da pasta selecionada) e pastas, renomeia (F2), move um caderno para outra pasta e exclui (Delete). Excluir um caderno ou uma pasta nunca apaga folhas: elas ficam soltas.</p>
+<p>A janela <strong>Cadernos e pastas…</strong> mostra cada pasta com os seus cadernos e as suas folhas, um ramo "Sem pasta" com os outros cadernos e um ramo "Folhas soltas". Enter abre uma folha. <strong>Criar…</strong> cria uma folha, um caderno ou uma pasta no lugar selecionado; <strong>Renomear…</strong> (F2) renomeia uma pasta ou um caderno ou muda o título de uma folha; <strong>Mover para…</strong> move uma folha ou um caderno; <strong>Excluir</strong> (tecla Delete) exclui. Excluir um caderno ou uma pasta nunca apaga folhas: elas ficam soltas.</p>
 <h2>Atalhos</h2>
 <table>
 <tr><th>Atalho</th><th>Ação</th></tr>
 <tr><td>NVDA+Alt+N</td><td>Abrir a janela Notas Workflow NVDA</td></tr>
 <tr><td>NVDA+Alt+F</td><td>Nova folha</td></tr>
 <tr><td>NVDA+Alt+B</td><td>Buscar nas folhas</td></tr>
-<tr><td>Alt+Shift+Seta para a direita e para a esquerda</td><td>Mover a folha para a raia seguinte ou anterior</td></tr>
+<tr><td>Alt+Shift+Seta para a direita e para a esquerda</td><td>Status seguinte ou anterior da folha</td></tr>
 <tr><td>Ctrl+S, Ctrl+B, Ctrl+I</td><td>Salvar, negrito e itálico na janela da folha</td></tr>
 </table>
 <p>Eles podem ser mudados em NVDA, Preferências, Definir comandos, categoria Notas Workflow NVDA, onde também há um comando, sem atalho, que diz quantas folhas cada raia tem.</p>
 <h2>Onde ficam as folhas</h2>
 <p>No arquivo <code>NotasWorkflowNVDA-data.json</code> da pasta das folhas, por padrão a pasta <code>NotasWorkflowNVDA</code> dentro da pasta de configurações do NVDA (<code>%APPDATA%\nvda</code>). Em NVDA, Preferências, Configurações, categoria <strong>Notas Workflow NVDA</strong>, você muda a pasta: escolha uma pasta do OneDrive ou do Google Drive para computador para ter as folhas em todos os computadores. Ali também ficam o tempo do salvamento automático e <strong>Importar folhas…</strong> e <strong>Exportar folhas…</strong>.</p>
-<p>Toda mudança é salva na hora, de forma segura: o arquivo anterior fica guardado como <code>NotasWorkflowNVDA-data.json.bak</code>. Se o arquivo estiver danificado, ele é guardado com outro nome e a cópia de segurança é usada. Desinstalar o complemento não apaga as folhas.</p>
-<h2>Folhas da aplicação web</h2>
-<p>Exportar e importar usam o formato da aplicação web (os mesmos campos de folhas, cadernos e pastas). Para trazer as folhas do navegador, abra a aplicação web, pressione F12, vá em Console e rode <code>copy(JSON.stringify({notes: JSON.parse(localStorage["notas-workflow:notes"] || "[]"), notebooks: JSON.parse(localStorage["notas-workflow:notebooks"] || "[]")}))</code>. Cole o texto em um arquivo terminado em <code>.json</code> e use <strong>Importar folhas…</strong>. Folhas com o mesmo identificador ficam com a versão alterada por último.</p>
+<p>Toda mudança é salva em segundo plano, de forma segura: o arquivo anterior fica guardado como <code>NotasWorkflowNVDA-data.json.bak</code>, e tudo o que estiver pendente é gravado antes de o NVDA fechar. Se o arquivo estiver danificado, ele é guardado com outro nome e a cópia de segurança é usada. Desinstalar o complemento não apaga as folhas.</p>
+<h2>Muitas folhas</h2>
+<p>O complemento foi medido com 100 mil folhas: o NVDA inicia na hora (as folhas são lidas em segundo plano), e mudar o status, abrir uma folha, salvar e buscar levam frações de segundo.</p>
 <h2>Privacidade</h2>
 <p>O complemento não usa a internet: nenhuma folha sai do computador, e o conteúdo das folhas nunca vai para o log do NVDA.</p>
 </main>

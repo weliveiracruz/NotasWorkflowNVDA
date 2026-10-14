@@ -10,6 +10,8 @@ import datetime
 import json
 import os
 import shutil
+import threading
+import time
 
 from . import model
 
@@ -20,6 +22,11 @@ FORMAT = "notas-workflow"
 VERSION = 1
 #: Data and import files above this size are refused without being read.
 MAX_FILE_SIZE = 200 * 1024 * 1024
+#: The background write waits this long after the last change (several changes, one write).
+WRITE_DELAY = 0.5
+#: Notes encoded between two pauses of the background write (NVDA keeps answering).
+WRITE_BATCH = 500
+WRITE_PAUSE = 0.003
 #: Keys of older exports (browser storage), still accepted on import.
 WEB_PREFIX = "notas-workflow:"
 
@@ -48,6 +55,24 @@ def _readJson(path):
 	except RecursionError:
 		# A hostile file with thousands of nested lists or objects.
 		raise ValueError("too deeply nested")
+
+
+def _jsonChunks(data):
+	"""The data as compact JSON, note by note. json.dumps would hold Python for the whole
+	file (about a second with 100,000 notes) and NVDA would stop answering meanwhile."""
+	encode = json.JSONEncoder(ensure_ascii=False, separators=(",", ":")).encode
+	yield '{"format":%s,"version":%d,"folders":%s,"notebooks":%s,"notes":[' % (
+		encode(data["format"]), data["version"], encode(data["folders"]), encode(data["notebooks"]))
+	batch = []
+	for i, note in enumerate(data["notes"]):
+		batch.append(("," if i else "") + encode(note))
+		if len(batch) >= WRITE_BATCH:
+			yield "".join(batch)
+			batch = []
+			# Gives the turn to NVDA: a short real pause, not just a switch.
+			time.sleep(WRITE_PAUSE)
+	batch.append("]}")
+	yield "".join(batch)
 
 
 def parseData(data, now=None):
@@ -94,6 +119,62 @@ def _unique(items):
 	return out
 
 
+class _Writer:
+	"""Writes the file in a thread. Changes made while a write is running become a single
+	next write (only the latest state is written)."""
+
+	def __init__(self, store, onError):
+		self.store = store
+		self.onError = onError
+		self.lastError = None
+		self._lock = threading.Lock()
+		self._pending = None
+		self._wake = threading.Event()
+		self._idle = threading.Event()
+		self._idle.set()
+		self._thread = threading.Thread(target=self._loop, name="NotasWorkflowNVDA-save", daemon=True)
+		self._thread.start()
+
+	def request(self, data):
+		with self._lock:
+			self._pending = data
+			self._idle.clear()
+			self._wake.set()
+
+	def busy(self):
+		return not self._idle.is_set()
+
+	def flush(self, timeout=120):
+		"""Waits until everything requested is written. Returns the error of a failed write, or None."""
+		self._idle.wait(timeout)
+		error, self.lastError = self.lastError, None
+		return error
+
+	def _loop(self):
+		while True:
+			self._wake.wait()
+			# Waits for the changes to stop for a moment: a series of changes is written once.
+			while True:
+				with self._lock:
+					self._wake.clear()
+				if not self._wake.wait(WRITE_DELAY):
+					break
+			with self._lock:
+				data, self._pending = self._pending, None
+				self._wake.clear()
+			if data is not None:
+				try:
+					self.store._write(data)
+					self.lastError = None
+				except StoreError as e:
+					self.lastError = e
+					if self.onError is not None:
+						self.onError(e)
+			with self._lock:
+				if self._pending is None:
+					self._idle.set()
+
+
 class NotesStore:
 	def __init__(self, folder):
 		self.folder = folder
@@ -105,6 +186,7 @@ class NotesStore:
 		self.warning = None
 		#: True when the last load copied a data file of NotasWorkflow 1.0.0.
 		self.migrated = False
+		self._writer = None
 
 	@property
 	def path(self):
@@ -137,6 +219,7 @@ class NotesStore:
 
 	def load(self):
 		"""Reads the file. A damaged file is kept with another name and the backup is used."""
+		self.flush()
 		self.migrated = self.adoptLegacyFile()
 		self.warning = None
 		self.folders, self.notebooks, self.notes = [], [], []
@@ -176,23 +259,41 @@ class NotesStore:
 			return None
 
 	def toData(self):
+		"""What is written: copies of the lists, so a write in a thread is not disturbed
+		by notes added or removed meanwhile."""
 		return {
 			"format": FORMAT,
 			"version": VERSION,
-			"folders": self.folders,
-			"notebooks": self.notebooks,
-			"notes": self.notes,
+			"folders": list(self.folders),
+			"notebooks": list(self.notebooks),
+			"notes": list(self.notes),
 		}
 
+	def enableBackgroundSaving(self, onError=None):
+		"""From now on save() returns at once and a thread writes the file (with 100,000 notes
+		a write takes about half a second). onError(StoreError) is called by that thread.
+		flush() waits for the write: call it before NVDA exits."""
+		if self._writer is None:
+			self._writer = _Writer(self, onError)
+
+	def flush(self):
+		"""Waits for the background write, if any. Returns the error of a failed write, or None."""
+		return self._writer.flush() if self._writer is not None else None
+
 	def save(self):
+		if self._writer is not None:
+			self._writer.request(self.toData())
+			return
+		self._write(self.toData())
+
+	def _write(self, data):
 		"""Atomic write: temporary file, backup of the previous file, os.replace."""
 		tmp = self.path + ".tmp"
 		try:
 			os.makedirs(self.folder, exist_ok=True)
-			# Compact: smaller and faster with many notes (64 MB for 100,000 notes).
-			text = json.dumps(self.toData(), ensure_ascii=False, separators=(",", ":"))
 			with open(tmp, "w", encoding="utf-8", newline="\n") as f:
-				f.write(text)
+				for chunk in _jsonChunks(data):
+					f.write(chunk)
 				f.flush()
 				os.fsync(f.fileno())
 			if os.path.exists(self.path):
@@ -210,6 +311,9 @@ class NotesStore:
 		self._stamp = self._fileStamp()
 
 	def changedOnDisk(self):
+		if self._writer is not None and self._writer.busy():
+			# Our own write is running: the file is not someone else's.
+			return False
 		return self._fileStamp() != self._stamp
 
 	def reloadIfChanged(self):
@@ -222,13 +326,14 @@ class NotesStore:
 	def relocate(self, folder):
 		"""Uses another folder: its notes when it has them ("loaded"), otherwise the
 		current notes are written there ("copied")."""
+		self.flush()
 		old = self.folder
 		self.folder = folder
 		if os.path.exists(self.path):
 			self.load()
 			return "loaded"
 		try:
-			self.save()
+			self._write(self.toData())
 		except StoreError:
 			self.folder = old
 			raise
@@ -392,6 +497,20 @@ class NotesStore:
 	def notesInFolder(self, folderId):
 		"""Notes put directly in a folder (not in one of its notebooks)."""
 		return [n for n in self.notes if n["folderId"] == folderId and n["notebookId"] is None]
+
+	def placeCounts(self):
+		"""Numbers of notes by place in one pass: ({notebookId: n}, {folderId: n directly}, loose)."""
+		byNotebook = {}
+		byFolder = {}
+		loose = 0
+		for n in self.notes:
+			if n["notebookId"] is not None:
+				byNotebook[n["notebookId"]] = byNotebook.get(n["notebookId"], 0) + 1
+			elif n["folderId"] is not None:
+				byFolder[n["folderId"]] = byFolder.get(n["folderId"], 0) + 1
+			else:
+				loose += 1
+		return byNotebook, byFolder, loose
 
 	def looseNotes(self):
 		return [n for n in self.notes if n["notebookId"] is None and n["folderId"] is None]

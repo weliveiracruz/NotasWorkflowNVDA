@@ -17,7 +17,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from _guiapp import RECORD, NotasWorkflowNVDA, markup, newPlugin, store, wx  # noqa: E402
+from _guiapp import RECORD, NotasWorkflowNVDA, markup, newPlugin, pump, store, wx  # noqa: E402
 import _helpers  # noqa: E402
 import nvda_stubs  # noqa: E402
 from _results import Recorder  # noqa: E402
@@ -92,9 +92,15 @@ def run():
 
 	# -- SEG-02 note content never in the log -------------------------------------------------------
 	folder = plugin.store.folder
+	# Earlier changes written first: the impossible folder below must only get this change.
+	plugin.store.flush()
 	plugin.store.folder = os.path.join(plugin.store.path, "impossible")
 	plugin.safe(plugin.store.updateNote, note["id"], title="outro " + SECRET)
+	# The write runs in the background: wait for it (it fails) before restoring the folder.
+	plugin.store.flush()
+	pump(timeout=0.3)
 	plugin.store.folder = folder
+	plugin.store.flush()
 	with open(plugin.store.path, "w", encoding="utf-8") as fh:
 		fh.write('{"notes": [{"id": "x", "title": "' + SECRET + '"')
 	broken = newPlugin(folder)
@@ -112,7 +118,7 @@ def run():
 	pattern = re.compile(r"(?<![\w.])(eval|exec|compile)\s*\(|\bpickle\b|\bmarshal\b|\bshelve\b|\bsubprocess\b|os\.system|os\.popen|os\.startfile|shell\s*=\s*True|__import__|yaml\.load|ctypes")
 	bad = ["%s: %s" % (p, m.group(0)) for p, s in sources.items() for m in pattern.finditer(s)]
 	R.check("SEG-03 no eval, exec, pickle, subprocess, shell or ctypes in the add-on", not bad, bad)
-	allowed = {"datetime", "html", "json", "os", "re", "shutil", "uuid", "unicodedata",
+	allowed = {"datetime", "heapq", "html", "json", "os", "re", "shutil", "threading", "time", "uuid", "unicodedata",
 		"addonHandler", "config", "globalPluginHandler", "globalVars", "gui", "queueHandler", "ui", "wx", "logHandler", "scriptHandler"}
 	R.check("SEG-03 only the standard library and NVDA (no third-party dependency)", imported <= allowed, sorted(imported - allowed))
 
@@ -229,9 +235,10 @@ def run():
 	R.check("SEG-08 export has only the notes (no settings, paths or user name)", set(data) == {"format", "version", "folders", "notebooks", "notes"} and folder not in json.dumps(data))
 
 	# -- SEG-09 confirmations ---------------------------------------------------------------------------------------
-	main = sources[os.path.join("addon", "globalPlugins", "NotasWorkflowNVDA", "mainDialog.py")]
+	plugin_ = sources[os.path.join("addon", "globalPlugins", "NotasWorkflowNVDA", "__init__.py")]
 	organize = sources[os.path.join("addon", "globalPlugins", "NotasWorkflowNVDA", "organizeDialog.py")]
-	R.check("SEG-09 deleting a note, notebook or folder always asks, with No as the default", main.count("wx.YES_NO | wx.NO_DEFAULT") == 1 and organize.count("wx.YES_NO | wx.NO_DEFAULT") == 1)
+	main = sources[os.path.join("addon", "globalPlugins", "NotasWorkflowNVDA", "mainDialog.py")]
+	R.check("SEG-09 deleting a note, notebook or folder always asks, with No as the default", plugin_.count("wx.YES_NO | wx.NO_DEFAULT") == 1 and organize.count("wx.YES_NO | wx.NO_DEFAULT") == 1 and not re.search(r"store\.deleteNote\(", main + organize), "notes are deleted only through GlobalPlugin.deleteNote, which asks first")
 	plugin = newPlugin()
 	n = plugin.store.addNote("Fica")
 	dlg = plugin.openWindow()

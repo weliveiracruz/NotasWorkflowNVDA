@@ -65,7 +65,10 @@ def newPlugin(folder=None):
 	conf["dataFolder"] = folder or _helpers.tempFolder()
 	conf["autoSaveSeconds"] = 1
 	conf["announceAutoSave"] = False
-	return NotasWorkflowNVDA.GlobalPlugin()
+	plugin = NotasWorkflowNVDA.GlobalPlugin()
+	# The notes are read in a thread; the tests use them right away, as a command would.
+	plugin.ensureLoaded()
+	return plugin
 
 
 @contextlib.contextmanager

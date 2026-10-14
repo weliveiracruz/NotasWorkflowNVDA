@@ -7,6 +7,8 @@
 
 import os
 import shutil
+import threading
+import time
 
 import addonHandler
 import config
@@ -33,6 +35,9 @@ CONFIG_SPEC = {
 	"legacyChecked": "boolean(default=False)",
 }
 DATA_SUBFOLDER = "NotasWorkflowNVDA"
+#: Notes prepared for the search at a time, and the pause between batches (seconds).
+INDEX_BATCH = 300
+INDEX_PAUSE = 0.02
 #: Name of the add-on up to 1.0.0: its settings and notes are copied once to the new name.
 LEGACY_NAME = "NotasWorkflow"
 LEGACY_DATA_FILE = "NotasWorkflow-data.json"
@@ -60,7 +65,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.openEditor = None
 		#: Prepared text of the notes for the search, kept while the notes do not change.
 		self.searchIndex = SearchIndex()
-		self.loadStore()
+		# Writes happen in a thread: with many notes a write takes half a second.
+		self.store.enableBackgroundSaving(lambda error: wx.CallAfter(self.writeFailed, error))
+		# The notes are read in a thread, so NVDA starts at once even with 100,000 notes;
+		# every command waits for them with ensureLoaded().
+		self._loaded = threading.Event()
+		#: Set when the text of every note is prepared for the search.
+		self.indexReady = threading.Event()
+		self._announced = False
+		self._loader = threading.Thread(target=self._loadInBackground, name="NotasWorkflowNVDA-load", daemon=True)
+		self._loader.start()
 		from .settingsPanel import NotasSettingsPanel
 
 		NotasSettingsPanel.plugin = self
@@ -83,6 +97,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def terminate(self):
 		from .mainDialog import NotesDialog
 
+		self._loaded.wait(60)
+
 		if self.openEditor:
 			try:
 				self.openEditor.save()
@@ -104,6 +120,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				gui.mainFrame.sysTrayIcon.toolsMenu.Remove(self._menuItem)
 			except Exception:
 				log.debugWarning("NotasWorkflowNVDA: could not remove the Tools menu item", exc_info=True)
+		# Nothing is lost: the last changes are written before NVDA exits.
+		error = self.store.flush()
+		if error is not None:
+			log.error("NotasWorkflowNVDA: could not save the notes when exiting (%s)" % error.detail)
 		super().terminate()
 
 	# -- configuration and data ------------------------------------------------------------
@@ -159,12 +179,38 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				except OSError as e:
 					log.warning("NotasWorkflowNVDA: could not copy the notes of NotasWorkflow (%s)" % type(e).__name__)
 
-	def loadStore(self):
+	def _loadInBackground(self):
 		try:
 			self.store.load()
 		except Exception as e:
 			# Never log the notes: only the kind of error.
 			log.error("NotasWorkflowNVDA: could not read the notes (%s)" % type(e).__name__)
+		finally:
+			self._loaded.set()
+		wx.CallAfter(self.ensureLoaded)
+		# Prepares the text of the search now, so the first search is as fast as the others.
+		# Small batches with pauses: Python runs one thread at a time, and NVDA must keep
+		# answering while this runs.
+		notes = list(self.store.notes)
+		try:
+			for start in range(0, len(notes), INDEX_BATCH):
+				for note in notes[start:start + INDEX_BATCH]:
+					self.searchIndex.entry(note)
+				time.sleep(INDEX_PAUSE)
+		except Exception:
+			log.debugWarning("NotasWorkflowNVDA: could not prepare the notes for the search", exc_info=True)
+		finally:
+			self.indexReady.set()
+
+	def ensureLoaded(self):
+		"""Waits for the notes (read in a thread when NVDA starts) and says, once, what happened."""
+		if not self._loaded.is_set():
+			# Translators: spoken when a command is used while the notes are still being read.
+			self.speak(_("Loading the notes…"))
+			self._loaded.wait()
+		if self._announced:
+			return
+		self._announced = True
 		self.announceWarning()
 		if self._legacyCopied or self.store.migrated:
 			self._legacyCopied = False
@@ -179,15 +225,25 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.speak(messages.corruptWarning(warning[1], warning[2]))
 			self.store.warning = None
 
+	def writeFailed(self, error):
+		"""A write in the background failed: the notes stay open and the next change tries again."""
+		log.warning("NotasWorkflowNVDA: write (%s)" % error.detail)
+		self.speak(messages.storeError(error, self.store.folder))
+
 	def reloadIfChanged(self):
+		"""Reads the notes again when another computer changed the file. True when it did."""
+		self.ensureLoaded()
 		try:
 			if self.store.reloadIfChanged():
 				self.announceWarning()
+				return True
 		except Exception as e:
 			log.error("NotasWorkflowNVDA: could not read the notes again (%s)" % type(e).__name__)
+		return False
 
 	def changeDataFolder(self):
 		"""After the settings change the folder: its notes or a copy of the current ones."""
+		self.ensureLoaded()
 		folder = self.dataFolder()
 		ok, result = self.safe(self.store.relocate, folder)
 		if not ok:
@@ -202,6 +258,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.notesChanged()
 
 	def importNotes(self, path):
+		self.ensureLoaded()
 		ok, counts = self.safe(self.store.importFile, path)
 		if not ok:
 			return None
@@ -215,6 +272,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		return counts
 
 	def exportNotes(self, path):
+		self.ensureLoaded()
 		ok, _r = self.safe(self.store.exportFile, path)
 		if ok:
 			# Translators: spoken after exporting.
@@ -240,7 +298,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		dlg = NotesDialog._instance
 		if dlg:
 			try:
-				dlg.refresh(noteId or dlg.selectedNoteId())
+				if noteId:
+					dlg.noteChanged(noteId)
+				else:
+					dlg.refresh(dlg.selectedNoteId())
 			except Exception:
 				log.debugWarning("NotasWorkflowNVDA: could not refresh the window", exc_info=True)
 
@@ -262,6 +323,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""New note window, then the note window. Returns the id of the new note or None."""
 		from .noteDialog import NewNoteDialog
 
+		self.ensureLoaded()
 		dlg = NewNoteDialog(parent or gui.mainFrame, self.store, laneId, notebookId, folderId)
 		try:
 			if dlg.ShowModal() != wx.ID_OK:
@@ -346,6 +408,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def editNote(self, parent, noteId, focusContent=False):
 		from .noteDialog import NoteDialog
 
+		self.ensureLoaded()
+
 		if self.store.getNote(noteId) is None:
 			self.speak(messages.storeError(StoreError("notFound")))
 			return
@@ -367,6 +431,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def openSearch(self, parent=None, query=""):
 		"""Search window. Returns the id of the last note opened from it, or None."""
 		from .searchDialog import SearchDialog
+
+		self.ensureLoaded()
 
 		dlg = SearchDialog(parent or gui.mainFrame, self, query)
 		try:

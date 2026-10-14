@@ -55,9 +55,8 @@ def iso(dt):
 	return model.nowIso(dt)
 
 
-def main():
-	count = int(sys.argv[1]) if len(sys.argv) > 1 else 100000
-	target = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "dados-teste", "massa-%d-folhas.json" % count)
+def gerar(count):
+	"""Os dados de uma massa de count folhas (sempre os mesmos para o mesmo count)."""
 	rnd = random.Random(20261013)
 	start = datetime.datetime(2025, 1, 1, tzinfo=datetime.timezone.utc)
 
@@ -109,12 +108,22 @@ def main():
 			"updatedAt": iso(updated),
 		})
 
-	data = {"format": "notas-workflow", "version": 1, "folders": folders, "notebooks": notebooks, "notes": notes}
+	return {"format": "notas-workflow", "version": 1, "folders": folders, "notebooks": notebooks, "notes": notes}
+
+
+def gravar(data, target):
 	os.makedirs(os.path.dirname(target), exist_ok=True)
 	with open(target, "w", encoding="utf-8", newline="\n") as f:
 		json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
-	size = os.path.getsize(target)
-	print("%s: %d folhas, %d cadernos, %d pastas, %.1f MB" % (target, len(notes), len(notebooks), len(folders), size / 1024 / 1024))
+	return os.path.getsize(target)
+
+
+def main():
+	count = int(sys.argv[1]) if len(sys.argv) > 1 else 100000
+	target = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "dados-teste", "massa-%d-folhas.json" % count)
+	data = gerar(count)
+	size = gravar(data, target)
+	print("%s: %d folhas, %d cadernos, %d pastas, %.1f MB" % (target, len(data["notes"]), len(data["notebooks"]), len(data["folders"]), size / 1024 / 1024))
 	return target
 
 

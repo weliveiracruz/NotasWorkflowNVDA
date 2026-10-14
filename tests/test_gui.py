@@ -199,21 +199,24 @@ def run():
 	dlg.setFilter(("folder", f["id"]))
 	R.check("FUN-10 folder filter shows its notes and the notes of its notebooks", sorted(dlg.visibleIds) == sorted([bug["id"], direct["id"]]), dlg.visibleIds)
 	dlg.setFilter(("recent", None))
-	R.check("FUN-10 recent: last changed first", dlg.visibleIds[0] == note["id"], dlg.visibleIds)
+	recent = plugin.store.filtered(("recent", None))
+	R.check("FUN-10 recent: the notes changed last (at most 10), the last one first", recent[0]["id"] == note["id"] and sorted(dlg.visibleIds) == sorted(n["id"] for n in recent) and len(recent) <= 10, [n["title"] for n in recent])
 	dlg.setFilter(("all", None))
 
 	# -- FUN-24 long lanes in pages --------------------------------------------------------------------
 	before = list(plugin.store.notes)
 	extra = bulk(plugin, 1100)
 	dlg.refresh()
+	page = mainDialog.PAGE_SIZE
+	todoNotes = [x for x in plugin.store.notes if x["laneId"] == "todo"]
 	todo, _c = dlg.tree.GetFirstChild(dlg.root)
-	R.check("FUN-24 a long lane shows 500 notes and a Show more item", dlg.tree.GetChildrenCount(todo, False) == 501, dlg.tree.GetChildrenCount(todo, False))
+	R.check("FUN-24 a long lane shows one page (%d notes) and a Show more item" % page, dlg.tree.GetChildrenCount(todo, False) == page + 1, dlg.tree.GetChildrenCount(todo, False))
 	more = dlg.tree.GetLastChild(todo)
-	R.check("FUN-24 Show more says how many are left", dlg.tree.GetItemText(more) == "Show 500 more notes (%d not shown yet)" % (len([x for x in plugin.store.notes if x["laneId"] == "todo"]) - 500), dlg.tree.GetItemText(more))
+	R.check("FUN-24 Show more says how many are left", dlg.tree.GetItemText(more) == "Show %d more notes (%d not shown yet)" % (page, len(todoNotes) - page), dlg.tree.GetItemText(more))
 	dlg.tree.SelectItem(more)
 	postKey(dlg.tree, VK_RETURN)
 	todo, _c = dlg.tree.GetFirstChild(dlg.root)
-	R.check("FUN-24 Enter on Show more adds the next page and selects its first note", dlg.tree.GetChildrenCount(todo, False) == 1001 and dlg.selectedNoteId() == [x for x in plugin.store.notes if x["laneId"] == "todo"][500]["id"], (dlg.tree.GetChildrenCount(todo, False), dlg.selectedNoteId()))
+	R.check("FUN-24 Enter on Show more adds the next page and selects its first note", dlg.tree.GetChildrenCount(todo, False) == 2 * page + 1 and dlg.selectedNoteId() == todoNotes[page]["id"], (dlg.tree.GetChildrenCount(todo, False), dlg.selectedNoteId()))
 	dlg.setFilter(("all", None))
 	dlg.refresh(extra[-1]["id"])
 	R.check("FUN-24 selecting a note beyond the page shows its page", dlg.selectedNoteId() == extra[-1]["id"])
@@ -387,11 +390,12 @@ def run():
 	od.refresh(("notebook", pessoal["id"]))
 	od.expandKey(("notebook", pessoal["id"]))
 	node = od.nodes[("notebook", pessoal["id"])]
-	R.check("FUN-24 a notebook with many notes shows 500 and Show more", od.tree.GetChildrenCount(node, False) == 501, od.tree.GetChildrenCount(node, False))
+	page = organizeDialog.PAGE_SIZE
+	R.check("FUN-24 a notebook with many notes shows one page and Show more", od.tree.GetChildrenCount(node, False) == page + 1, od.tree.GetChildrenCount(node, False))
 	od.tree.SelectItem(od.tree.GetLastChild(node))
 	od.activate()
 	node = od.nodes[("notebook", pessoal["id"])]
-	R.check("FUN-24 Show more in the tree of notebooks adds the rest", od.tree.GetChildrenCount(node, False) == 650 and od.selected() == ("note", many[500]["id"]), (od.tree.GetChildrenCount(node, False), od.selected()))
+	R.check("FUN-24 Show more in the tree of notebooks adds the next page and selects its first note", od.tree.GetChildrenCount(node, False) == 2 * page + 1 and od.selected() == ("note", many[page]["id"]), (od.tree.GetChildrenCount(node, False), od.selected()))
 	plugin.store.notes = [x for x in plugin.store.notes if x["notebookId"] != pessoal["id"]]
 	plugin.store.save()
 	od.close()
@@ -460,6 +464,7 @@ def run():
 	R.check("FUN-18 lanes summary", spokenSince(n) and spokenSince(n)[-1].startswith("To do ") and "Done " in spokenSince(n)[-1], spokenSince(n))
 	outside = newPlugin(folder)
 	outside.store.addNote("De outro computador")
+	outside.store.flush()
 	os.utime(outside.store.path, ns=(1, 1))
 	dlg = openWindow(plugin)
 	R.check("FUN-17 window reads the file again when another program changed it", any(nt["title"] == "De outro computador" for nt in plugin.store.notes))
@@ -474,10 +479,14 @@ def run():
 	broken.terminate()
 
 	# write error announced
+	plugin.store.flush()
 	plugin.store.folder = os.path.join(plugin.store.path, "impossible")
 	n = mark()
 	ok, _r = plugin.safe(plugin.store.addNote, "x")
-	R.check("FUN-17 write error is announced with the folder", not ok and any(s.startswith("Could not save the notes in") for s in spokenSince(n)), spokenSince(n))
+	error = plugin.store.flush()
+	pump(lambda: any(s.startswith("Could not save the notes in") for s in spokenSince(n)), 3)
+	R.check("FUN-17 a failed write (in the background) is announced with the folder", error is not None and error.kind == "write" and any(s.startswith("Could not save the notes in") for s in spokenSince(n)), spokenSince(n))
+	plugin.store.notes = [x for x in plugin.store.notes if x["title"] != "x"]
 	plugin.store.folder = folder
 
 	# -- FUN-16 terminate ---------------------------------------------------------------------------------
@@ -515,14 +524,14 @@ def legacyMigration():
 	conf = config.conf["NotasWorkflowNVDA"]
 	conf["dataFolder"] = ""
 	conf["legacyChecked"] = False
-	conf["view"] = "lanes"
 	config.conf.profiles[0]["NotasWorkflow"] = {"view": "table", "autoSaveSeconds": "7", "announceAutoSave": "True"}
 	try:
 		n = mark()
 		plugin = NotasWorkflowNVDA.GlobalPlugin()
+		plugin.ensureLoaded()
 		R.check("FUN-20 first start brings the notes of NotasWorkflow 1.0.0", [x["title"] for x in plugin.store.notes] == ["da 1.0.0", "outra"] and plugin.store.folder == os.path.join(cfg, "NotasWorkflowNVDA"), (plugin.store.folder, len(plugin.store.notes)))
 		R.check("FUN-20 the copy is announced, saying the old add-on can be uninstalled", any(s.startswith("Notes of the previous version brought to Notas Workflow NVDA: 2 notes") for s in spokenSince(n)), spokenSince(n))
-		R.check("FUN-20 settings of [NotasWorkflow] copied", conf["view"] == "table" and conf["autoSaveSeconds"] == 7 and conf["announceAutoSave"] is True)
+		R.check("FUN-20 settings of [NotasWorkflow] copied", conf["autoSaveSeconds"] == 7 and conf["announceAutoSave"] is True)
 		R.check("FUN-20 backup copy also brought", os.path.isfile(plugin.store.backupPath))
 		with open(oldFile, "rb") as fh:
 			R.check("FUN-20 nothing of the old add-on is changed or deleted", fh.read() == before and os.path.isfile(oldFile + ".bak"))
@@ -530,6 +539,7 @@ def legacyMigration():
 		plugin.terminate()
 		n = mark()
 		again = NotasWorkflowNVDA.GlobalPlugin()
+		again.ensureLoaded()
 		R.check("FUN-20 the copy happens only once (new notes are kept)", len(again.store.notes) == 3 and not any("previous version" in s for s in spokenSince(n)))
 		again.terminate()
 	finally:

@@ -35,6 +35,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | Segurança | `tests/test_security.py` | SEG |
 | NVDA instalado | `tests/test_nvda_runtime.py` | FUN |
 | Pacote | `tests/run_all.py` (etapa build) | FUN |
+| Desempenho (100 mil folhas) | `tests/test_performance.py` | PERF |
 | Manual | `tests/test_manual.py` (depois do build) | DOC |
 
 `python tests/run_all.py --note "o que mudou"` roda tudo, grava o histórico em `reports/execucoes.json` e o resumo em `reports/ULTIMA-EXECUCAO.md`.
@@ -61,6 +62,10 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | FUN-16 | NVDA real, Python e encerrar | Todo módulo e função usados existem no NVDA instalado; manifesto aceito; todo arquivo compila em 3.11 e 3.13; encerrar fecha a janela e remove o painel sem erros no log | runtime, pure, gui |
 | FUN-17 | Arquivo | Arquivo ausente = vazio; tudo salvo e lido; `.bak` com a versão anterior; sem `.tmp` sobrando; arquivo danificado (ou aninhado demais) guardado com outro nome e cópia usada, com aviso falado; itens inválidos descartados; erro de gravação avisado com a pasta; mudança feita por outro programa lida de novo ao abrir a janela; BOM aceito | pure, gui |
 | FUN-18 | Comandos | NVDA+Alt+F cria folha; NVDA+Alt+B abre a busca; resumo das raias | gui |
+| FUN-21 | Mover para caderno ou pasta (1.2.0) | Caderno, direto numa pasta ou solta; caderno vence; lugares desconhecidos viram solta; folhas por caderno, por pasta e soltas; Mover para começa no lugar atual e escolher o mesmo lugar não muda nada; anúncio "Agora em: …" | pure, gui |
+| FUN-22 | Índice e busca preparada (1.2.0) | `getNote` pelo índice acompanha inclusões, exclusões e listas novas; importação que substitui folha atualiza o índice; texto da busca reaproveitado e refeito quando a folha muda; texto sem marcação, scripts e estilos; arquivo compacto; limite de 200 MB | pure, gui |
+| FUN-23 | Enter abre a folha (1.2.0) | Tecla real (mensagem do Windows) abre a folha selecionada na lista e na árvore de Cadernos e pastas; Enter e clique duplo juntos abrem uma vez só; Enter numa raia abre e fecha a raia | gui |
+| FUN-24 | Listas paginadas (1.2.0) | Uma raia longa mostra uma página e "Mostrar mais" com o número restante; Enter nele mostra a próxima página com o foco na primeira nova; selecionar uma folha além da página mostra a página dela; o mesmo num caderno com muitas folhas | gui |
 | FUN-20 | Novo nome (1.1.0) | Arquivo antigo da pasta copiado para o nome novo e nunca alterado; o novo vence e a cópia é feita uma vez; primeiro início traz folhas, cópia de segurança e configurações do NotasWorkflow 1.0.0, com aviso falado; nada do antigo muda | pure, gui |
 | FUN-19 | Datas | Formato do `toISOString()` do JavaScript; datas inválidas recusadas | pure |
 
@@ -103,6 +108,26 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | SEG-11 | Desinstalar e migrar | Sem tarefa de desinstalação: as folhas ficam; a migração do NotasWorkflow 1.0.0 só copia (sem mover, renomear ou apagar); o único arquivo apagado é o temporário do próprio complemento |
 | SEG-12 | Análise estática | bandit sem nenhum aviso (nem baixo) |
 
+## 6.2 Casos de desempenho (PERF)
+
+Com 100 mil folhas em 80 cadernos e 12 pastas, geradas por `tests/gerar_massa.py`. Cada operação é medida depois da gravação anterior terminar, como quando a pessoa espera a resposta. Os limites são folgados para uma máquina ocupada e muito abaixo do que fazia o NVDA parar de responder antes da 1.2.0.
+
+| ID | Caso | Limite |
+|---|---|---|
+| PERF-01 | O complemento fica pronto ao iniciar o NVDA | 0,5 s |
+| PERF-02 | As 100 mil folhas são lidas (em segundo plano) e todas ficam disponíveis | 20 s |
+| PERF-03 | A janela abre durante a preparação da busca; reabrir é instantâneo | 3 s / 0,5 s |
+| PERF-04 | A busca termina de ser preparada em segundo plano | 180 s |
+| PERF-05 | Uma raia mostra uma página, não 25 mil itens | 201 itens |
+| PERF-06 | Alt+Shift+Seta muda o status e a folha continua selecionada | 2 s |
+| PERF-07 | Trocar o filtro para um caderno e voltar | 2 s |
+| PERF-08 | Abrir, editar e fechar uma folha (grava e atualiza a lista) | 2 s |
+| PERF-09 | Salvar não para o NVDA; a gravação em segundo plano termina | 0,1 s / 15 s |
+| PERF-10 | Buscar o nome de um projeto, palavras comuns e nada | 2 s cada |
+| PERF-11 | Abrir Cadernos e pastas, abrir um caderno com as folhas, reconstruir a árvore | 3 s / 2 s / 3 s |
+| PERF-12 | Fechar a janela | 2 s |
+| PERF-13 | Encerrar o NVDA com tudo gravado | 20 s |
+
 ## 6.1 Casos do manual de uso (DOC)
 
 | ID | Caso | Resultado esperado |
@@ -111,6 +136,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | DOC-02 | Atualizado | Gerado do `MANUAL.md` atual (SHA-256 nas propriedades); da versão do manifesto; com linha da versão no histórico e versão na capa |
 | DOC-03 | Completo | Todo botão, campo e menu com letra de atalho (tirados da tradução pt_BR), as 4 raias, os 10 formatos, as opções de Mostrar, Visualização e Situação do salvamento e as colunas das tabelas aparecem no manual |
 | DOC-04 | Atalhos | Todo atalho padrão (lido dos scripts) e as teclas das janelas aparecem no manual |
+| DOC-06 | Só este complemento | Manual, readmes, manifestos e textos da interface não citam outra plataforma |
 | DOC-05 | Acessível | Capítulos com Título 1 do Word; toda tabela com linha de cabeçalho repetida; idioma pt-BR e título nas propriedades; sumário com links para todos os capítulos; nenhuma imagem sem descrição |
 
 ## 7. Critérios de aprovação

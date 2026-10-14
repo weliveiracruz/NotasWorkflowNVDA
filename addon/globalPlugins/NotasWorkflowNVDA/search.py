@@ -6,11 +6,12 @@
 # Copyright (C) 2026 Wellington Cruz <weliveiracruz@gmail.com>
 # This file is covered by the GNU General Public License, version 2.
 
+import heapq
 import html
 import re
 import unicodedata
 
-from .model import updatedKey
+from .model import parseIso
 
 MAX_RESULTS = 100
 EXCERPT_LENGTH = 120
@@ -34,8 +35,12 @@ def fold(text):
 
 
 def foldWithMap(text):
-	"""(folded text, index in the original text of each folded character). Slower than
-	fold(): used only for the excerpts of the results shown."""
+	"""(folded text, index in the original text of each folded character). Used only for
+	the excerpts of the results shown."""
+	folded = fold(text)
+	if len(folded) == len(text):
+		# Each character became one character (the usual case): same positions.
+		return folded, range(len(text))
 	out = []
 	positions = []
 	for i, ch in enumerate(text):
@@ -80,14 +85,15 @@ class SearchIndex:
 
 	def __init__(self):
 		self._entries = {}
+		self._dates = {}
 
 	def entry(self, note):
 		content = note.get("content", "")
 		title = note.get("title", "")
-		tags = tuple(note.get("tags", ()))
+		tags = note.get("tags", ())
 		cached = self._entries.get(note["id"])
-		# "is" on the content: an edited note always gets a new string, so this is O(1).
-		if cached is not None and cached[0] is content and cached[1] == title and cached[2] == tags:
+		# Identity checks: an edited or imported note always gets new objects, so this is O(1).
+		if cached is not None and cached[0] is content and cached[1] is title and cached[2] is tags:
 			return cached
 		plain = plainText(content)
 		foldedTitle = fold(title)
@@ -96,10 +102,21 @@ class SearchIndex:
 		self._entries[note["id"]] = cached
 		return cached
 
+	def updated(self, note):
+		"""Time of the last change as a number (for the order of the results), kept too."""
+		stamp = note.get("updatedAt")
+		cached = self._dates.get(note["id"])
+		if cached is None or cached[0] is not stamp:
+			dt = parseIso(stamp)
+			cached = (stamp, dt.timestamp() if dt else 0.0)
+			self._dates[note["id"]] = cached
+		return cached[1]
+
 	def forget(self, keep):
 		"""Drops the entries of notes that no longer exist (keep: the ids that do)."""
 		for noteId in [k for k in self._entries if k not in keep]:
 			del self._entries[noteId]
+			self._dates.pop(noteId, None)
 
 	def __len__(self):
 		return len(self._entries)
@@ -113,16 +130,22 @@ def search(notes, query, limit=MAX_RESULTS, index=None):
 		return []
 	index = index if index is not None else SearchIndex()
 	ranked = []
+	entryOf = index.entry
 	for note in notes:
-		haystack = index.entry(note)[5]
+		entry = entryOf(note)
+		haystack = entry[5]
 		hits = 0
 		for t in wanted:
 			if t in haystack:
 				hits += 1
 		if not hits:
 			continue
-		entry = index.entry(note)
-		titleHits = sum(1 for t in wanted if t in entry[4])
-		ranked.append((hits / len(wanted), titleHits, updatedKey(note), note, entry[3]))
-	ranked.sort(key=lambda r: (r[0], r[1], r[2]), reverse=True)
-	return [(note, score, excerpt(plain, query)) for score, _t, _u, note, plain in ranked[:limit]]
+		title = entry[4]
+		titleHits = 0
+		for t in wanted:
+			if t in title:
+				titleHits += 1
+		ranked.append((hits / len(wanted), titleHits, index.updated(note), note, entry[3]))
+	# Only the best ones are ordered (a common word can match tens of thousands of notes).
+	best = heapq.nlargest(limit, ranked, key=lambda r: (r[0], r[1], r[2]))
+	return [(note, score, excerpt(plain, query)) for score, _t, _u, note, plain in best]

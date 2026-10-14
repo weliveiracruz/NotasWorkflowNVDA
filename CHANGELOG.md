@@ -1,5 +1,17 @@
 # Histórico de versões
 
+## 1.2.0
+
+* **Criar…** no lugar de Nova folha: um menu para criar uma folha, um caderno ou uma pasta, na janela principal e em Cadernos e pastas.
+* **Atualizar o status da tarefa…** no lugar do antigo Mover para (status).
+* **Mover para…** agora move a folha para um caderno, **direto para uma pasta** ou a deixa solta; o campo Caderno da folha virou **Local**.
+* **Enter abre a folha**; o botão Abrir saiu.
+* Só a visualização em raias: a tabela e a caixa Visualização saíram.
+* **Cadernos e pastas** lista as folhas de cada caderno e pasta, e Enter abre a folha; Renomear muda o título da folha, Mover para e Excluir também valem para folhas.
+* **Desempenho com 100 mil folhas:** o NVDA inicia na hora (as folhas são lidas em segundo plano); a gravação acontece em segundo plano, juntando mudanças seguidas e terminando antes de o NVDA fechar; a busca prepara o texto das folhas uma vez (de 7 s para frações de segundo); mudar o status e editar uma folha só atualizam a parte da lista que mudou; listas de 200 em 200 com "Mostrar mais folhas"; reabrir a janela é instantâneo. Arquivos de até 200 MB.
+* Correção: a seleção da lista podia pular para outra folha quando a lista recebia o foco.
+* Os textos de uso não citam mais outra plataforma.
+
 ## 1.1.0
 
 * **Novo nome: Notas Workflow NVDA.** O nome interno passa a `NotasWorkflowNVDA`: pacote `NotasWorkflowNVDA-<versão>.nvda-addon`, categoria "Notas Workflow NVDA" nas Configurações e em Definir comandos, item "Notas Workflow NVDA…" no menu Ferramentas, pasta das folhas `%APPDATA%\nvda\NotasWorkflowNVDA` e arquivo `NotasWorkflowNVDA-data.json`.

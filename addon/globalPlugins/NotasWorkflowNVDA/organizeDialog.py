@@ -13,11 +13,12 @@ import wx
 from gui import guiHelper
 
 from . import messages, model, prompts
+from .mainDialog import selectItem
 
 addonHandler.initTranslation()
 
 #: Notes added to a branch at a time; "Show more notes" adds the next page.
-PAGE_SIZE = 500
+PAGE_SIZE = 200
 
 
 class OrganizeDialog(wx.Dialog):
@@ -61,6 +62,8 @@ class OrganizeDialog(wx.Dialog):
 		self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.activate())
 		self.tree.Bind(wx.EVT_TREE_KEY_DOWN, lambda evt: self.onKey(evt.GetKeyEvent()))
 		self.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
+		# The character of Enter must not reach the tree: its type-ahead search would move the selection.
+		self.tree.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
 		self.createButton.Bind(wx.EVT_BUTTON, self.onCreate)
 		self.renameButton.Bind(wx.EVT_BUTTON, self.onRename)
 		self.moveButton.Bind(wx.EVT_BUTTON, self.onMove)
@@ -105,11 +108,13 @@ class OrganizeDialog(wx.Dialog):
 			tree.DeleteChildren(self.root)
 			self.nodes = {}
 			self.loaded = set()
+			self.counts = self.store.placeCounts()
+			byFolder = self.counts[1]
 			for folder in self.store.folders:
 				notebooks = self.store.notebooksIn(folder["id"])
-				direct = self.store.notesInFolder(folder["id"])
+				direct = byFolder.get(folder["id"], 0)
 				# Translators: a folder in the tree: name, number of notebooks and number of notes put directly in it.
-				text = _("Folder {name}, {notebooks}, {notes}").format(name=folder["name"], notebooks=messages.notebooksCount(len(notebooks)), notes=messages.notesCount(len(direct)))
+				text = _("Folder {name}, {notebooks}, {notes}").format(name=folder["name"], notebooks=messages.notebooksCount(len(notebooks)), notes=messages.notesCount(direct))
 				node = self._add(self.root, ("folder", folder["id"]), text)
 				for nb in notebooks:
 					self.addNotebook(node, nb)
@@ -120,10 +125,10 @@ class OrganizeDialog(wx.Dialog):
 			for nb in loose:
 				self.addNotebook(node, nb)
 			tree.SetItemHasChildren(node, bool(loose))
-			looseNotes = self.store.looseNotes()
+			looseCount = self.counts[2]
 			# Translators: branch of the tree with the notes that are neither in a notebook nor in a folder.
-			node = self._add(self.root, ("loose", None), _("Loose notes, {count}").format(count=messages.notesCount(len(looseNotes))))
-			tree.SetItemHasChildren(node, bool(looseNotes))
+			node = self._add(self.root, ("loose", None), _("Loose notes, {count}").format(count=messages.notesCount(looseCount)))
+			tree.SetItemHasChildren(node, looseCount > 0)
 			if select and select[0] == "note":
 				note = self.store.getNote(select[1])
 				if note:
@@ -134,14 +139,13 @@ class OrganizeDialog(wx.Dialog):
 			if node is None or not node.IsOk():
 				node, _cookie = tree.GetFirstChild(self.root)
 			if node.IsOk():
-				tree.SelectItem(node)
-				tree.EnsureVisible(node)
+				selectItem(tree, node)
 		finally:
 			tree.Thaw()
 		self.updateButtons()
 
 	def addNotebook(self, parent, nb):
-		count = len(self.store.notesIn(nb["id"]))
+		count = self.counts[0].get(nb["id"], 0)
 		node = self._add(parent, ("notebook", nb["id"]), "%s, %s" % (nb["name"], messages.notesCount(count)))
 		self.tree.SetItemHasChildren(node, count > 0)
 
@@ -198,7 +202,7 @@ class OrganizeDialog(wx.Dialog):
 		return self.selectedKey() or (None, None)
 
 	def updateButtons(self):
-		if self._closing:
+		if self._closing or not self.tree:
 			return
 		kind, ident = self.selected()
 		self.renameButton.Enable(kind in ("folder", "notebook", "note"))

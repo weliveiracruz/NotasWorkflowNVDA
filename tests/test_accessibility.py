@@ -16,8 +16,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from _guiapp import (  # noqa: E402
-	Key, NotasWorkflowNVDA, closeWindow, fakeModal, gui, mark, newPlugin, noteDialog, openWindow,
-	organizeDialog, searchDialog, settingsPanel, spokenSince, wx,
+	VK_RETURN, Key, NotasWorkflowNVDA, closeWindow, fakeModal, gui, mark, newPlugin, noteDialog, openWindow,
+	organizeDialog, postKey, prompts, pump, replaced, searchDialog, settingsPanel, spokenSince, wx,
 )
 from NotasWorkflowNVDA import messages  # noqa: E402
 import _strings  # noqa: E402
@@ -224,9 +224,10 @@ def run():
 
 	# -- main window, empty -----------------------------------------------------------------------
 	ctrls = checkWindow("main window, no notes", dlg)
-	R.check("ACE-04 without a note: Open, Move, Notebook and Delete out of the tab order", ctrls == [dlg.filterChoice, dlg.viewChoice, dlg.tree, dlg.newButton, dlg.searchButton, dlg.organizeButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-04 without a note: Update the task status, Move to and Delete out of the tab order", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-06 focus starts on the notes", lastFocus() is dlg.tree, lastFocus())
 	R.check("ACE-05 Esc closes the window", dlg.GetEscapeId() == wx.ID_CLOSE and dlg.closeButton.GetId() == wx.ID_CLOSE)
+	R.check("ACE-03 a single view (lanes): no View box and no table", not hasattr(dlg, "viewChoice") and not hasattr(dlg, "table"))
 
 	# -- notes ---------------------------------------------------------------------------------------
 	nb = store.addNotebook("Trabalho & Casa")
@@ -235,7 +236,7 @@ def run():
 	store.addNote("Revisar", "inprogress")
 	dlg.refresh(a["id"])
 	ctrls = checkWindow("main window, lanes", dlg)
-	R.check("ACE-03 tab order: show, view, notes, actions, close", ctrls == [dlg.filterChoice, dlg.viewChoice, dlg.tree, dlg.newButton, dlg.openButton, dlg.moveButton, dlg.notebookButton, dlg.deleteButton, dlg.searchButton, dlg.organizeButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-03 tab order: show, notes, create, update the task status, move to, delete, search, notebooks and folders, close", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.statusButton, dlg.moveButton, dlg.deleteButton, dlg.searchButton, dlg.organizeButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-14 list label says what it shows and how many", plain(structuralName(dlg.tree)) == plain(T("Not&es: {filter} ({count})")).format(filter=T("All notes"), count=2), structuralName(dlg.tree))
 	dlg.setFilter(("notebook", nb["id"]))
 	label = structuralName(dlg.tree)
@@ -244,33 +245,41 @@ def run():
 	dlg.refresh(a["id"])
 	if msaaName(dlg.tree) is not None:
 		R.check("ACE-14 list name read through MSAA", plain(msaaName(dlg.tree)) == plain(structuralName(dlg.tree)), msaaName(dlg.tree))
+		dlg.refresh(a["id"])
 		name, state = msaaTreeSelection(dlg.tree)
-		expected = messages.noteDescription(a, nb["name"])
-		R.check("ACE-18 selected note read by MSAA with title, notebook, tags and date", name == expected, (name, expected))
+		expected = messages.noteDescription(a, messages.placeOf(store, a))
+		R.check("ACE-18 selected note read by MSAA with title, place, tags and date", name == expected, (name, expected))
 		lane = dlg.tree.GetItemParent(dlg.tree.GetSelection())
 		dlg.tree.SelectItem(lane)
 		name, state = msaaTreeSelection(dlg.tree)
 		R.check("ACE-18 lane read by MSAA with name, number of notes and 'expanded'", name == messages.laneNode("todo", 1) and state & 0x200, (name, hex(state)))
 		dlg.tree.SelectItem(dlg.tree.GetLastChild(lane))
-	R.check("ACE-19 the lane is said by its name, never only by its colour", all(not re.search(r"#[0-9A-Fa-f]{6}", dlg.tree.GetItemText(item)) for item in _allItems(dlg.tree)) and T("To do") in dlg.tree.GetItemText(dlg.tree.GetFirstChild(dlg.root)[0]))
+	R.check("ACE-19 the status is said by its name, never only by its colour", all(not re.search(r"#[0-9A-Fa-f]{6}", dlg.tree.GetItemText(item)) for item in _allItems(dlg.tree)) and T("To do") in dlg.tree.GetItemText(dlg.tree.GetFirstChild(dlg.root)[0]))
+	createLabels = messages.createLabels()
+	present = [k for k in (mnemonic(lbl) for lbl in createLabels) if k]
+	R.check("ACE-02 the Create menu items have unique Alt shortcuts", len(present) == 3 and len(set(present)) == 3, createLabels)
 
-	dlg.viewChoice.SetSelection(1)
-	dlg.onView(None)
-	ctrls = checkWindow("main window, table", dlg)
-	R.check("ACE-03 table takes the place of the tree in the tab order", ctrls[2] is dlg.table and dlg.tree not in ctrls)
-	if msaaName(dlg.table) is not None:
-		R.check("ACE-14 table name read through MSAA", plain(msaaName(dlg.table)) == plain(structuralName(dlg.table)), msaaName(dlg.table))
-	R.check("ACE-19 table has the Status column with the lane name", dlg.table.GetItemText(0, 1) in messages.laneNames())
-	dlg.viewChoice.SetSelection(0)
-	dlg.onView(None)
-
-	# move: announced, focus stays
+	# status and place: announced, focus stays
 	dlg.refresh(a["id"])
 	FOCUS.clear()
 	n = mark()
 	dlg.onKey(Key(wx.WXK_RIGHT, alt=True, shift=True))
-	R.check("ACE-07 moving is announced with the lane name", spokenSince(n) == [messages.movedTo("inprogress")], spokenSince(n))
-	R.check("ACE-06 focus stays on the moved note", lastFocus() is dlg.tree and dlg.selectedNoteId() == a["id"])
+	R.check("ACE-07 a status change is announced with the status name", spokenSince(n) == [messages.movedTo("inprogress")], spokenSince(n))
+	R.check("ACE-06 focus stays on the note", lastFocus() is dlg.tree and dlg.selectedNoteId() == a["id"])
+	FOCUS.clear()
+	n = mark()
+	with replaced(prompts, "chooseItem", lambda parent, message, caption, labels, current=0: 0):
+		dlg.onMove(None)
+	R.check("ACE-07 Move to is announced with the new place", spokenSince(n) == [messages.movedToPlace(messages.looseNote())], spokenSince(n))
+	R.check("ACE-06 after Move to, the focus is back on the list", lastFocus() is dlg.tree)
+
+	# Enter opens the note (real key press)
+	opened = []
+	with replaced(plugin, "editNote", lambda parent, noteId, **k: opened.append(noteId)):
+		dlg.refresh(a["id"])
+		postKey(dlg.tree, VK_RETURN)
+		pump(lambda: opened, 2)
+	R.check("ACE-05 Enter on a note of the list opens it", opened == [a["id"]], opened)
 
 	# delete: focus to the neighbour
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.YES
@@ -287,7 +296,7 @@ def run():
 	nd = noteDialog.NewNoteDialog(dlg, store)
 	nd.Show()
 	ctrls = checkWindow("New note", nd)
-	R.check("ACE-03 New note: title, notebook, status, create (disabled until there is a title), cancel", ctrls == [nd.titleEdit, nd.notebookChoice, nd.laneChoice, nd.cancelButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-03 New note: title, location, status, create (disabled until there is a title), cancel", ctrls == [nd.titleEdit, nd.locationChoice, nd.laneChoice, nd.cancelButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-06 New note starts on the title", lastFocus() is nd.titleEdit)
 	nd.titleEdit.SetValue("x")
 	# Focusing a button (as the MSAA reading above does) makes it the temporary default:
@@ -295,7 +304,7 @@ def run():
 	nd.titleEdit.SetFocus()
 	wx.Yield()
 	default = nd.GetDefaultItem()
-	R.check("ACE-04 Create note enters the tab order with a title and is the default button (Enter creates)", nd.createButton in focusables(nd) and default is not None and default.GetId() == nd.createButton.GetId(), default and default.GetLabel())
+	R.check("ACE-04 Create enters the tab order with a title and is the default button (Enter creates)", nd.createButton in focusables(nd) and default is not None and default.GetId() == nd.createButton.GetId(), default and default.GetLabel())
 	nd.Destroy()
 
 	# -- note window --------------------------------------------------------------------------------------
@@ -318,7 +327,7 @@ def run():
 	with fakeModal(noteDialog.NoteDialog, inspect):
 		plugin.editNote(dlg, note["id"])
 	d = seen["dlg"]
-	R.check("ACE-03 note window: title, notebook, status, tags, content, formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.notebookChoice, d.laneChoice, d.tagsEdit, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
+	R.check("ACE-03 note window: title, location, status, tags, content, formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationChoice, d.laneChoice, d.tagsEdit, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
 	R.check("ACE-06 opening a note starts on the title", seen["focus"] is d.titleEdit, seen["focus"])
 	R.check("ACE-13 save status is read-only and reachable with Tab", seen["status"] is False)
 	R.check("ACE-07 formatting is announced", seen["spoken"] == [T("Italic")], seen["spoken"])
@@ -348,12 +357,25 @@ def run():
 	R.check("ACE-05 Esc closes the search", sd.GetEscapeId() == wx.ID_CLOSE)
 	sd.close()
 
-	# -- notebooks and folders ------------------------------------------------------------------------------
+	# -- notebooks, folders and their notes ------------------------------------------------------------------
+	inNb = store.addNote("No caderno", notebookId=nb["id"])
 	od = organizeDialog.OrganizeDialog(dlg, plugin)
 	od.Show()
 	ctrls = checkWindow("Notebooks and folders", od)
 	R.check("ACE-04 on Without folder: rename, move and delete out of the tab order", od.renameButton not in ctrls and od.deleteButton not in ctrls and od.moveButton not in ctrls)
 	R.check("ACE-06 Notebooks and folders starts on the tree", lastFocus() is od.tree)
+	od.expandKey(("notebook", nb["id"]))
+	od.tree.SelectItem(od.nodes[("note", inNb["id"])])
+	ctrls = focusables(od)
+	R.check("ACE-03 on a note: tree, create, rename, move to, delete, close", ctrls == [od.tree, od.createButton, od.renameButton, od.moveButton, od.deleteButton, od.closeButton], [plain(structuralName(c)) for c in ctrls])
+	if msaaName(od.tree) is not None:
+		name, state = msaaTreeSelection(od.tree)
+		R.check("ACE-18 note of the tree of notebooks read by MSAA with title and status", name == messages.noteDescription(inNb, "", withLane=True), name)
+	opened = []
+	with replaced(plugin, "editNote", lambda parent, noteId, **k: opened.append(noteId)):
+		postKey(od.tree, VK_RETURN)
+		pump(lambda: opened, 2)
+	R.check("ACE-05 Enter on a note of the tree of notebooks opens it", opened == [inNb["id"]], opened)
 	od.close()
 
 	# -- settings panel -----------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ def run():
 	mo = os.path.join(tmp, "pt_BR", "LC_MESSAGES", "nvda.mo")
 	build.writeMo(build.parsePo(PO), mo)
 	t = gettext.translation("nvda", localedir=tmp, languages=["pt_BR"])
-	R.check("ACE-17 compiled translation loads with gettext", t.gettext("C&reate note") == "C&riar folha" and t.gettext("{count} notes").format(count=3) == "3 folhas")
+	R.check("ACE-17 compiled translation loads with gettext", t.gettext("&Create…") == "&Criar…" and t.gettext("&Update the task status…") == "&Atualizar o status da tarefa…" and t.gettext("{count} notes").format(count=3) == "3 folhas")
 
 	man = build.readManifest(os.path.join(ROOT, "addon", "locale", "pt_BR", "manifest.ini"))
 	R.check("ACE-17 add-on summary, description and changelog in pt_BR", all(man.get(k) for k in ("summary", "description", "changelog")))

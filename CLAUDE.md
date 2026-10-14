@@ -26,4 +26,5 @@ Nunca apague nem edite à mão execuções antigas em `reports/execucoes.json`.
 * Todo texto da interface passa por `_()`, com `# Translators:` na linha anterior, e é traduzido em `addon/locale/pt_BR/LC_MESSAGES/nvda.po`.
 * Letras de atalho (&) únicas em cada janela, em inglês e em português.
 * Nunca registrar título, conteúdo ou tags das folhas no log.
+* Desempenho: toda mudança precisa continuar passando em `tests/test_performance.py` (100 mil folhas). Nada demorado na linha principal do NVDA: leitura, preparação da busca e gravação ficam em segundo plano; a árvore só refaz o que mudou.
 * Nunca apagar folhas do usuário: excluir caderno ou pasta solta as folhas; desinstalar não apaga nada.

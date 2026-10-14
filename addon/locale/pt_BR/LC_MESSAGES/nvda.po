@@ -10,143 +10,147 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:40 addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:52 addon/globalPlugins/NotasWorkflowNVDA/settingsPanel.py:60 addon/globalPlugins/NotasWorkflowNVDA/settingsPanel.py:140
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:45 addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:65 addon/globalPlugins/NotasWorkflowNVDA/settingsPanel.py:60 addon/globalPlugins/NotasWorkflowNVDA/settingsPanel.py:140
 msgid "Notas Workflow NVDA"
 msgstr "Notas Workflow NVDA"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:286
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:348
 msgid "New notebook"
 msgstr "Novo caderno"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:298
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:360
 msgid "Name of the new folder:"
 msgstr "Nome da nova pasta:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:298
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:360
 msgid "New folder"
 msgstr "Nova pasta"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:316
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:378
 msgid "Move to"
 msgstr "Mover para"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:334
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:396
 msgid "Delete note"
 msgstr "Excluir folha"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:389
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:455
 msgid "Opens the Notas Workflow NVDA window with the notes in lanes"
 msgstr "Abre a janela do Notas Workflow NVDA com as folhas em raias"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:397
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:463
 msgid "Notas Workflow NVDA: creates a note"
 msgstr "Notas Workflow NVDA: cria uma folha"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:405
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:471
 msgid "Notas Workflow NVDA: searches the notes"
 msgstr "Notas Workflow NVDA: busca nas folhas"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:413
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:479
 msgid "Notas Workflow NVDA: says how many notes each lane has"
 msgstr "Notas Workflow NVDA: diz quantas folhas cada raia tem"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:75
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:89
 msgid "&Notas Workflow NVDA…"
 msgstr "&Notas Workflow NVDA…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:77
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:91
 msgid "Opens the Notas Workflow NVDA window: notes in lanes, notebooks and folders"
 msgstr "Abre a janela do Notas Workflow NVDA: folhas em raias, cadernos e pastas"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:201
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:209
+msgid "Loading the notes…"
+msgstr "Carregando as folhas…"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:257
 msgid "Notes saved in the new folder"
 msgstr "Folhas salvas na nova pasta"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:209
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:266
 msgid "Imported: {notes}, {notebooks}, {folders} folders"
 msgstr "Importado: {notes}, {notebooks}, {folders} pastas"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:278
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:340
 msgid "Note created in {lane}"
 msgstr "Folha criada em {lane}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:314
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:376
 msgid "Move {title} to:"
 msgstr "Mover {title} para:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:332
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:394
 msgid "Delete the note {title}? This cannot be undone."
 msgstr "Excluir a folha {title}? Isso não pode ser desfeito."
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:173
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:219
 msgid "Notes of the previous version brought to Notas Workflow NVDA: {count}. The old add-on can be uninstalled."
 msgstr "Folhas da versão anterior trazidas para o Notas Workflow NVDA: {count}. O complemento antigo pode ser desinstalado."
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:198
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:254
 msgid "Using the notes of the new folder: {count}"
 msgstr "Usando as folhas da nova pasta: {count}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:221
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:279
 msgid "Exported: {count}"
 msgstr "Exportado: {count}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:343
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:405
 msgid "Note deleted: {title}"
 msgstr "Folha excluída: {title}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:141
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:160
 msgid "All notes"
 msgstr "Todas as folhas"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:65
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:82
 msgid "&Show:"
 msgstr "M&ostrar:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:129
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:148
 msgid "Loose notes"
 msgstr "Folhas soltas"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:132
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:151
 msgid "Recent notes"
 msgstr "Folhas recentes"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:74 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:44
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:91 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:45
 msgid "&Create…"
 msgstr "&Criar…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:76
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:93
 msgid "&Update the task status…"
 msgstr "&Atualizar o status da tarefa…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:78 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:48
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:95 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:49
 msgid "&Move to…"
 msgstr "&Mover para…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:80 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:50
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:97 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:51
 msgid "&Delete"
 msgstr "E&xcluir"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:84
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:101
 msgid "Searc&h…"
 msgstr "&Buscar…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:86
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:103
 msgid "Notebooks and &folders…"
 msgstr "Cadernos e pas&tas…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:88 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:52 addon/globalPlugins/NotasWorkflowNVDA/searchDialog.py:51
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:105 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:53 addon/globalPlugins/NotasWorkflowNVDA/searchDialog.py:51
 msgid "C&lose"
 msgstr "Fec&har"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:135
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:154
 msgid "Notebook: {name}"
 msgstr "Caderno: {name}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:139
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:158
 msgid "Folder: {name}"
 msgstr "Pasta: {name}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:173
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:190
 msgid "Not&es: {filter} ({count})"
 msgstr "&Folhas: {filter} ({count})"
 
@@ -414,71 +418,71 @@ msgstr "&Formatação…"
 msgid "Not saved"
 msgstr "Não salva"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:325
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:329
 msgid "New name:"
 msgstr "Novo nome:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:325 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:312
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:329 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:316
 msgid "Rename"
 msgstr "Renomear"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:355
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:359
 msgid "Move to folder"
 msgstr "Mover para pasta"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:388
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:392
 msgid "Delete"
 msgstr "Excluir"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:26
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:27
 msgid "Notebooks and folders"
 msgstr "Cadernos e pastas"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:37
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:38
 msgid "&Organization:"
 msgstr "&Organização:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:46
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:47
 msgid "&Rename…"
 msgstr "&Renomear…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:312
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:316
 msgid "New title:"
 msgstr "Novo título:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:348
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:352
 msgid "Without folder"
 msgstr "Sem pasta"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:353
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:357
 msgid "Folder of the notebook {name}:"
 msgstr "Pasta do caderno {name}:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:382
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:386
 msgid "Delete the folder {name}? Its notebooks and notes are not deleted: they stay without folder."
 msgstr "Excluir a pasta {name}? Os cadernos e as folhas dela não são apagados: ficam sem pasta."
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:386
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:390
 msgid "Delete the notebook {name}? Its notes are not deleted: they become loose notes."
 msgstr "Excluir o caderno {name}? As folhas dele não são apagadas: viram folhas soltas."
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:112
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:117
 msgid "Folder {name}, {notebooks}, {notes}"
 msgstr "Pasta {name}, {notebooks}, {notes}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:119
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:124
 msgid "Without folder, {count}"
 msgstr "Sem pasta, {count}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:125
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:130
 msgid "Loose notes, {count}"
 msgstr "Folhas soltas, {count}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:334 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:318
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:338 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:322
 msgid "Renamed to {name}"
 msgstr "Renomeado para {name}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:398
+#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:402
 msgid "{name} deleted"
 msgstr "{name} excluído"
 

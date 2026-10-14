@@ -42,17 +42,17 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 
 | ID | Requisito | Como é atendido |
 |---|---|---|
-| RF-01 | Criar folha com título, caderno e status | Janela **Nova folha** (NVDA+Alt+F, botão Nova folha… ou menu Ferramentas); título obrigatório (até 200 caracteres); caderno opcional ("Folha solta"); status padrão "A fazer" ou a raia selecionada; ao criar, abre o editor |
-| RF-02 | Editar título, caderno, status, tags e conteúdo | Janela da folha; tags separadas por vírgula (sem repetição, até 30, cada uma até 50 caracteres); conteúdo com marcação leve convertida para o HTML do TipTap |
+| RF-01 | Criar folha, caderno e pasta | Botão **Criar…** (menu Folha…, Caderno…, Pasta…) na janela principal e em Cadernos e pastas; NVDA+Alt+F cria uma folha de qualquer lugar. Nova folha: título obrigatório (até 200 caracteres), **Local** (solta, uma pasta ou um caderno; padrão: o filtro em uso), status (padrão: a raia selecionada); ao criar, abre o editor. Caderno criado com uma pasta selecionada ou filtrada nasce nela |
+| RF-02 | Editar título, local, status, tags e conteúdo | Janela da folha; tags separadas por vírgula (sem repetição, até 30, cada uma até 50 caracteres); conteúdo com marcação leve convertida para HTML |
 | RF-03 | Salvamento automático | 2 s (1 a 30, configurável) depois da última alteração; Ctrl+S salva na hora; fechar a janela (Esc ou Salvar e fechar) e encerrar o NVDA com a folha aberta sempre salvam o que estiver pendente — nada se perde |
 | RF-04 | Formatação do conteúdo | Menu Formatação… e atalhos: negrito (Ctrl+B), itálico (Ctrl+I), tachado, código, título 2, título 3, lista com marcadores, lista numerada, citação e divisor — as mesmas opções da barra do editor web |
-| RF-05 | Ver as folhas por raia | Árvore: cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); cada folha mostra título, caderno, tags e data |
-| RF-06 | Ver as folhas em tabela | Lista com colunas Título, Status, Caderno, Tags e Atualizada em (layout "tabela" do web) |
-| RF-07 | Mover folha entre raias | Botão **Mover para…** (menu com as outras raias, como no cartão do web) e Alt+Shift+Seta para a direita/esquerda (próxima/anterior raia, como o Shift+Alt+Setas do web); a seleção acompanha a folha e o NVDA fala a raia nova |
-| RF-08 | Mudar o caderno de uma folha | Botão **Mudar caderno…** e campo Caderno da janela da folha |
+| RF-05 | Ver as folhas por raia | Árvore (a única visualização): cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); cada folha mostra título, local, tags e data; **Enter abre a folha** |
+| RF-06 | Listas longas | Cada raia (e cada caderno ou pasta na janela Cadernos e pastas) mostra 200 folhas por vez, com o item "Mostrar mais 200 folhas (N ainda não mostradas)"; uma folha a selecionar além da página faz a página dela aparecer |
+| RF-07 | Atualizar o status da tarefa | Botão **Atualizar o status da tarefa…** (menu com os outros status) e Alt+Shift+Seta para a direita/esquerda (status seguinte/anterior); a seleção acompanha a folha e o NVDA fala o novo status |
+| RF-08 | Mover para um caderno ou uma pasta | Botão **Mover para…** (na janela principal e em Cadernos e pastas) e campo Local da janela da folha: folha solta, direto numa pasta ou num caderno; a lista começa no lugar atual |
 | RF-09 | Excluir folha | Botão Excluir ou tecla Delete, sempre com confirmação |
 | RF-10 | Filtrar | Caixa **Mostrar**: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), Caderno: <nome>, Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) |
-| RF-11 | Cadernos e pastas | Janela **Cadernos e pastas…**: novo caderno (dentro da pasta selecionada), nova pasta, renomear, mover caderno para outra pasta, excluir (com confirmação; as folhas nunca são apagadas, ficam soltas) |
+| RF-11 | Cadernos e pastas | Janela **Cadernos e pastas…**: árvore com cada pasta, os cadernos dela e as folhas guardadas nela, cada caderno com as suas folhas, o ramo "Sem pasta" e o ramo "Folhas soltas"; as folhas são carregadas só ao abrir o ramo; Enter abre a folha; Criar…, Renomear… (também o título da folha, F2), Mover para…, Excluir (com confirmação; as folhas nunca são apagadas ao excluir caderno ou pasta) |
 | RF-12 | Buscar | Janela **Buscar** (NVDA+Alt+B): título, conteúdo e tags; sem diferenciar acentos e maiúsculas; resultados por relevância, com trecho e porcentagem; Enter abre a folha |
 | RF-13 | Guardar as folhas | Arquivo JSON na pasta das folhas (padrão: pasta de configuração do NVDA, subpasta `NotasWorkflowNVDA`); gravação atômica; cópia de segurança do arquivo anterior; arquivo danificado é preservado e a cópia de segurança é usada |
 | RF-14 | Trocar a pasta das folhas | Configurações: se a pasta nova já tiver folhas, passam a ser usadas; senão as folhas atuais são gravadas nela |
@@ -86,7 +86,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RS-01 | Nenhum acesso à rede: o complemento não importa `socket`, `urllib`, `http` nem `ssl` |
 | RS-02 | O conteúdo das folhas nunca vai para o log do NVDA, nem em erros |
 | RS-03 | Só JSON: nenhum `eval`, `exec`, `pickle`, `subprocess` ou shell |
-| RS-04 | Arquivos de dados e de importação acima de 20 MB são recusados sem ler tudo |
+| RS-04 | Arquivos de dados e de importação acima de 200 MB são recusados sem ler tudo |
 | RS-05 | Dados importados ou lidos são validados: tipos, tamanhos (título 200, tag 50, conteúdo 1 MB), IDs (só letras, números, `-` e `_`, até 64), raias conhecidas, referências a cadernos e pastas existentes |
 | RS-06 | O HTML do conteúdo nunca é executado nem exibido como página: é convertido em texto por um analisador que descarta `script`, `style` e atributos; o HTML gerado escapa tudo o que a pessoa digitou (sem injeção quando o web abrir a folha) |
 | RS-07 | Gravação atômica (arquivo temporário + `os.replace`) com cópia de segurança: queda de energia ou erro não corrompe as folhas |
@@ -97,7 +97,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 
 ### 3.4 Restrições
 
-* Somente biblioteca padrão do Python e módulos do NVDA: sem dependências externas e sem DLLs próprias. Os módulos usados precisam existir no Python embutido no NVDA (`library.zip`); já conferido: `uuid`, `html.parser`, `unicodedata`, `tempfile`, `datetime`, `json`.
+* Somente biblioteca padrão do Python e módulos do NVDA: sem dependências externas e sem DLLs próprias. Os módulos usados precisam existir no Python embutido no NVDA (`library.zip`); já conferido: `uuid`, `html.parser`, `unicodedata`, `datetime`, `json`, `threading`, `heapq`.
 * Compatível com NVDA 2024.1 (Python 3.11, 32 bits) até 2026.x (Python 3.13, 64 bits).
 * Indentação com tabulação, como no NVDA. Texto da interface em inglês no código, traduzido para pt_BR (`.po`).
 * Datas gravadas como o `toISOString()` do JavaScript (`2026-10-12T18:41:00.000Z`, UTC), para o web ler sem conversão.
@@ -107,24 +107,25 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 ```
 NVDA
  └─ globalPlugins/NotasWorkflowNVDA/
-     __init__.py        GlobalPlugin: atalhos, menu Ferramentas, painel de configurações, abre as janelas
+     __init__.py        GlobalPlugin: atalhos, menu Ferramentas, painel, leitura em segundo plano, criar/mover/excluir
      model.py           Raias, criação e validação de folhas, cadernos e pastas, filtros, datas ISO
-     markup.py          Marcação leve <-> HTML do TipTap; HTML -> texto; formatação de seleção
-     search.py          Normalização sem acentos, pontuação, trecho
-     store.py           NotesStore: operações do web (lib/store.ts) + arquivo JSON (lib/storage.ts)
-     messages.py        Textos traduzidos: nomes das raias, contagens, datas, descrição das folhas
-     mainDialog.py      Janela "Notas Workflow NVDA": Mostrar, Visualização, árvore/tabela, ações
+     markup.py          Marcação leve <-> HTML; HTML -> texto; formatação de seleção
+     search.py          Índice da busca (texto preparado de cada folha), normalização sem acentos, pontuação, trecho
+     store.py           NotesStore: operações, índice por id, arquivo JSON com gravação em segundo plano
+     messages.py        Textos traduzidos: raias, contagens, lugares, datas, descrição das folhas
+     prompts.py         Menus e caixas de escolha compartilhados pelas janelas
+     mainDialog.py      Janela "Notas Workflow NVDA": Mostrar, árvore de raias paginada, ações
      noteDialog.py      Janelas "Nova folha" e da folha (editor)
      searchDialog.py    Janela "Buscar folhas"
-     organizeDialog.py  Janela "Cadernos e pastas"
+     organizeDialog.py  Janela "Cadernos e pastas" (com as folhas, carregadas ao abrir cada ramo)
      settingsPanel.py   Configurações do NVDA > Notas Workflow NVDA
 ```
 
 Camadas:
 
 1. **Núcleo sem interface** (`model`, `markup`, `search`, `store`): não importa `wx` nem módulos do NVDA; é testado em Python 3.11 e 3.13.
-2. **Interface** (`messages`, `mainDialog`, `noteDialog`, `searchDialog`, `organizeDialog`, `settingsPanel`): wxPython e `gui.guiHelper` do NVDA.
-3. **Integração** (`__init__`): scripts, menu Ferramentas, registro do painel. Tudo roda na linha principal do NVDA (não há rede nem trabalho demorado: o arquivo é pequeno e local).
+2. **Interface** (`messages`, `prompts`, `mainDialog`, `noteDialog`, `searchDialog`, `organizeDialog`, `settingsPanel`): wxPython e `gui.guiHelper` do NVDA.
+3. **Integração** (`__init__`): scripts, menu Ferramentas, registro do painel. A interface roda na linha principal do NVDA; a leitura do arquivo, a preparação da busca e a gravação rodam em linhas de execução próprias (seção 4.6).
 
 ### 4.1 Modelo de dados (igual a `types/index.ts`)
 
@@ -170,8 +171,8 @@ O editor do web (TipTap StarterKit) grava HTML. Um editor rico não é bem lido 
 ### 4.3 Armazenamento
 
 * Arquivo `NotasWorkflowNVDA-data.json` na pasta das folhas. Padrão: `%APPDATA%\nvda\NotasWorkflowNVDA\` (pasta de configuração do NVDA; na versão portátil, a pasta do NVDA portátil).
-* Toda alteração grava na hora: escreve `NotasWorkflowNVDA-data.json.tmp`, guarda o arquivo anterior como `NotasWorkflowNVDA-data.json.bak` e troca com `os.replace` (atômico no Windows).
-* Ao ler: arquivo ausente = nenhuma folha; JSON danificado ou acima de 20 MB = o arquivo é renomeado para `NotasWorkflowNVDA-data.corrupt-<data>.json` (nunca apagado), a cópia `.bak` é usada se estiver boa e a pessoa é avisada.
+* Toda alteração pede uma gravação; uma linha de execução própria espera 0,5 s sem novas alterações (várias viram uma gravação só) e então escreve `NotasWorkflowNVDA-data.json.tmp` (JSON compacto, folha por folha, com pausas para o NVDA continuar respondendo), guarda o arquivo anterior como `NotasWorkflowNVDA-data.json.bak` e troca com `os.replace` (atômico no Windows). Ao encerrar, o complemento espera a última gravação.
+* Ao ler: arquivo ausente = nenhuma folha; JSON danificado ou acima de 200 MB = o arquivo é renomeado para `NotasWorkflowNVDA-data.corrupt-<data>.json` (nunca apagado), a cópia `.bak` é usada se estiver boa e a pessoa é avisada.
 * Erro de gravação (disco cheio, pasta somente leitura): as folhas continuam na memória, a pessoa é avisada e a próxima alteração tenta de novo.
 * Mudanças externas: o tamanho e a data do arquivo são lembrados; ao abrir a janela principal, se mudaram, o arquivo é lido de novo.
 
@@ -182,6 +183,20 @@ O editor do web (TipTap StarterKit) grava HTML. Um editor rico não é bem lido 
 3. Trecho: até 120 caracteres em volta do primeiro termo encontrado, com "…" nas pontas (igual ao web, mas achando o termo sem acento).
 4. Resultados com pontuação zero não aparecem; no máximo 100.
 
+### 4.6 Desempenho (1.2.0)
+
+Requisitos não funcionais, medidos com 100 mil folhas em 80 cadernos e 12 pastas (`tests/test_performance.py`, limites folgados para não falhar em máquina ocupada):
+
+| ID | Requisito | Como é atendido | Medido |
+|---|---|---|---|
+| RNF-01 | O NVDA inicia sem esperar as folhas | Leitura do arquivo numa linha de execução; todo comando chama `ensureLoaded()` e, se preciso, fala "Carregando as folhas…" e espera | 0 s para o complemento ficar pronto; 3 a 5 s para ler |
+| RNF-02 | Busca em fração de segundo | `SearchIndex`: texto de cada folha preparado uma vez (sem marcação, sem acentos), refeito só quando a folha muda (comparação por identidade dos objetos); preparado em segundo plano em lotes com pausas; só os 100 melhores resultados são ordenados | 0,1 a 0,5 s |
+| RNF-03 | Mudar o status e editar sem travar | A árvore só refaz as raias afetadas (`refreshLanes`) ou troca o texto de um item (`noteChanged`); índice por id no store (`getNote` em O(1)) | 0,2 a 0,4 s |
+| RNF-04 | Gravar sem travar | Gravação em segundo plano, adiada e agrupada; JSON codificado folha por folha com pausas, porque `json.dumps` do arquivo inteiro prende o Python por cerca de 1 s | 0 s para quem usa; 2 a 4 s em segundo plano |
+| RNF-05 | Árvores leves | Páginas de 200 folhas por raia; folhas de Cadernos e pastas carregadas só ao abrir o ramo; contagem de folhas por lugar numa passada só; a janela principal é escondida ao fechar e reaproveitada | Reabrir: 0 s |
+
+A seleção da árvore é feita junto com o "item com foco" do Windows (`SetFocusedItem`): sem isso, a seleção podia voltar a um item antigo quando a árvore recebia o foco.
+
 ### 4.5 Erros
 
 | Situação | Fala (pt_BR) |
@@ -189,8 +204,8 @@ O editor do web (TipTap StarterKit) grava HTML. Um editor rico não é bem lido 
 | Arquivo danificado | As folhas salvas estavam danificadas. O arquivo foi guardado como <nome> e a cópia de segurança foi usada. |
 | Não foi possível gravar | Não foi possível salvar as folhas em <pasta>. Confira se a pasta existe e pode ser gravada. |
 | Importação inválida | Este arquivo não tem folhas do Notas Workflow NVDA. |
-| Arquivo grande demais | O arquivo tem mais de 20 MB e não foi aberto. |
-| Título vazio | O botão Criar folha fica indisponível até haver título |
+| Arquivo grande demais | O arquivo tem mais de 200 MB e não foi aberto. |
+| Título vazio | O botão Criar fica indisponível até haver título |
 | Folha excluída enquanto aberta | Esta folha foi excluída. |
 
 ## 5. Interface
@@ -200,30 +215,26 @@ O editor do web (TipTap StarterKit) grava HTML. Um editor rico não é bem lido 
 Ordem de tabulação:
 
 1. **Mostrar** (caixa): Todas as folhas, Folhas soltas, Folhas recentes, Caderno: <nome>…, Pasta: <nome>…
-2. **Visualização** (caixa): Raias (árvore) ou Tabela; a escolha fica lembrada.
-3. **Folhas** (árvore ou tabela; o rótulo diz o filtro e quantas folhas há).
-   * Árvore: ramos "A fazer, 2 folhas"… já abertos; cada folha: "Título, caderno Trabalho, tags x, y, atualizada em 12/10/2026".
-   * Tabela: colunas Título, Status, Caderno, Tags, Atualizada em.
-   * Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda move para a raia seguinte/anterior.
-4. Botões: **Nova folha…** (na raia selecionada), **Abrir**, **Mover para…**, **Mudar caderno…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Fechar** (Esc).
+2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… já abertos; cada folha: "Título, caderno Trabalho, tags x, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
+3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Fechar** (Esc).
 
-A janela é única: abrir de novo traz a mesma janela para a frente.
+A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo o arquivo de novo se outro computador o mudou.
 
-### 5.2 Nova folha (NVDA+Alt+F)
+### 5.2 Nova folha (NVDA+Alt+F ou Criar… > Folha…)
 
-**Título** (obrigatório), **Caderno** (Folha solta ou um caderno), **Status** (as 4 raias), **Criar folha** (padrão; indisponível sem título) e **Cancelar**. Enter cria; Esc cancela. Depois de criar, a janela da folha abre com o foco no conteúdo.
+**Título** (obrigatório), **Local** (Folha solta, cada pasta e cada caderno com a pasta dele), **Status** (as 4 raias), **Criar** (padrão; indisponível sem título) e **Cancelar**. Enter cria; Esc cancela. Depois de criar, a janela da folha abre com o foco no conteúdo.
 
 ### 5.3 Janela da folha (editor)
 
-Título da janela = título da folha. Ordem: **Título**, **Caderno**, **Status**, **Tags (separadas por vírgula)**, **Conteúdo** (várias linhas), **Formatação…**, **Situação do salvamento** (somente leitura: "Salvo às 14:32", "Alterações não salvas…"), **Salvar e fechar**. Esc também salva e fecha. Ctrl+S salva sem fechar; Ctrl+B e Ctrl+I formatam no conteúdo.
+Título da janela = título da folha. Ordem: **Título**, **Local**, **Status**, **Tags (separadas por vírgula)**, **Conteúdo** (várias linhas), **Formatação…**, **Situação do salvamento** (somente leitura: "Salva às 14:32", "Alterações não salvas…"), **Salvar e fechar**. Esc também salva e fecha. Ctrl+S salva sem fechar; Ctrl+B e Ctrl+I formatam no conteúdo.
 
 ### 5.4 Buscar folhas (NVDA+Alt+B)
 
-**Buscar** (campo; busca 300 ms depois de parar de digitar, ou com Enter), **Resultados** (tabela: Título, Trecho, Relevância, Atualizada em; Enter abre), **Abrir**, **Fechar**. O NVDA fala "N resultados" ou "Nenhuma folha encontrada".
+**Buscar** (campo; busca 300 ms depois de parar de digitar, ou com Enter), **Resultados** (tabela: Título, Trecho, Relevância, Atualizada em; Enter abre), **Abrir**, **Fechar**. O NVDA fala "Encontrado: N folhas" ou "Nenhuma folha encontrada".
 
 ### 5.5 Cadernos e pastas
 
-**Organização** (árvore: cada pasta com os seus cadernos; ramo "Sem pasta" com os cadernos soltos; cada caderno diz quantas folhas tem), **Novo caderno…**, **Nova pasta…**, **Renomear…**, **Mover para pasta…**, **Excluir**, **Fechar**.
+**Organização** (árvore: cada pasta com os seus cadernos e as folhas guardadas nela; cada caderno com as suas folhas; "Sem pasta"; "Folhas soltas"; folhas lidas com título, status, tags e data; Enter abre), **Criar…**, **Renomear…** (F2), **Mover para…**, **Excluir** (Delete), **Fechar**.
 
 ### 5.6 Configurações do NVDA > Notas Workflow NVDA
 
@@ -264,6 +275,7 @@ O detalhamento de cada caso fica em [SDD-TESTES.md](SDD-TESTES.md). Resumo:
 | Segurança | `tests/test_security.py` | bandit, padrões proibidos, sem rede, sem conteúdo no log, validação, HTML hostil, gravação atômica, limites de tamanho |
 | NVDA real | `tests/test_nvda_runtime.py` | Todo módulo importado existe no Python do NVDA instalado; manifesto aceito |
 | Pacote | `tests/run_all.py` | `build.py` gera um pacote válido |
+| Desempenho | `tests/test_performance.py` | 100 mil folhas: início, leitura, janela, status, edição, gravação, busca, Cadernos e pastas, saída (seção 4.6) |
 | Manual | `tests/test_manual.py` | Manual em Word atualizado, da versão atual, com todos os controles, raias, formatos e atalhos, e acessível |
 
 O que não é automatizável (fala real do NVDA, pasta sincronizada com OneDrive, troca de arquivos com o web) está no roteiro manual [TESTES-MANUAIS.md](TESTES-MANUAIS.md).
