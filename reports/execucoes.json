@@ -1,0 +1,504 @@
+[
+ {
+  "number": 1,
+  "date": "2026-10-13T00:04:46-03:00",
+  "version": "1.0.0",
+  "note": "Primeira execução completa",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 469,
+  "passed": 469,
+  "failed": 0,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 93,
+    "passed": 93,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 36,
+    "passed": 36,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 2,
+  "date": "2026-10-13T00:05:33-03:00",
+  "version": "1.0.0",
+  "note": "build.py --release",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 469,
+  "passed": 469,
+  "failed": 0,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 93,
+    "passed": 93,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 36,
+    "passed": 36,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 3,
+  "date": "2026-10-13T00:44:24-03:00",
+  "version": "1.0.0",
+  "note": "Manual de uso em Word e suíte test_manual",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 487,
+  "passed": 487,
+  "failed": 0,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 93,
+    "passed": 93,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 36,
+    "passed": 36,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 4,
+  "date": "2026-10-13T00:44:39-03:00",
+  "version": "1.0.0",
+  "note": "build.py --release",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 487,
+  "passed": 487,
+  "failed": 0,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 72,
+    "passed": 72,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 93,
+    "passed": 93,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 36,
+    "passed": 36,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 5,
+  "date": "2026-10-13T21:58:21-03:00",
+  "version": "1.1.0",
+  "note": "1.1.0: novo nome Notas Workflow NVDA e migracao do NotasWorkflow 1.0.0",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 502,
+  "passed": 502,
+  "failed": 0,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 76,
+    "passed": 76,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 76,
+    "passed": 76,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 99,
+    "passed": 99,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 37,
+    "passed": 37,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 6,
+  "date": "2026-10-13T21:58:48-03:00",
+  "version": "1.1.0",
+  "note": "build.py --release",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 502,
+  "passed": 502,
+  "failed": 0,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 76,
+    "passed": 76,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 76,
+    "passed": 76,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 99,
+    "passed": 99,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 37,
+    "passed": 37,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ }
+]

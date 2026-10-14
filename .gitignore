@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+dist/
+*.nvda-addon
+addon/locale/*/LC_MESSAGES/*.mo
+dados-teste/

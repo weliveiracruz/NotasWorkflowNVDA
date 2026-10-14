@@ -1,0 +1,48 @@
+# Runs every test suite of docs/SDD-TESTES.md (functional, accessibility and
+# security) on Windows with Python 3.11 and 3.13. When a tag like v1.0.0 is pushed
+# and every test passes, builds the .nvda-addon and publishes it as a release.
+# If any test fails, nothing is published.
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: |
+            3.11
+            3.13
+      - name: Install wxPython, bandit and comtypes
+        run: python -m pip install wxPython bandit comtypes
+      - name: Run every test suite and build (refused if any test fails)
+        run: python -X utf8 build.py --release
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: NotasWorkflowNVDA-test-reports
+          path: |
+            reports/ULTIMA-EXECUCAO.md
+            reports/execucoes.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NotasWorkflowNVDA
+          path: dist/*
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.nvda-addon
+            dist/*.sha256
+          body_path: CHANGELOG.md

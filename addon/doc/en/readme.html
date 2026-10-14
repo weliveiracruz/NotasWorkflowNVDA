@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notas Workflow NVDA</title>
+</head>
+<body>
+<main>
+<h1>Notas Workflow NVDA</h1>
+<p>NVDA add-on with the same workflow as the Notas Workflow web app: notes organized in status lanes (To do, In progress, Blocked, Done), grouped in notebooks and folders, with tags, formatted content, automatic saving and search. Everything works from the keyboard, with spoken feedback, without a browser.</p>
+<h2>The main window</h2>
+<p>Press <strong>NVDA+Alt+N</strong> (or NVDA menu, Tools, <strong>Notas Workflow NVDA…</strong>). The window has:</p>
+<ul>
+<li><strong>Show</strong>: all notes, loose notes (without notebook), recent notes (the 10 changed last), one notebook or one folder.</li>
+<li><strong>View</strong>: <strong>Lanes (tree)</strong>, with one branch per lane ("To do, 3 notes"), or <strong>Table</strong>, with the columns Title, Status, Notebook, Tags and Updated on.</li>
+<li><strong>Notes</strong>: the list itself. Enter opens the note, Delete deletes it (after confirming), <strong>Alt+Shift+Right Arrow</strong> moves it to the next lane and <strong>Alt+Shift+Left Arrow</strong> to the previous one.</li>
+<li>Buttons <strong>New note…</strong>, <strong>Open</strong>, <strong>Move to…</strong> (menu with the other lanes), <strong>Change notebook…</strong>, <strong>Delete</strong>, <strong>Search…</strong>, <strong>Notebooks and folders…</strong> and <strong>Close</strong> (Esc).</li>
+</ul>
+<h2>Notes</h2>
+<p><strong>New note</strong> (NVDA+Alt+F or the New note… button) asks for the title, the notebook and the status, and then opens the note window. The note window has the title, notebook, status, tags (separated by commas) and the content. It saves by itself 2 seconds after you stop typing; Ctrl+S saves at once and closing the window (Esc or Save and close) always saves. Nothing is lost.</p>
+<p>The content is plain text with a light markup, the same formats of the web editor:</p>
+<table>
+<tr><th>Type</th><th>To get</th></tr>
+<tr><td><code>## Title</code> or <code>### Title</code></td><td>Heading 2 or 3</td></tr>
+<tr><td><code>- item</code></td><td>Bulleted list</td></tr>
+<tr><td><code>1. item</code></td><td>Numbered list</td></tr>
+<tr><td><code>&gt; text</code></td><td>Quote</td></tr>
+<tr><td><code>---</code></td><td>Divider</td></tr>
+<tr><td><code><strong>text</strong></code></td><td>Bold (Ctrl+B)</td></tr>
+<tr><td><code>*text*</code></td><td>Italic (Ctrl+I)</td></tr>
+<tr><td><code>~~text~~</code></td><td>Strikethrough</td></tr>
+<tr><td>`<code> </code>text<code> </code>`</td><td>Inline code</td></tr>
+</table>
+<p>The <strong>Formatting…</strong> button opens a menu with every format; it applies to the selected text or to the current line, and choosing it again removes it.</p>
+<h2>Search</h2>
+<p><strong>NVDA+Alt+B</strong> (or Search… in the window) searches the title, the content and the tags, ignoring accents and case, while you type. Results show the title, an excerpt, the relevance and the date; Enter opens the note.</p>
+<h2>Notebooks and folders</h2>
+<p>The <strong>Notebooks and folders…</strong> window shows each folder with its notebooks and a "Without folder" branch. It creates notebooks (inside the selected folder) and folders, renames (F2), moves a notebook to another folder and deletes (Delete). Deleting a notebook or a folder never deletes notes: they become loose.</p>
+<h2>Shortcuts</h2>
+<table>
+<tr><th>Shortcut</th><th>Action</th></tr>
+<tr><td>NVDA+Alt+N</td><td>Open the Notas Workflow NVDA window</td></tr>
+<tr><td>NVDA+Alt+F</td><td>New note</td></tr>
+<tr><td>NVDA+Alt+B</td><td>Search the notes</td></tr>
+<tr><td>Alt+Shift+Right and Left Arrow</td><td>Move the note to the next or previous lane</td></tr>
+<tr><td>Ctrl+S, Ctrl+B, Ctrl+I</td><td>Save, bold and italic in the note window</td></tr>
+</table>
+<p>They can be changed in NVDA, Preferences, Input gestures, Notas Workflow NVDA category, where there is also a command, without shortcut, that says how many notes each lane has.</p>
+<h2>Where the notes are</h2>
+<p>In the file <code>NotasWorkflowNVDA-data.json</code> of the notes folder, by default the <code>NotasWorkflowNVDA</code> folder inside the NVDA settings folder (<code>%APPDATA%\nvda</code>). NVDA, Preferences, Settings, <strong>Notas Workflow NVDA</strong> category changes the folder: choose a folder of OneDrive or Google Drive for computers to have the notes on every computer. There you also choose the automatic saving time and <strong>Import notes…</strong> and <strong>Export notes…</strong>.</p>
+<p>Every change is saved at once, in a safe way: the previous file is kept as <code>NotasWorkflowNVDA-data.json.bak</code>. If the file is damaged, it is kept with another name and the backup copy is used. Uninstalling the add-on does not delete the notes.</p>
+<h2>Notes of the web app</h2>
+<p>Export and import use the format of the web app (the same fields of notes, notebooks and folders). To bring the notes of the browser, open the web app, press F12, go to Console and run <code>copy(JSON.stringify({notes: JSON.parse(localStorage["notas-workflow:notes"] || "[]"), notebooks: JSON.parse(localStorage["notas-workflow:notebooks"] || "[]")}))</code>. Paste the text in a file ending in <code>.json</code> and use <strong>Import notes…</strong>. Notes with the same identifier keep the version changed last.</p>
+<h2>Privacy</h2>
+<p>The add-on does not use the internet: no note leaves the computer, and the content of the notes never goes to the NVDA log.</p>
+</main>
+</body>
+</html>
