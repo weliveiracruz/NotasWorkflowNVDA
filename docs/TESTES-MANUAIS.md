@@ -31,3 +31,4 @@ Anote o resultado (OK ou o problema) em `reports/RELATORIO-TESTES-<versão>.md`.
 | MAN-23 | Importar a massa de 100 mil folhas (`python tests/gerar_massa.py`) numa pasta vazia, reiniciar o NVDA, NVDA+Alt+N logo em seguida | O NVDA inicia na hora; se a janela for pedida antes de terminar a leitura, fala "Carregando as folhas…" e abre em seguida |
 | MAN-24 | Com 100 mil folhas: Alt+Shift+Setas, Enter numa folha e Esc, NVDA+Alt+B com uma palavra comum | Cada resposta em menos de um segundo; o NVDA não para de falar |
 | MAN-25 | Numa raia com mais de 200 folhas, ir até o fim e Enter em "Mostrar mais 200 folhas" | As próximas folhas aparecem e o foco vai para a primeira delas |
+| MAN-26 | Na lista, descer com as setas até uma folha, Tab até um botão e Shift+Tab de volta, Enter | Abre a folha que estava selecionada (a seleção não pula para outra folha) |

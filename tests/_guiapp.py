@@ -33,6 +33,28 @@ import config  # noqa: E402
 
 MainDialog = mainDialog.NotesDialog
 
+# No real menu or modal dialog may open during the tests: nobody is there to answer, and
+# the suite would wait forever (it happened on GitHub, where the window may not get the
+# focus and a key went to a button). Tests replace these when they need an answer; any
+# other call is recorded, answers "cancel" and makes RECORD["blocked"] non-empty.
+RECORD["blocked"] = []
+
+
+def _blocked(name, answer=None):
+	def fake(*args, **kwargs):
+		RECORD["blocked"].append(name)
+		return answer
+	return fake
+
+
+prompts.chooseFromMenu = _blocked("prompts.chooseFromMenu")
+prompts.chooseItem = _blocked("prompts.chooseItem")
+prompts.askText = _blocked("prompts.askText")
+noteDialog.chooseFormat = _blocked("noteDialog.chooseFormat")
+settingsPanel.askFolder = _blocked("settingsPanel.askFolder")
+settingsPanel.askOpenPath = _blocked("settingsPanel.askOpenPath")
+settingsPanel.askSavePath = _blocked("settingsPanel.askSavePath")
+
 
 def pump(until=lambda: False, timeout=5.0):
 	end = time.time() + timeout
@@ -158,7 +180,18 @@ def postKey(window, vk):
 	import ctypes
 
 	window.SetFocus()
-	pump(lambda: window.FindFocus() is window, 1)
+	# The Windows path depends on who has the foreground of the desktop (another program, a
+	# busy desktop or GitHub's machine change the result), so it is used only on request.
+	realKeys = os.environ.get("NOTASWORKFLOWNVDA_REALKEYS") == "1"
+	if not realKeys or not pump(lambda: window.FindFocus() is window, 2):
+		# No focus (a desktop nobody uses, like GitHub's): a key posted now would go to
+		# another control. The key goes to the handler of the window instead.
+		if realKeys:
+			print("   (no keyboard focus here: key %#x sent to the handler)" % vk, flush=True)
+		top = window.GetTopLevelParent()
+		top.handleTreeKey(Key({VK_RETURN: wx.WXK_RETURN}.get(vk, vk)))
+		pump(timeout=0.3)
+		return
 	hwnd = ctypes.c_void_p(window.GetHandle())
 	ctypes.windll.user32.PostMessageW(hwnd, 0x100, vk, 0)
 	ctypes.windll.user32.PostMessageW(hwnd, 0x101, vk, 0xC0000001)

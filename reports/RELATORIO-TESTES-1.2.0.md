@@ -1,19 +1,19 @@
 # Relatório de testes da versão 1.2.0
 
 * Pacote: `dist/NotasWorkflowNVDA-1.2.0.nvda-addon`
-* SHA-256: `c2ba9d36425e4aa59588709522bd34de47032b7755a8e3d5a9b7aff9b83e034e`
+* SHA-256: `188f6d165dc4456bc0a80b518772ded6bdda0943f1ab00d156ff97bc9ae1fdcb`
 * Ambiente: Windows 11, NVDA 2026.1.1 instalado, Python 3.11 e 3.13, wxPython 4.3.1, bandit, MSAA (comtypes)
 * Mudanças: Criar (folha, caderno e pasta), Atualizar o status da tarefa, Mover para (caderno ou pasta), Enter abre a folha, sem tabela e sem o botão Abrir, folhas em Cadernos e pastas, campo Local, desempenho com 100 mil folhas, textos de uso sem outra plataforma
 
 ## Resultado final
 
-**570 testes · 570 aprovados · 0 falhas.** O pacote foi gerado por `python build.py --release`, que roda todas as suítes antes e recusa gerar o pacote se alguma falhar.
+**571 testes · 571 aprovados · 0 falhas.** O pacote foi gerado por `python build.py --release`, que roda todas as suítes antes e recusa gerar o pacote se alguma falhar.
 
 | Suíte | Testes | Aprovados | Falharam |
 |---|---|---|---|
 | Unidades (Python 3.11, NVDA 2024.1–2025.x) | 86 | 86 | 0 |
 | Unidades (Python 3.13, NVDA 2026.x) | 86 | 86 | 0 |
-| Interface | 123 | 123 | 0 |
+| Interface | 124 | 124 | 0 |
 | Acessibilidade (inglês, com MSAA) | 88 | 88 | 0 |
 | Acessibilidade (português, com MSAA) | 88 | 88 | 0 |
 | Tradução | 10 | 10 | 0 |
@@ -43,14 +43,16 @@ Medianas de três execuções de `tests/medir_desempenho.py` (cada operação me
 | Nº | Testes | Aprovados | Falhas | Corrigidos | Observação |
 |---|---|---|---|---|---|
 | 7 | 570 | 570 | 0 | 0 | 1.2.0 completa |
-| 8 | 570 | 570 | 0 | 0 | `build.py --release` (portão da versão) |
+| 8 | 570 | 570 | 0 | 0 | `build.py --release` (primeiro pacote; a release no GitHub travou, T-08) |
+| 9 | 571 | 569 | 2 | 0 | `build.py --release` (FUN-23 instável com a área de trabalho em uso, T-08) |
+| 10 | 571 | 571 | 0 | 2 | `build.py --release` (portão da versão) |
 
 Antes da primeira execução completa, cada suíte foi rodada isoladamente durante a construção; as falhas dessas rodadas estão em [PROBLEMAS-1.2.0.md](PROBLEMAS-1.2.0.md).
 
 ## Problemas
 
 * Do complemento: **9** (P-01 a P-09), todos corrigidos, entre eles a seleção da árvore que podia pular para outra folha (P-08) e a gravação que travava a interface (P-05).
-* Dos testes: **7** (T-01 a T-07), todos corrigidos.
+* Dos testes: **8** (T-01 a T-08), todos corrigidos. O T-08 travou a release da tag no GitHub; a tag `v1.2.0` foi refeita no commit corrigido.
 * Do manual: **1** (D-01), corrigido.
 
 ## Pendente: roteiro manual

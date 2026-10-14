@@ -501,6 +501,7 @@ def run():
 	R.check("FUN-16 NVDA exiting with a note open saves what was typed", pending["content"] == "<p>digitado antes de sair</p>", pending["content"])
 	editor.Destroy()
 	R.check("FUN-16 no error in the log", len(RECORD["logErrors"]) == errors, RECORD["logErrors"][errors:])
+	R.check("FUN-16 no real menu or dialog was opened without an answer (it would wait forever)", not RECORD["blocked"], RECORD["blocked"])
 	closeWindow()
 	legacyMigration()
 

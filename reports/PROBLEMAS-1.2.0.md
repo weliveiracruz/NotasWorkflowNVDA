@@ -27,6 +27,7 @@ Versão das mudanças pedidas na interface (Criar, Atualizar o status da tarefa,
 | T-05 | test_security: SEG-02 | Trocava a pasta por um caminho impossível antes de a gravação anterior terminar; a gravação adiada criou uma pasta com o nome do arquivo | `flush()` antes de trocar a pasta |
 | T-06 | test_security: SEG-09 | Procurava "store.deleteNote", que também aparece em "store.deleteNotebook" | Procura a chamada exata |
 | T-07 | test_manual | Ainda procurava textos da tabela e da caixa Visualização | Listas atualizadas; novo DOC-06 |
+| T-08 | test_gui no GitHub (release da tag v1.2.0) | Na máquina do GitHub a janela do teste nem sempre recebe o foco: o Enter simulado de FUN-24 foi para um botão, que abriu um menu real; sem ninguém para escolher, a suíte esperou até o tempo esgotar e nada foi publicado. Aqui, com o painel do navegador em primeiro plano, os testes de foco real também falharam | Nos testes, nenhum menu ou caixa real pode abrir sem resposta (registrado em RECORD["blocked"] e conferido por FUN-16); sem foco do teclado, a tecla vai direto para quem a trata. A tag v1.2.0 foi refeita no commit corrigido |
 
 ## Problemas do manual (D)
 

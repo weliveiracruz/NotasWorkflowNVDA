@@ -17,6 +17,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 |---|---|
 | Interface | wxPython real (a mesma biblioteca do NVDA), janelas reais do Windows, com laço de eventos ativo para os temporizadores (salvamento automático, busca enquanto digita) |
 | NVDA | Módulos simulados (`tests/nvda_stubs.py`), exceto o `gui.guiHelper`, que é o arquivo original do NVDA |
+| Teclado | As teclas vão direto para quem as trata (`handleTreeKey`). Com `NOTASWORKFLOWNVDA_REALKEYS=1`, vão como mensagens reais do Windows; esse caminho depende de quem está em primeiro plano na área de trabalho e por isso não é o padrão (o Enter real fica no roteiro manual, MAN-26) |
 | Janelas modais e menus | `ShowModal`, os menus (Mover para, Formatação) e as caixas de escolha são trocados por ações do teste (`tests/_guiapp.py`), sem mudar o código do complemento |
 | Leitor de telas | No Windows, os nomes dos controles e dos itens da árvore são lidos pelo MSAA (`oleacc`), a mesma interface que o NVDA usa nesses controles |
 | Arquivos | Pastas temporárias novas a cada teste; arquivos danificados, gigantes (esparsos), aninhados e hostis criados pelos testes |
@@ -64,7 +65,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | FUN-18 | Comandos | NVDA+Alt+F cria folha; NVDA+Alt+B abre a busca; resumo das raias | gui |
 | FUN-21 | Mover para caderno ou pasta (1.2.0) | Caderno, direto numa pasta ou solta; caderno vence; lugares desconhecidos viram solta; folhas por caderno, por pasta e soltas; Mover para começa no lugar atual e escolher o mesmo lugar não muda nada; anúncio "Agora em: …" | pure, gui |
 | FUN-22 | Índice e busca preparada (1.2.0) | `getNote` pelo índice acompanha inclusões, exclusões e listas novas; importação que substitui folha atualiza o índice; texto da busca reaproveitado e refeito quando a folha muda; texto sem marcação, scripts e estilos; arquivo compacto; limite de 200 MB | pure, gui |
-| FUN-23 | Enter abre a folha (1.2.0) | Tecla real (mensagem do Windows) abre a folha selecionada na lista e na árvore de Cadernos e pastas; Enter e clique duplo juntos abrem uma vez só; Enter numa raia abre e fecha a raia | gui |
+| FUN-23 | Enter abre a folha (1.2.0) | Enter (pelo tratador de teclas; como mensagem real do Windows com `NOTASWORKFLOWNVDA_REALKEYS=1`) abre a folha selecionada na lista e na árvore de Cadernos e pastas; Enter e clique duplo juntos abrem uma vez só; Enter numa raia abre e fecha a raia | gui |
 | FUN-24 | Listas paginadas (1.2.0) | Uma raia longa mostra uma página e "Mostrar mais" com o número restante; Enter nele mostra a próxima página com o foco na primeira nova; selecionar uma folha além da página mostra a página dela; o mesmo num caderno com muitas folhas | gui |
 | FUN-20 | Novo nome (1.1.0) | Arquivo antigo da pasta copiado para o nome novo e nunca alterado; o novo vence e a cópia é feita uma vez; primeiro início traz folhas, cópia de segurança e configurações do NotasWorkflow 1.0.0, com aviso falado; nada do antigo muda | pure, gui |
 | FUN-19 | Datas | Formato do `toISOString()` do JavaScript; datas inválidas recusadas | pure |
