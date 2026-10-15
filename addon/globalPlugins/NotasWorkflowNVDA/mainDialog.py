@@ -72,6 +72,9 @@ class NotesDialog(wx.Dialog):
 		#: Tree items: note id -> item and lane id -> lane item (to change one note without rebuilding).
 		self.items = {}
 		self.laneNodes = {}
+		#: Lanes the person opened. The lanes start closed (only the lane of a note being
+		#: selected opens by itself), and stay as the person left them.
+		self.expandedLanes = set()
 		#: True while the window is being destroyed (deleting the tree still sends events).
 		self._closing = False
 		#: An Enter or a double click already asked to open something (avoids opening twice).
@@ -113,6 +116,8 @@ class NotesDialog(wx.Dialog):
 		self.filterChoice.Bind(wx.EVT_CHOICE, self.onFilter)
 		self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.activate())
 		self.tree.Bind(wx.EVT_TREE_SEL_CHANGED, lambda evt: self.updateButtons())
+		self.tree.Bind(wx.EVT_TREE_ITEM_EXPANDED, lambda evt: self.onLaneOpened(evt, True))
+		self.tree.Bind(wx.EVT_TREE_ITEM_COLLAPSED, lambda evt: self.onLaneOpened(evt, False))
 		self.tree.Bind(wx.EVT_TREE_KEY_DOWN, lambda evt: self.onKey(evt.GetKeyEvent()))
 		# Enter, Delete and Alt+Shift+Arrows are caught before the dialog uses them
 		# (in a dialog, Enter does not always reach the tree).
@@ -257,8 +262,21 @@ class NotesDialog(wx.Dialog):
 				found = child
 		if len(notes) > shown:
 			tree.AppendItem(node, messages.moreNotes(len(notes) - shown, PAGE_SIZE), data={"more": lane})
-		tree.Expand(node)
+		if lane in self.expandedLanes:
+			tree.Expand(node)
 		return found
+
+	def onLaneOpened(self, evt, opened):
+		"""Remembers which lanes the person opened (selecting a note also opens its lane)."""
+		if self._closing:
+			return
+		data = self.tree.GetItemData(evt.GetItem()) or {}
+		if "lane" in data:
+			if opened:
+				self.expandedLanes.add(data["lane"])
+			else:
+				self.expandedLanes.discard(data["lane"])
+		evt.Skip()
 
 	def fillTree(self, lanes, selectId, selectLane):
 		tree = self.tree
@@ -276,8 +294,7 @@ class NotesDialog(wx.Dialog):
 			toSelect = toSelect or found
 			if lane == selectLane and selectId is None:
 				toSelect = node
-			if toSelect is None and selectId is None and selectLane is None and notes:
-				toSelect = self.items.get(notes[0]["id"])
+		# Without a note to select, the focus is on the first lane (all lanes closed).
 		toSelect = toSelect or firstNode
 		if toSelect is not None:
 			selectItem(tree, toSelect)
@@ -343,6 +360,20 @@ class NotesDialog(wx.Dialog):
 			return ids[i + 1]
 		return ids[i - 1] if i > 0 else None
 
+	def nextInLane(self, noteId):
+		"""The note after noteId in its lane (the next one in the pile), otherwise the one
+		before it, or None when it is alone in the lane."""
+		note = self.store.getNote(noteId)
+		if note is None:
+			return None
+		ids = [n["id"] for n in model.byLane(self.store.filtered(self.activeFilter))[note["laneId"]]]
+		if noteId not in ids:
+			return None
+		i = ids.index(noteId)
+		if i + 1 < len(ids):
+			return ids[i + 1]
+		return ids[i - 1] if i > 0 else None
+
 	def showMore(self, lane):
 		"""Shows the next page of a lane, with the focus on its first new note."""
 		lanes = model.byLane(self.store.filtered(self.activeFilter))
@@ -395,11 +426,23 @@ class NotesDialog(wx.Dialog):
 		try:
 			if self._closing:
 				return
-			following = self.neighbourOf(noteId)
+			before = self.store.getNote(noteId)
+			lane = before["laneId"] if before else None
+			following = self.nextInLane(noteId)
 			self.plugin.editNote(self, noteId)
 			if self._closing:
 				return
-			self.noteChanged(noteId, fallback=following)
+			after = self.store.getNote(noteId)
+			if after is not None and after["laneId"] == lane and self.isShown(after):
+				# Still in the same place of the pile: the focus comes back to it.
+				self.noteChanged(noteId)
+				if noteId in self.items:
+					selectItem(self.tree, self.items[noteId])
+			else:
+				# Moved to another status (or out of what is shown): the focus goes to the
+				# next note of the pile it was in (the previous one if it was the last).
+				changed = {lane} | ({after["laneId"]} if after else set())
+				self.refreshLanes(changed, following, selectLane=lane if following is None else None)
 			self.focusNotes()
 		finally:
 			self._pending = False

@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 1.3.0
+
+* **As raias começam fechadas**: a lista mostra só as raias com o número de folhas; Seta para a direita abre uma raia. A raia de uma folha selecionada pelo complemento abre sozinha, e as raias ficam como você as deixou.
+* **Pilha da raia**: ao mudar o status ou o local de uma folha na janela dela e fechar a janela, o foco vai para a próxima folha da mesma raia (a anterior, se era a última; a raia, se era a única), e não para a folha movida.
+
 ## 1.2.0
 
 * **Criar…** no lugar de Nova folha: um menu para criar uma folha, um caderno ou uma pasta, na janela principal e em Cadernos e pastas.

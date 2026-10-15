@@ -32,3 +32,5 @@ Anote o resultado (OK ou o problema) em `reports/RELATORIO-TESTES-<versão>.md`.
 | MAN-24 | Com 100 mil folhas: Alt+Shift+Setas, Enter numa folha e Esc, NVDA+Alt+B com uma palavra comum | Cada resposta em menos de um segundo; o NVDA não para de falar |
 | MAN-25 | Numa raia com mais de 200 folhas, ir até o fim e Enter em "Mostrar mais 200 folhas" | As próximas folhas aparecem e o foco vai para a primeira delas |
 | MAN-26 | Na lista, descer com as setas até uma folha, Tab até um botão e Shift+Tab de volta, Enter | Abre a folha que estava selecionada (a seleção não pula para outra folha) |
+| MAN-27 | NVDA+Alt+N com folhas em várias raias | NVDA lê a primeira raia como "recolhido"; Seta para a direita abre e Seta para baixo lê as folhas; ao fechar e reabrir a janela, as raias continuam como você deixou |
+| MAN-28 | Abrir a primeira folha de uma raia com três folhas, mudar o Status, Esc | O foco fica na segunda folha da raia (a seguinte na pilha), e não na folha movida |

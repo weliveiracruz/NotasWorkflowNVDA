@@ -878,5 +878,294 @@
     "failures": []
    }
   ]
+ },
+ {
+  "number": 11,
+  "date": "2026-10-14T21:04:19-03:00",
+  "version": "1.3.0",
+  "note": "build.py --release",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 565,
+  "passed": 563,
+  "failed": 2,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 134,
+    "passed": 133,
+    "failed": 1,
+    "failures": [
+     "FUN-24 Enter on Show more adds the next page and selects its first note"
+    ]
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 37,
+    "passed": 37,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "performance (test_performance)",
+    "total": 9,
+    "passed": 8,
+    "failed": 1,
+    "failures": [
+     "suite finished without crashing"
+    ]
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 12,
+  "date": "2026-10-14T21:07:08-03:00",
+  "version": "1.3.0",
+  "note": "build.py --release",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 582,
+  "passed": 580,
+  "failed": 2,
+  "corrected": [],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 134,
+    "passed": 132,
+    "failed": 2,
+    "failures": [
+     "FUN-23 double click and Enter together open it only once",
+     "FUN-24 Enter on Show more adds the next page and selects its first note"
+    ]
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 37,
+    "passed": 37,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "performance (test_performance)",
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "failures": []
+   }
+  ]
+ },
+ {
+  "number": 13,
+  "date": "2026-10-14T21:12:48-03:00",
+  "version": "1.3.0",
+  "note": "build.py --release",
+  "pythons": [
+   "3.11",
+   "3.13"
+  ],
+  "total": 582,
+  "passed": 582,
+  "failed": 0,
+  "corrected": [
+   "interface (test_gui) :: FUN-23 double click and Enter together open it only once",
+   "interface (test_gui) :: FUN-24 Enter on Show more adds the next page and selects its first note"
+  ],
+  "suites": [
+   {
+    "suite": "unit (python 3.11)",
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "unit (python 3.13)",
+    "total": 86,
+    "passed": 86,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "interface (test_gui)",
+    "total": 134,
+    "passed": 134,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility)",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "accessibility (test_accessibility, pt_BR)",
+    "total": 88,
+    "passed": 88,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "translation (test_translation)",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "security (test_security)",
+    "total": 37,
+    "passed": 37,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "NVDA installed (test_nvda_runtime)",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "performance (test_performance)",
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "package (build.py)",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "failures": []
+   },
+   {
+    "suite": "manual (test_manual)",
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "failures": []
+   }
+  ]
  }
 ]

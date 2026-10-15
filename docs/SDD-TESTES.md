@@ -17,6 +17,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 |---|---|
 | Interface | wxPython real (a mesma biblioteca do NVDA), janelas reais do Windows, com laço de eventos ativo para os temporizadores (salvamento automático, busca enquanto digita) |
 | NVDA | Módulos simulados (`tests/nvda_stubs.py`), exceto o `gui.guiHelper`, que é o arquivo original do NVDA |
+| Entrada de fora | Toda entrada real de teclado e mouse nas janelas dos testes é descartada (`_TestApp.FilterEvent`): elas são reais e podem pegar o primeiro plano enquanto alguém usa o computador, e uma tecla digitada em outro lugar mudaria a seleção pela busca por digitação da árvore |
 | Teclado | As teclas vão direto para quem as trata (`handleTreeKey`). Com `NOTASWORKFLOWNVDA_REALKEYS=1`, vão como mensagens reais do Windows; esse caminho depende de quem está em primeiro plano na área de trabalho e por isso não é o padrão (o Enter real fica no roteiro manual, MAN-26) |
 | Janelas modais e menus | `ShowModal`, os menus (Mover para, Formatação) e as caixas de escolha são trocados por ações do teste (`tests/_guiapp.py`), sem mudar o código do complemento |
 | Leitor de telas | No Windows, os nomes dos controles e dos itens da árvore são lidos pelo MSAA (`oleacc`), a mesma interface que o NVDA usa nesses controles |
@@ -67,6 +68,8 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | FUN-22 | Índice e busca preparada (1.2.0) | `getNote` pelo índice acompanha inclusões, exclusões e listas novas; importação que substitui folha atualiza o índice; texto da busca reaproveitado e refeito quando a folha muda; texto sem marcação, scripts e estilos; arquivo compacto; limite de 200 MB | pure, gui |
 | FUN-23 | Enter abre a folha (1.2.0) | Enter (pelo tratador de teclas; como mensagem real do Windows com `NOTASWORKFLOWNVDA_REALKEYS=1`) abre a folha selecionada na lista e na árvore de Cadernos e pastas; Enter e clique duplo juntos abrem uma vez só; Enter numa raia abre e fecha a raia | gui |
 | FUN-24 | Listas paginadas (1.2.0) | Uma raia longa mostra uma página e "Mostrar mais" com o número restante; Enter nele mostra a próxima página com o foco na primeira nova; selecionar uma folha além da página mostra a página dela; o mesmo num caderno com muitas folhas | gui |
+| FUN-25 | Raias fechadas (1.3.0) | As raias começam fechadas, com o número de folhas; sem folha a selecionar, o foco fica na primeira raia; selecionar uma folha abre só a raia dela; as raias ficam como a pessoa as deixou quando a lista é refeita | gui |
+| FUN-26 | Pilha da raia (1.3.0) | Status mudado na janela da folha: ao fechar, o foco vai para a próxima folha da raia; última folha: a anterior; única: a raia; folha só editada: o foco volta para ela; folha que sai do filtro pelo Local: a próxima da raia | gui |
 | FUN-20 | Novo nome (1.1.0) | Arquivo antigo da pasta copiado para o nome novo e nunca alterado; o novo vence e a cópia é feita uma vez; primeiro início traz folhas, cópia de segurança e configurações do NotasWorkflow 1.0.0, com aviso falado; nada do antigo muda | pure, gui |
 | FUN-19 | Datas | Formato do `toISOString()` do JavaScript; datas inválidas recusadas | pure |
 

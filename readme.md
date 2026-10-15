@@ -7,7 +7,7 @@ NVDA add-on to organize notes and tasks in status lanes (To do, In progress, Blo
 Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The window has:
 
 * **Show**: all notes, loose notes (neither in a notebook nor in a folder), recent notes (the 10 changed last), one notebook or one folder.
-* **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
+* **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Lanes start closed: Right Arrow opens one, Left Arrow closes it. Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
 * **Create…**: a menu to create a note, a notebook or a folder.
 * **Update the task status…**: a menu with the other statuses.
 * **Move to…**: moves the note to a notebook, directly to a folder, or makes it loose.
@@ -15,7 +15,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 
 ## Notes
 
-**Create… > Note…** (or NVDA+Alt+F from anywhere) asks for the title, the location (loose, a folder or a notebook) and the status, and then opens the note window. The note window has the title, location, status, tags (separated by commas) and the content. It saves by itself 2 seconds after you stop typing; Ctrl+S saves at once and closing the window (Esc or Save and close) always saves. Nothing is lost.
+**Create… > Note…** (or NVDA+Alt+F from anywhere) asks for the title, the location (loose, a folder or a notebook) and the status, and then opens the note window. The note window has the title, location, status, tags (separated by commas) and the content. If you change the status or the location there, closing the window puts the focus on the next note of the same lane, so a lane can be handled one note after the other. It saves by itself 2 seconds after you stop typing; Ctrl+S saves at once and closing the window (Esc or Save and close) always saves. Nothing is lost.
 
 The content is plain text with a light markup:
 

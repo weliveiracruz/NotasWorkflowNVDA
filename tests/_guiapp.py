@@ -19,7 +19,25 @@ import wx  # noqa: E402
 
 import gui  # noqa: E402  (fake)
 
-app = wx.App(False)
+class _TestApp(wx.App):
+	"""The windows of the tests are real and may get the foreground while the person uses the
+	computer: a key typed elsewhere would reach a tree and its type-ahead search would select
+	another note. Real keyboard and mouse input is dropped (the tests send keys straight to the
+	handlers); with NOTASWORKFLOWNVDA_REALKEYS=1 the keyboard passes, for the tests that post
+	real key messages."""
+
+	_KEYS = {wx.wxEVT_KEY_DOWN, wx.wxEVT_KEY_UP, wx.wxEVT_CHAR, wx.wxEVT_CHAR_HOOK}
+	_MOUSE = {wx.wxEVT_LEFT_DOWN, wx.wxEVT_LEFT_UP, wx.wxEVT_LEFT_DCLICK, wx.wxEVT_RIGHT_DOWN, wx.wxEVT_RIGHT_UP, wx.wxEVT_MIDDLE_DOWN, wx.wxEVT_MOUSEWHEEL}
+
+	def FilterEvent(self, event):
+		kind = event.GetEventType()
+		if kind in self._MOUSE or (kind in self._KEYS and os.environ.get("NOTASWORKFLOWNVDA_REALKEYS") != "1"):
+			# "Processed": the native control must not get it either (its type-ahead search).
+			return self.Event_Processed
+		return self.Event_Skip
+
+
+app = _TestApp(False)
 # Without an active event loop, wx.Yield does not deliver timer events (the
 # automatic saving and the search debounce); NVDA always has its main loop.
 _loop = wx.GUIEventLoop()

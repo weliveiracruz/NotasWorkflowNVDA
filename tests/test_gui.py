@@ -212,8 +212,8 @@ def run():
 	todo, _c = dlg.tree.GetFirstChild(dlg.root)
 	R.check("FUN-24 a long lane shows one page (%d notes) and a Show more item" % page, dlg.tree.GetChildrenCount(todo, False) == page + 1, dlg.tree.GetChildrenCount(todo, False))
 	more = dlg.tree.GetLastChild(todo)
+	mainDialog.selectItem(dlg.tree, more)
 	R.check("FUN-24 Show more says how many are left", dlg.tree.GetItemText(more) == "Show %d more notes (%d not shown yet)" % (page, len(todoNotes) - page), dlg.tree.GetItemText(more))
-	dlg.tree.SelectItem(more)
 	postKey(dlg.tree, VK_RETURN)
 	todo, _c = dlg.tree.GetFirstChild(dlg.root)
 	R.check("FUN-24 Enter on Show more adds the next page and selects its first note", dlg.tree.GetChildrenCount(todo, False) == 2 * page + 1 and dlg.selectedNoteId() == todoNotes[page]["id"], (dlg.tree.GetChildrenCount(todo, False), dlg.selectedNoteId()))
@@ -503,7 +503,76 @@ def run():
 	R.check("FUN-16 no error in the log", len(RECORD["logErrors"]) == errors, RECORD["logErrors"][errors:])
 	R.check("FUN-16 no real menu or dialog was opened without an answer (it would wait forever)", not RECORD["blocked"], RECORD["blocked"])
 	closeWindow()
+	collapsedLanesAndPile()
 	legacyMigration()
+
+
+def collapsedLanesAndPile():
+	"""FUN-25: lanes start closed. FUN-26: after moving a note in its window, the focus goes
+	to the next note of the pile it was in."""
+	plugin = newPlugin()
+	store_ = plugin.store
+	a1, a2, a3 = store_.addNote("Tarefa 1"), store_.addNote("Tarefa 2"), store_.addNote("Tarefa 3")
+	solo = store_.addNote("Sozinha", "blocked")
+	dlg = openWindow(plugin)
+	dlg.refresh()
+	lanes = [dlg.laneNodes[lane] for lane in model.LANE_IDS]
+	R.check("FUN-25 lanes start closed", not any(dlg.tree.IsExpanded(node) for node in lanes))
+	R.check("FUN-25 without a note to select, the focus is on the first lane", dlg.selectedData() == {"lane": "todo"}, dlg.selectedData())
+	R.check("FUN-25 a closed lane still says how many notes it has", dlg.tree.GetItemText(lanes[0]) == "To do, 3 notes", dlg.tree.GetItemText(lanes[0]))
+	dlg.refresh(a2["id"])
+	R.check("FUN-25 selecting a note opens only its lane", dlg.tree.IsExpanded(dlg.laneNodes["todo"]) and not dlg.tree.IsExpanded(dlg.laneNodes["blocked"]) and dlg.selectedNoteId() == a2["id"])
+	dlg.tree.Expand(dlg.laneNodes["blocked"])
+	dlg.tree.Collapse(dlg.laneNodes["todo"])
+	dlg.refresh()
+	R.check("FUN-25 the lanes stay as the person left them after the list changes", dlg.tree.IsExpanded(dlg.laneNodes["blocked"]) and not dlg.tree.IsExpanded(dlg.laneNodes["todo"]))
+	dlg.tree.Collapse(dlg.laneNodes["blocked"])
+
+	def changeStatus(laneIndex):
+		def action(d):
+			d.laneChoice.SetSelection(laneIndex)
+			d.onChange("laneId")
+			d.finish()
+		return action
+
+	dlg.refresh(a1["id"])
+	n = mark()
+	with fakeModal(noteDialog.NoteDialog, changeStatus(1)):
+		dlg.openNote(a1["id"])
+	R.check("FUN-26 status changed in the note window: the focus goes to the next note of the pile", a1["laneId"] == "inprogress" and dlg.selectedNoteId() == a2["id"], (a1["laneId"], dlg.selectedNoteId(), a2["id"]))
+	dlg.refresh(a3["id"])
+	with fakeModal(noteDialog.NoteDialog, changeStatus(3)):
+		dlg.openNote(a3["id"])
+	R.check("FUN-26 the last note of the pile: the focus goes to the one before it", dlg.selectedNoteId() == a2["id"], dlg.selectedNoteId())
+	dlg.refresh(solo["id"])
+	with fakeModal(noteDialog.NoteDialog, changeStatus(0)):
+		dlg.openNote(solo["id"])
+	R.check("FUN-26 the only note of the pile: the focus goes to its lane", dlg.selectedData() == {"lane": "blocked"}, dlg.selectedData())
+	dlg.refresh(a2["id"])
+
+	def editOnly(d):
+		d.contentEdit.SetValue("só o texto")
+		d.finish()
+
+	with fakeModal(noteDialog.NoteDialog, editOnly):
+		dlg.openNote(a2["id"])
+	R.check("FUN-26 a note edited without moving keeps the focus", dlg.selectedNoteId() == a2["id"], dlg.selectedNoteId())
+	nb = store_.addNotebook("Caderno")
+	dlg.refresh(a2["id"])
+	rest = [x["id"] for x in model.byLane(store_.notes)["todo"]]
+	following = rest[rest.index(a2["id"]) + 1] if rest.index(a2["id"]) + 1 < len(rest) else rest[rest.index(a2["id"]) - 1]
+	dlg.setFilter(("loose", None))
+	dlg.refresh(a2["id"])
+
+	def moveAway(d):
+		d.locationChoice.SetSelection(d.places.index((nb["id"], None)))
+		d.onChange("location")
+		d.finish()
+
+	with fakeModal(noteDialog.NoteDialog, moveAway):
+		dlg.openNote(a2["id"])
+	R.check("FUN-26 a note moved out of what is shown (Location): the focus goes to the next note of the pile", a2["notebookId"] == nb["id"] and dlg.selectedNoteId() == following, (dlg.selectedNoteId(), following))
+	plugin.terminate()
 
 
 def legacyMigration():

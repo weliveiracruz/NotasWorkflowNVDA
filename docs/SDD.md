@@ -46,9 +46,9 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-02 | Editar título, local, status, tags e conteúdo | Janela da folha; tags separadas por vírgula (sem repetição, até 30, cada uma até 50 caracteres); conteúdo com marcação leve convertida para HTML |
 | RF-03 | Salvamento automático | 2 s (1 a 30, configurável) depois da última alteração; Ctrl+S salva na hora; fechar a janela (Esc ou Salvar e fechar) e encerrar o NVDA com a folha aberta sempre salvam o que estiver pendente — nada se perde |
 | RF-04 | Formatação do conteúdo | Menu Formatação… e atalhos: negrito (Ctrl+B), itálico (Ctrl+I), tachado, código, título 2, título 3, lista com marcadores, lista numerada, citação e divisor — as mesmas opções da barra do editor web |
-| RF-05 | Ver as folhas por raia | Árvore (a única visualização): cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); cada folha mostra título, local, tags e data; **Enter abre a folha** |
+| RF-05 | Ver as folhas por raia | Árvore (a única visualização): cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); **as raias começam fechadas** (1.3.0) e ficam como a pessoa as deixou; a raia de uma folha selecionada pelo complemento abre sozinha; cada folha mostra título, local, tags e data; **Enter abre a folha** |
 | RF-06 | Listas longas | Cada raia (e cada caderno ou pasta na janela Cadernos e pastas) mostra 200 folhas por vez, com o item "Mostrar mais 200 folhas (N ainda não mostradas)"; uma folha a selecionar além da página faz a página dela aparecer |
-| RF-07 | Atualizar o status da tarefa | Botão **Atualizar o status da tarefa…** (menu com os outros status) e Alt+Shift+Seta para a direita/esquerda (status seguinte/anterior); a seleção acompanha a folha e o NVDA fala o novo status |
+| RF-07 | Atualizar o status da tarefa | Botão **Atualizar o status da tarefa…** (menu com os outros status) e Alt+Shift+Seta para a direita/esquerda (status seguinte/anterior); a seleção acompanha a folha e o NVDA fala o novo status. Status ou local mudados **na janela da folha** (1.3.0): ao fechar, o foco vai para a próxima folha da mesma raia (a anterior, se era a última; a raia, se era a única) |
 | RF-08 | Mover para um caderno ou uma pasta | Botão **Mover para…** (na janela principal e em Cadernos e pastas) e campo Local da janela da folha: folha solta, direto numa pasta ou num caderno; a lista começa no lugar atual |
 | RF-09 | Excluir folha | Botão Excluir ou tecla Delete, sempre com confirmação |
 | RF-10 | Filtrar | Caixa **Mostrar**: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), Caderno: <nome>, Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) |
@@ -215,7 +215,7 @@ A seleção da árvore é feita junto com o "item com foco" do Windows (`SetFocu
 Ordem de tabulação:
 
 1. **Mostrar** (caixa): Todas as folhas, Folhas soltas, Folhas recentes, Caderno: <nome>…, Pasta: <nome>…
-2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… já abertos; cada folha: "Título, caderno Trabalho, tags x, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
+2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… fechados no início (só a raia da folha selecionada abre); cada folha: "Título, caderno Trabalho, tags x, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
 3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Fechar** (Esc).
 
 A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo o arquivo de novo se outro computador o mudou.

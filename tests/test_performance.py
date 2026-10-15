@@ -56,7 +56,10 @@ def run():
 	dlg = check("PERF-03 the window opens again at once (it is kept hidden)", plugin.openWindow, 0.5, plugin)
 	todo, _cookie = dlg.tree.GetFirstChild(dlg.root)
 	R.check("PERF-05 a lane shows one page, not 25,000 items", dlg.tree.GetChildrenCount(todo, False) <= 201, dlg.tree.GetChildrenCount(todo, False))
-	noteId = dlg.selectedNoteId()
+	# The lanes start closed: a note is chosen first, as the person does with the arrows.
+	noteId = next(n["id"] for n in plugin.store.notes if n["laneId"] == "todo")
+	dlg.refresh(noteId)
+	R.check("PERF-05 the lanes start closed and the chosen note opens its lane", dlg.selectedNoteId() == noteId and dlg.tree.IsExpanded(dlg.laneNodes["todo"]) and not dlg.tree.IsExpanded(dlg.laneNodes["done"]))
 	check("PERF-06 Alt+Shift+Arrow updates the task status", lambda: dlg.moveBy(1), 2, plugin)
 	R.check("PERF-06 the status changed and the note stays selected", plugin.store.getNote(noteId)["laneId"] == "inprogress" and dlg.selectedNoteId() == noteId)
 	check("PERF-07 a notebook filter is shown", lambda: dlg.setFilter(("notebook", plugin.store.notebooks[0]["id"])), 2, plugin)

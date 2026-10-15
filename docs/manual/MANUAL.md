@@ -58,7 +58,7 @@ A migração só **copia**: o arquivo antigo `NotasWorkflow-data.json` continua 
 
 ## Primeiros passos
 
-1. Pressione **NVDA+Alt+N** para abrir a janela Notas Workflow NVDA. O foco fica na lista de folhas.
+1. Pressione **NVDA+Alt+N** para abrir a janela Notas Workflow NVDA. O foco fica na lista de folhas, na primeira raia. As raias começam fechadas: **Seta para a direita** abre uma raia e mostra as folhas dela.
 2. Pressione **Alt+C** (botão Criar…) e escolha **Folha…** no menu. Digite o título e pressione **Enter**. O NVDA fala "Folha criada em A fazer".
 3. A janela da folha abre com o foco no **Conteúdo**. Escreva o que quiser. A folha é salva sozinha 2 segundos depois que você para de digitar.
 4. Pressione **Esc** para salvar e voltar para a lista. A folha nova está selecionada.
@@ -89,11 +89,11 @@ Os botões Atualizar o status da tarefa…, Mover para… e Excluir só ficam di
 
 ### A lista de folhas em raias
 
-Cada raia é um ramo já aberto, com o nome e o número de folhas, por exemplo "A fazer, 3 folhas". Dentro dele, cada folha é lida assim:
+As raias **começam fechadas**: cada uma é um ramo com o nome e o número de folhas, por exemplo "A fazer, 3 folhas", e você só ouve as folhas da raia que abrir. Dentro de uma raia aberta, cada folha é lida assim:
 
 `Título, caderno Trabalho, tags urgente, cliente, atualizada em 12/10/2026`
 
-O local (caderno ou pasta) e as tags só aparecem quando existem. Seta para cima e para baixo percorrem raias e folhas; Seta para a esquerda fecha uma raia e Seta para a direita abre.
+O local (caderno ou pasta) e as tags só aparecem quando existem. Seta para cima e para baixo percorrem raias e folhas; **Seta para a direita abre** uma raia e **Seta para a esquerda fecha**. Quando uma folha é selecionada pelo complemento (ao criar uma folha, ao voltar da busca, ao mudar o status), a raia dela abre sozinha. Enquanto a janela estiver aberta, as raias ficam como você as deixou.
 
 ### Listas longas
 
@@ -229,7 +229,15 @@ Há duas formas:
 - **Alt+Shift+Seta para a direita ou para a esquerda** na lista: status seguinte ou anterior.
 - **Atualizar o status da tarefa… (Alt+A)**: um menu com os três outros status.
 
-O NVDA fala "Status atualizado para" e o nome do status, e a seleção acompanha a folha. Também é possível mudar o status pelo campo Status da janela da folha.
+O NVDA fala "Status atualizado para" e o nome do status, e a seleção acompanha a folha.
+
+### Trabalhar a pilha de uma raia
+
+Também é possível mudar o status (ou o local) pelos campos **Status** e **Local** da janela da folha. Nesse caso, ao fechar a janela da folha, o foco **não acompanha a folha movida**: ele vai para a **próxima folha da mesma raia**, a seguinte na pilha. Assim dá para tratar uma raia em sequência: Enter na primeira folha, mudar o status, Esc, e o foco já está na folha seguinte.
+
+- Se a folha movida era a última da raia, o foco vai para a anterior.
+- Se era a única, o foco vai para a própria raia.
+- Se você só editou a folha, sem mudar o status nem a tirar do que está sendo mostrado, o foco volta para ela.
 
 ### Mover para um caderno ou uma pasta
 
@@ -441,4 +449,5 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 |---|---|
 | 1.0.0 | Primeira versão do manual, com todas as funcionalidades da versão 1.0.0 do complemento. |
 | 1.1.0 | Novo nome do complemento, Notas Workflow NVDA, com os novos nomes de pasta e arquivo; nova seção "Quem usava o NotasWorkflow 1.0.0" com a migração das folhas; nova mensagem falada da migração. |
+| 1.3.0 | As raias começam fechadas e ficam como você as deixou; ao mudar o status ou o local na janela da folha, o foco vai para a próxima folha da mesma raia (nova seção "Trabalhar a pilha de uma raia"). |
 | 1.2.0 | Botão Criar (folha, caderno e pasta); Atualizar o status da tarefa; Mover para (caderno ou pasta, e folhas guardadas direto em pastas); Enter abre a folha; sem a visualização em tabela e sem o botão Abrir; folhas listadas e abertas na janela Cadernos e pastas; campo Local; listas de 200 em 200; desempenho com 100 mil folhas; sem menções a outras plataformas. |

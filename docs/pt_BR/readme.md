@@ -7,7 +7,7 @@ Complemento do NVDA para organizar folhas (anotações e tarefas) em raias de st
 Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…**). A janela tem:
 
 * **Mostrar**: todas as folhas, folhas soltas (sem caderno nem pasta), folhas recentes (as 10 alteradas por último), um caderno ou uma pasta.
-* **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
+* **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). As raias começam fechadas: Seta para a direita abre, Seta para a esquerda fecha. Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
 * **Criar…**: um menu para criar uma folha, um caderno ou uma pasta.
 * **Atualizar o status da tarefa…**: um menu com os outros status.
 * **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
@@ -15,7 +15,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 
 ## Folhas
 
-**Criar… > Folha…** (ou NVDA+Alt+F de qualquer lugar) pede o título, o local (solta, uma pasta ou um caderno) e o status e depois abre a janela da folha. A janela da folha tem título, local, status, tags (separadas por vírgula) e o conteúdo. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.
+**Criar… > Folha…** (ou NVDA+Alt+F de qualquer lugar) pede o título, o local (solta, uma pasta ou um caderno) e o status e depois abre a janela da folha. A janela da folha tem título, local, status, tags (separadas por vírgula) e o conteúdo. Se você mudar o status ou o local ali, ao fechar a janela o foco vai para a próxima folha da mesma raia, para tratar a raia uma folha depois da outra. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.
 
 O conteúdo é texto com uma marcação leve:
 
