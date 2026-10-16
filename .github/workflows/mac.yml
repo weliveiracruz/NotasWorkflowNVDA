@@ -1,0 +1,26 @@
+name: Notas Workflow Mac
+
+on:
+  push:
+    branches: [mac-app]
+    paths: ["mac/**", ".github/workflows/mac.yml"]
+  workflow_dispatch:
+
+jobs:
+  mac:
+    # Mac com Apple Silicon, como o MacBook M4.
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: mac
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift --version
+      - name: Autotestes e app
+        run: ./build-app.sh
+      - name: Compactar o app
+        run: cd build && ditto -c -k --keepParent "Notas Workflow Mac.app" NotasWorkflowMac-app.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NotasWorkflowMac-app
+          path: mac/build/NotasWorkflowMac-app.zip
