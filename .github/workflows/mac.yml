@@ -6,6 +6,9 @@ on:
     paths: ["mac/**", ".github/workflows/mac.yml"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   mac:
     # Mac com Apple Silicon, como o MacBook M4.
@@ -15,12 +18,24 @@ jobs:
         working-directory: mac
     steps:
       - uses: actions/checkout@v4
-      - run: swift --version
       - name: Autotestes e app
-        run: ./build-app.sh
+        run: |
+          set -o pipefail
+          swift --version 2>&1 | tee build.log
+          ./build-app.sh 2>&1 | tee -a build.log
       - name: Compactar o app
         run: cd build && ditto -c -k --keepParent "Notas Workflow Mac.app" NotasWorkflowMac-app.zip
-      - uses: actions/upload-artifact@v4
-        with:
-          name: NotasWorkflowMac-app
-          path: mac/build/NotasWorkflowMac-app.zip
+      - name: Publicar o app e o registro na branch mac-build
+        if: always()
+        run: |
+          mkdir -p /tmp/out
+          cp build.log /tmp/out/ 2>/dev/null || true
+          cp build/NotasWorkflowMac-app.zip /tmp/out/ 2>/dev/null || true
+          echo "${GITHUB_SHA}" > /tmp/out/commit.txt
+          cd /tmp/out
+          git init -q -b mac-build
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Compilação de ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" mac-build
