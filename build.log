@@ -1,0 +1,46 @@
+swift-driver version: 1.120.5 Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)
+Target: arm64-apple-macosx15.0
+== Autotestes
+Building for production...
+[0/5] Write sources
+[2/5] Write swift-version--79AA4F9932D1E87A.txt
+[4/6] Compiling NotasCore JSONText.swift
+[5/7] Compiling NotasSelfTest main.swift
+[5/7] Write Objects.LinkFileList
+[6/7] Linking NotasSelfTest
+Build of product 'NotasSelfTest' complete! (12.70s)
+  ler 100 mil folhas: 1.01 s
+  preparar a busca: 1.60 s
+  buscar: 0.065 s
+  gravar: 0.26 s
+
+107 verificações passaram, 0 falharam.
+== Compilando para arm64
+[0/1] Planning build
+Building for production...
+[0/4] Write sources
+[1/4] Write swift-version--79AA4F9932D1E87A.txt
+[3/5] Compiling NotasWorkflowMac AppController.swift
+/Users/runner/work/NotasWorkflowNVDA/NotasWorkflowNVDA/mac/Sources/NotasWorkflowMac/OrganizeWindow.swift:333:7: warning: constant 'done' inferred to have type '()?', which may be unexpected
+331 | 		let clean = name.trimmingCharacters(in: .whitespaces)
+332 | 		guard !clean.isEmpty, clean != current else { return }
+333 | 		let done = controller.safe {
+    |       |- warning: constant 'done' inferred to have type '()?', which may be unexpected
+    |       `- note: add an explicit type annotation to silence this warning
+334 | 			if kind == "folder" {
+335 | 				try store.renameFolder(ident, name)
+
+/Users/runner/work/NotasWorkflowNVDA/NotasWorkflowNVDA/mac/Sources/NotasWorkflowMac/OrganizeWindow.swift:391:7: warning: constant 'done' inferred to have type '()?', which may be unexpected
+389 | 		}
+390 | 		guard Prompts.confirm(question, tr("Delete")) else { return }
+391 | 		let done = controller.safe {
+    |       |- warning: constant 'done' inferred to have type '()?', which may be unexpected
+    |       `- note: add an explicit type annotation to silence this warning
+392 | 			if kind == "folder" {
+393 | 				try store.deleteFolder(ident)
+[3/5] Write Objects.LinkFileList
+[4/5] Linking NotasWorkflowMac
+Build of product 'NotasWorkflowMac' complete! (8.10s)
+== Montando build/Notas Workflow Mac.app
+build/Notas Workflow Mac.app: replacing existing signature
+Pronto: build/Notas Workflow Mac.app
