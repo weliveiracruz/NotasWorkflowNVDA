@@ -104,6 +104,8 @@ class NotesDialog(wx.Dialog):
 		self.searchButton = actions2.addButton(self, label=_("Searc&h…"))
 		# Translators: button that opens the window of notebooks and folders.
 		self.organizeButton = actions2.addButton(self, label=_("Notebooks and &folders…"))
+		# Translators: button that opens the menu to export the selected note, a notebook or a folder.
+		self.exportButton = actions2.addButton(self, label=_("E&xport…"))
 		# Translators: button that closes the window.
 		self.closeButton = actions2.addButton(self, id=wx.ID_CLOSE, label=_("C&lose"))
 		sHelper.addItem(actions2)
@@ -130,6 +132,7 @@ class NotesDialog(wx.Dialog):
 		self.deleteButton.Bind(wx.EVT_BUTTON, self.onDelete)
 		self.searchButton.Bind(wx.EVT_BUTTON, self.onSearch)
 		self.organizeButton.Bind(wx.EVT_BUTTON, self.onOrganize)
+		self.exportButton.Bind(wx.EVT_BUTTON, self.onExport)
 		self.closeButton.Bind(wx.EVT_BUTTON, lambda evt: self.Close())
 		self.Bind(wx.EVT_CLOSE, self.onClose)
 
@@ -535,6 +538,57 @@ class NotesDialog(wx.Dialog):
 				dlg.Destroy()
 		self.refresh(self.selectedNoteId())
 		self.focusNotes()
+
+	def onExport(self, evt):
+		"""Export…: the selected note, a notebook or a folder (the one shown, or the one of the
+		selected note, comes chosen)."""
+		noteId = self.selectedNoteId()
+		labels = messages.exportLabels(noteId is not None)
+		index = prompts.chooseFromMenu(self.exportButton, labels)
+		if index is None:
+			self.focusNotes()
+			return
+		if noteId is None:
+			index += 1
+		if index == 0:
+			self.plugin.exportItem(self, "note", noteId)
+		else:
+			ident = self.chooseExported("notebook" if index == 1 else "folder")
+			if ident is not None:
+				self.plugin.exportItem(self, "notebook" if index == 1 else "folder", ident)
+		self.focusNotes()
+
+	def chooseExported(self, kind):
+		"""Asks which notebook or folder to export; id or None."""
+		kindShown, shown = self.activeFilter
+		note = self.store.getNote(self.selectedNoteId()) if self.selectedNoteId() else None
+		if kind == "notebook":
+			items = self.store.notebooks
+			labels = [messages.notebookPlace(nb, self.store.getFolder(nb["folderId"])) for nb in items]
+			current = shown if kindShown == "notebook" else (note["notebookId"] if note else None)
+			# Translators: question of the dialog that chooses the notebook to export.
+			question = _("Export which notebook?")
+		else:
+			items = self.store.folders
+			labels = [messages.folderPlace(f) for f in items]
+			current = shown if kindShown == "folder" else None
+			if current is None and note:
+				nb = self.store.getNotebook(note["notebookId"]) if note["notebookId"] else None
+				current = nb["folderId"] if nb else note["folderId"]
+			# Translators: question of the dialog that chooses the folder to export.
+			question = _("Export which folder?")
+		if not items:
+			if kind == "notebook":
+				# Translators: spoken when Export > Notebook is chosen and there is no notebook.
+				self.plugin.speak(_("There are no notebooks."))
+			else:
+				# Translators: spoken when Export > Folder is chosen and there is no folder.
+				self.plugin.speak(_("There are no folders."))
+			return None
+		ids = [item["id"] for item in items]
+		# Translators: title of the dialogs that export notes.
+		index = prompts.chooseItem(self, question, _("Export"), labels, ids.index(current) if current in ids else 0)
+		return None if index is None else ids[index]
 
 	def destroy(self):
 		self._closing = True

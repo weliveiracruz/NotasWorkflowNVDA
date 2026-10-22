@@ -617,9 +617,121 @@ def legacyMigration():
 		config.conf.profiles[0].pop("NotasWorkflow", None)
 
 
+def answers(*values):
+	"""A replacement for prompts.chooseItem that answers the values in turn (None = cancel)
+	and records the questions."""
+	queue = list(values)
+	asked = []
+
+	def choose(parent, message, caption, labels, current=0):
+		asked.append((message, list(labels), current))
+		return queue.pop(0) if queue else None
+	choose.asked = asked
+	return choose
+
+
+def runExport():
+	"""FUN-27 Export… of the main window (1.4.0)."""
+	import zipfile
+
+	plugin = newPlugin()
+	s = plugin.store
+	out = _helpers.tempFolder()
+	folder = s.addFolder("Projetos")
+	nb = s.addNotebook("Trabalho", folder["id"])
+	empty = s.addNotebook("Vazio")
+	a = s.addNote("Planejar sprint", "todo", nb["id"])
+	s.updateNote(a["id"], content="<p>Pauta da <strong>reunião</strong></p><script>alert(1)</script>", tags=["sprint"])
+	s.addNote("Bug do login", "blocked", nb["id"])
+	s.addNote("Direto na pasta", "done", None, folder["id"])
+	plugin.script_openWindow(None)
+	pump(lambda: MainDialog._instance is not None)
+	dlg = MainDialog._instance
+	dlg.refresh(a["id"])
+	R.check("FUN-27 the main window has the button Export", dlg.exportButton.GetLabel() == "E&xport…" and dlg.exportButton.IsEnabled())
+	seen = {}
+	with replaced(prompts, "chooseFromMenu", lambda window, labels: seen.setdefault("labels", labels) and None):
+		click(dlg.exportButton)
+	R.check("FUN-27 the Export menu has Selected note, Notebook and Folder", seen.get("labels") == ["Selected &note…", "Note&book…", "&Folder…"], seen)
+
+	# The selected note, in Word.
+	target = os.path.join(out, "folha.docx")
+	choose = answers(0)
+	n = mark()
+	with menu(0), replaced(prompts, "chooseItem", choose), replaced(prompts, "askSaveFile", lambda *args: (seen.__setitem__("save", args), target)[1]):
+		click(dlg.exportButton)
+		waitSpoken(n, lambda t: t.startswith("Exported"), 5)
+	R.check("FUN-27 a note asks only the format (Word, Markdown, HTML)", len(choose.asked) == 1 and choose.asked[0][1] == ["Word document (.docx)", "Markdown (.md)", "HTML page (.html)"], choose.asked)
+	R.check("FUN-27 the file dialog suggests the title of the note", seen["save"][2] == "Planejar sprint.docx" and seen["save"][3].endswith("*.docx"), seen.get("save"))
+	R.check("FUN-27 the export is announced with the number of notes and the file", "Exported: 1 note, in folha.docx" in spokenSince(n), spokenSince(n))
+	document = zipfile.ZipFile(target).read("word/document.xml").decode("utf-8") if os.path.isfile(target) else ""
+	R.check("FUN-27 the Word file has the note, its status, tags and place, without the script", "Planejar sprint" in document and "Status: To do" in document and "Tags: sprint" in document and "Location: notebook Trabalho" in document and "alert" not in document, document[:300])
+
+	# A notebook, one Markdown file for each note.
+	dlg.setFilter(("notebook", nb["id"]))
+	dlg.refresh(a["id"])
+	choose = answers(0, 1, 1)
+	n = mark()
+	with menu(1), replaced(prompts, "chooseItem", choose), replaced(prompts, "askFolder", lambda *args: out):
+		click(dlg.exportButton)
+		waitSpoken(n, lambda t: t.startswith("Exported"), 5)
+	R.check("FUN-27 the notebook shown comes chosen", choose.asked and choose.asked[0][2] == [x["id"] for x in s.notebooks].index(nb["id"]), choose.asked)
+	R.check("FUN-27 a notebook asks: one file with all the notes or one for each", len(choose.asked) == 3 and choose.asked[2][1] == ["One file with all the notes", "One file for each note"], choose.asked)
+	files = sorted(os.listdir(os.path.join(out, "Trabalho"))) if os.path.isdir(os.path.join(out, "Trabalho")) else []
+	R.check("FUN-27 one file for each note, in a folder with the name of the notebook", files == ["Bug do login.md", "Planejar sprint.md"], files)
+	R.check("FUN-27 the export of separate files is announced", any(t.startswith("Exported: 2 notes, one file for each note, in the folder") for t in spokenSince(n)), spokenSince(n))
+	n = mark()
+	with menu(1), replaced(prompts, "chooseItem", answers(0, 1, 1)), replaced(prompts, "askFolder", lambda *args: out):
+		click(dlg.exportButton)
+		waitSpoken(n, lambda t: t.startswith("Exported"), 5)
+	R.check("FUN-27 exporting again never overwrites: a new folder Trabalho (2)", os.path.isdir(os.path.join(out, "Trabalho (2)")) and files == sorted(os.listdir(os.path.join(out, "Trabalho"))))
+
+	# A folder, in one HTML file.
+	dlg.setFilter(model.FILTER_ALL)
+	dlg.refresh(a["id"])
+	target = os.path.join(out, "pasta")
+	choose = answers(0, 2, 0)
+	n = mark()
+	with menu(2), replaced(prompts, "chooseItem", choose), replaced(prompts, "askSaveFile", lambda *args: target):
+		click(dlg.exportButton)
+		waitSpoken(n, lambda t: t.startswith("Exported"), 5)
+	R.check("FUN-27 the folder of the selected note comes chosen", choose.asked and choose.asked[0][2] == 0 and choose.asked[0][1] == ["Folder Projetos"], choose.asked)
+	page = open(target + ".html", encoding="utf-8").read() if os.path.isfile(target + ".html") else ""
+	R.check("FUN-27 the extension is added when the name has none", bool(page))
+	R.check("FUN-27 the folder file has its notes and its notebooks as headings", "<h1>Folder Projetos</h1>" in page and "<h2>Notes directly in the folder</h2>" in page and "<h2>Notebook Trabalho</h2>" in page and "<h3>Planejar sprint</h3>" in page, page[:600])
+	R.check("FUN-27 announced with the 3 notes of the folder", "Exported: 3 notes, in pasta.html" in spokenSince(n), spokenSince(n))
+
+	# Nothing to export, cancel and failures.
+	n = mark()
+	with menu(1), replaced(prompts, "chooseItem", answers([x["id"] for x in s.notebooks].index(empty["id"]))):
+		click(dlg.exportButton)
+	R.check("FUN-27 an empty notebook: nothing to export, nothing asked", "Nothing to export: Notebook Vazio has no notes." in spokenSince(n), spokenSince(n))
+	before = sorted(os.listdir(out))
+	with menu(0), replaced(prompts, "chooseItem", answers(None)), replaced(prompts, "askSaveFile", lambda *args: os.path.join(out, "nao.docx")):
+		click(dlg.exportButton)
+	with menu(0), replaced(prompts, "chooseItem", answers(1)), replaced(prompts, "askSaveFile", lambda *args: None):
+		click(dlg.exportButton)
+	R.check("FUN-27 cancelling the format or the file writes nothing", sorted(os.listdir(out)) == before, sorted(os.listdir(out)))
+	n = mark()
+	bad = os.path.join(out, "nao-existe", "x.md")
+	with menu(0), replaced(prompts, "chooseItem", answers(1)), replaced(prompts, "askSaveFile", lambda *args: bad):
+		click(dlg.exportButton)
+		waitSpoken(n, lambda t: t.startswith("Could not export"), 5)
+	R.check("FUN-27 a file that cannot be written is announced", any(t.startswith("Could not export to %s" % bad) for t in spokenSince(n)), spokenSince(n))
+	for notebook in list(s.notebooks):
+		s.deleteNotebook(notebook["id"])
+	n = mark()
+	with menu(1):
+		click(dlg.exportButton)
+	R.check("FUN-27 without notebooks: said, no list opens", "There are no notebooks." in spokenSince(n) and "prompts.chooseItem" not in RECORD["blocked"], spokenSince(n))
+	R.check("FUN-27 no real menu or dialog opened without an answer", not RECORD["blocked"], RECORD["blocked"])
+	plugin.terminate()
+
+
 if __name__ == "__main__":
 	try:
 		run()
+		runExport()
 	except Exception:
 		import traceback
 

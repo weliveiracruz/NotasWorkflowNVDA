@@ -573,3 +573,119 @@ msgstr "A pasta das folhas precisa existir e poder ser gravada. Escolha-a com Pr
 #: addon/globalPlugins/NotasWorkflowNVDA/settingsPanel.py:87
 msgid "&Announce the automatic saving"
 msgstr "&Anunciar o salvamento automático"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "E&xport…"
+msgstr "&Exportar…"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Selected &note…"
+msgstr "&Folha selecionada…"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Word document (.docx)"
+msgstr "Documento do Word (.docx)"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Markdown (.md)"
+msgstr "Markdown (.md)"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "HTML page (.html)"
+msgstr "Página HTML (.html)"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Word document (*.docx)|*.docx"
+msgstr "Documento do Word (*.docx)|*.docx"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Markdown (*.md)|*.md"
+msgstr "Markdown (*.md)|*.md"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "HTML page (*.html)|*.html"
+msgstr "Página HTML (*.html)|*.html"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "One file with all the notes"
+msgstr "Um arquivo com todas as folhas"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "One file for each note"
+msgstr "Um arquivo para cada folha"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Status: {lane}"
+msgstr "Status: {lane}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Location: {place}"
+msgstr "Local: {place}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Tags: {tags}"
+msgstr "Tags: {tags}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Created on {created}, updated on {updated}"
+msgstr "Criada em {created}, atualizada em {updated}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Exported from Notas Workflow NVDA on {date}: {count}."
+msgstr "Exportado do Notas Workflow NVDA em {date}: {count}."
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Notes directly in the folder"
+msgstr "Folhas direto na pasta"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Nothing to export: {name} has no notes."
+msgstr "Nada para exportar: {name} não tem folhas."
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Exported: {count}, in {file}"
+msgstr "Exportado: {count}, em {file}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Exported: {count}, one file for each note, in the folder {folder}"
+msgstr "Exportado: {count}, um arquivo por folha, na pasta {folder}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Could not export to {path}. Check that the folder exists and can be written."
+msgstr "Não foi possível exportar para {path}. Confira se a pasta existe e pode ser gravada."
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "Export"
+msgstr "Exportar"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "Export {name} as:"
+msgstr "Exportar {name} como:"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "How to export {count}:"
+msgstr "Como exportar {count}:"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "Choose where to create the folder {name}"
+msgstr "Escolha onde criar a pasta {name}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "Export {name}"
+msgstr "Exportar {name}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "Export which notebook?"
+msgstr "Exportar qual caderno?"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "Export which folder?"
+msgstr "Exportar qual pasta?"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "There are no notebooks."
+msgstr "Não há cadernos."
+
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "There are no folders."
+msgstr "Não há pastas."

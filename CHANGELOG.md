@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## 1.4.0
+
+* **Exportar… (Alt+E)** na janela principal: um menu com **Folha selecionada…**, **Caderno…** e **Pasta…**. O caderno ou a pasta mostrada (ou o da folha selecionada) já vem escolhido.
+* Três formatos: **documento do Word (.docx)**, **Markdown (.md)** e **página HTML (.html)**, gerados pelo próprio complemento, sem precisar de nenhum programa instalado.
+* Caderno e pasta: **um arquivo com todas as folhas** (o caderno ou a pasta como título 1, cada caderno da pasta como título 2 e cada folha como título abaixo, na ordem das raias) ou **um arquivo para cada folha**, numa pasta nova com o nome do caderno ou da pasta e uma subpasta para cada caderno.
+* Cada folha exportada traz o título, o status, as tags, as datas e o conteúdo com a formatação (negrito, itálico, tachado, código, títulos, listas, citações e divisores). Os títulos são navegáveis pelo leitor de telas no Word e no navegador, e o documento tem idioma e título.
+* Nada é sobrescrito sem perguntar: o arquivo único pergunta antes de substituir, e a exportação de um arquivo por folha cria uma pasta nova ("Trabalho (2)" se "Trabalho" já existe). A gravação acontece em segundo plano, e o NVDA fala quantas folhas foram exportadas e onde.
+
 ## 1.3.0
 
 * **As raias começam fechadas**: a lista mostra só as raias com o número de folhas; Seta para a direita abre uma raia. A raia de uma folha selecionada pelo complemento abre sozinha, e as raias ficam como você as deixou.

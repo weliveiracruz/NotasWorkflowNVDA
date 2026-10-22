@@ -64,7 +64,12 @@ def run():
 	# -- SEG-01 no network ----------------------------------------------------------------------
 	network = {"socket", "ssl", "urllib", "http", "ftplib", "smtplib", "telnetlib", "xmlrpc", "asyncio", "requests", "websocket", "poplib", "imaplib"}
 	R.check("SEG-01 the add-on imports no network module", not (imported & network), sorted(imported & network))
-	R.check("SEG-01 no web address in the code (nothing is sent anywhere)", not any(re.search(r"https?://", s) for p, s in sources.items()), [p for p, s in sources.items() if re.search(r"https?://", s)])
+	# The only addresses allowed are the fixed names (XML namespaces) a Word document must declare
+	# inside it; they are never opened.
+	namespaces = re.compile(r"https?://(schemas\.openxmlformats\.org|purl\.org/dc|www\.w3\.org/2001/XMLSchema-instance)")
+	addresses = [p for p, s in sources.items() if re.search(r"https?://", namespaces.sub("", s))]
+	R.check("SEG-01 no web address in the code (nothing is sent anywhere)", not addresses, addresses)
+	R.check("SEG-01 the XML namespaces of the Word export are only in exporter.py", all(os.path.basename(p) == "exporter.py" for p, s in sources.items() if namespaces.search(s)))
 	attempts = []
 	original = socket.socket
 
@@ -118,8 +123,8 @@ def run():
 	pattern = re.compile(r"(?<![\w.])(eval|exec|compile)\s*\(|\bpickle\b|\bmarshal\b|\bshelve\b|\bsubprocess\b|os\.system|os\.popen|os\.startfile|shell\s*=\s*True|__import__|yaml\.load|ctypes")
 	bad = ["%s: %s" % (p, m.group(0)) for p, s in sources.items() for m in pattern.finditer(s)]
 	R.check("SEG-03 no eval, exec, pickle, subprocess, shell or ctypes in the add-on", not bad, bad)
-	allowed = {"datetime", "heapq", "html", "json", "os", "re", "shutil", "threading", "time", "uuid", "unicodedata",
-		"addonHandler", "config", "globalPluginHandler", "globalVars", "gui", "queueHandler", "ui", "wx", "logHandler", "scriptHandler"}
+	allowed = {"datetime", "heapq", "html", "json", "os", "re", "shutil", "threading", "time", "uuid", "unicodedata", "zipfile",
+		"addonHandler", "languageHandler", "config", "globalPluginHandler", "globalVars", "gui", "queueHandler", "ui", "wx", "logHandler", "scriptHandler"}
 	R.check("SEG-03 only the standard library and NVDA (no third-party dependency)", imported <= allowed, sorted(imported - allowed))
 
 	# -- SEG-04 size limits ------------------------------------------------------------------------------
@@ -193,6 +198,18 @@ def run():
 	webHtml = '<p onclick="steal()">a<script>document.cookie</script><style>*{}</style><a href="javascript:alert(1)">link</a><iframe src="x">frame</iframe></p>'
 	text = markup.htmlToText(webHtml)
 	R.check("SEG-06 HTML from files: scripts, styles, frames and attributes dropped", text == "alink", text)
+	exp = _helpers.loadCore().exporter
+	evil = {"id": "e", "title": '<script>alert("t")</script>', "content": webHtml + "<p>%s</p>" % typed, "tags": [], "laneId": "todo"}
+	page = exp.toHtml(exp.buildDocument(None, None, [(None, [evil])], lambda n: ['<img src=x onerror="m()">'], lambda n: n["title"]), evil["title"], '"><script>')
+	safeTags = {"html", "head", "meta", "title", "style", "body", "main", "h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "li", "blockquote", "pre", "code", "hr", "strong", "em", "s"}
+	tags = set(re.findall(r"</?([A-Za-z][A-Za-z0-9]*)", page))
+	attributes = set(re.findall(r"<[A-Za-z][A-Za-z0-9]*((?:\s+[\w-]+=)+)", page))
+	R.check(
+		"SEG-06 exported HTML: only the tags of the formats, no script, frame, link, image or attribute from the notes (all escaped)",
+		tags <= safeTags and {a.split("=")[0].strip() for attr in attributes for a in attr.split()} <= {"lang", "charset", "name", "content", "class", "start"}
+		and "&lt;script&gt;" in page and page.count("<style>") == 1,
+		(sorted(tags - safeTags), attributes, page[:300]),
+	)
 	R.check("SEG-06 the add-on never renders HTML (no wx.html, no browser)", not any(re.search(r"wx\.html|webbrowser|WebView", s) for s in sources.values()))
 
 	# -- SEG-07 atomic write --------------------------------------------------------------------------------------
@@ -230,6 +247,24 @@ def run():
 	s.importFile(writeFile(json.dumps({"notes": [{"id": "../../evil", "title": "x"}, {"id": "ok", "title": "y"}], "notebooks": [{"id": "..\\x", "name": "n"}]})))
 	R.check("SEG-08 data never decides a file name (nothing written outside the folder)", os.listdir(parent) == ["data"] and sorted(os.listdir(inner)) == [store.FILE_NAME] and [n["id"] for n in s.notes] == ["ok"], (os.listdir(parent), os.listdir(inner)))
 	R.check("SEG-08 file name is fixed", store.FILE_NAME == "NotasWorkflowNVDA-data.json")
+	out = os.path.join(_helpers.tempFolder(), "export")
+	os.makedirs(out)
+	titles = ["..\\..\\fora", "../../fora", "C:\\Windows\\x", "CON", "nul.txt", "a" * 300, "\x00\x1f", ".", "<>:\"|?*"]
+	notes = [{"id": str(i), "title": t, "content": "", "tags": [], "laneId": "todo"} for i, t in enumerate(titles)]
+	root, written = exp.writeSeparate(
+		out, "..\\..\\caderno", "md", [(None, notes), ("../sub", notes[:1])],
+		lambda n: exp.buildDocument(None, None, [(None, [n])], lambda x: [], lambda x: x["title"]), lambda n: n["title"], "en", "Untitled",
+	)
+	inside = []
+	for folderNow, _dirs, files in os.walk(os.path.dirname(out)):
+		inside += [os.path.join(folderNow, f) for f in files]
+	R.check(
+		"SEG-08 export with one file per note: titles become clean names, everything stays inside the chosen folder",
+		written == len(titles) + 1 and os.path.dirname(root) == out and len(inside) == written
+		and all(os.path.commonpath([p, root]) == root for p in inside)
+		and all(len(os.path.basename(p)) <= exp.MAX_NAME + 8 and not os.path.basename(p).upper().startswith(("CON.", "NUL.")) for p in inside),
+		sorted(os.path.relpath(p, out) for p in inside),
+	)
 	with open(exported, encoding="utf-8") as fh:
 		data = json.load(fh)
 	R.check("SEG-08 export has only the notes (no settings, paths or user name)", set(data) == {"format", "version", "folders", "notebooks", "notes"} and folder not in json.dumps(data))

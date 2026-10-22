@@ -37,6 +37,24 @@ def chooseItem(parent, message, caption, labels, current=0):
 		dlg.Destroy()
 
 
+def askSaveFile(parent, title, defaultFile, wildcard):
+	"""Path of a new file chosen by the person (asks before replacing one), or None."""
+	dlg = wx.FileDialog(parent, title, defaultFile=defaultFile, wildcard=wildcard, style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+	try:
+		return dlg.GetPath() if dlg.ShowModal() == wx.ID_OK else None
+	finally:
+		dlg.Destroy()
+
+
+def askFolder(parent, message):
+	"""Folder chosen by the person, or None."""
+	dlg = wx.DirDialog(parent, message, "", wx.DD_DEFAULT_STYLE)
+	try:
+		return dlg.GetPath() if dlg.ShowModal() == wx.ID_OK else None
+	finally:
+		dlg.Destroy()
+
+
 def askText(parent, message, caption, value="", maxLength=model.MAX_NAME):
 	"""Text typed in a dialog, or None when cancelled."""
 	dlg = wx.TextEntryDialog(parent, message, caption, value)

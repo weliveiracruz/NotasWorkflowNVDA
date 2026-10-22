@@ -70,6 +70,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | FUN-24 | Listas paginadas (1.2.0) | Uma raia longa mostra uma página e "Mostrar mais" com o número restante; Enter nele mostra a próxima página com o foco na primeira nova; selecionar uma folha além da página mostra a página dela; o mesmo num caderno com muitas folhas | gui |
 | FUN-25 | Raias fechadas (1.3.0) | As raias começam fechadas, com o número de folhas; sem folha a selecionar, o foco fica na primeira raia; selecionar uma folha abre só a raia dela; as raias ficam como a pessoa as deixou quando a lista é refeita | gui |
 | FUN-26 | Pilha da raia (1.3.0) | Status mudado na janela da folha: ao fechar, o foco vai para a próxima folha da raia; última folha: a anterior; única: a raia; folha só editada: o foco volta para ela; folha que sai do filtro pelo Local: a próxima da raia | gui |
+| FUN-27 | Exportar como documento (1.4.0) | Botão Exportar… com menu Folha selecionada (só com folha), Caderno e Pasta; caderno e pasta do filtro ou da folha já escolhidos; folha pergunta só o formato; caderno e pasta perguntam um arquivo ou um por folha; nome sugerido e extensão acrescentada; Word, Markdown e HTML com título do documento, títulos por nível (conteúdo abaixo da folha), Status, Local, Tags, datas, negrito, itálico, tachado, código, listas (numerada recomeça e respeita o início), citação, bloco de código e divisor; Markdown escapa o que viraria lista, título ou citação; .docx válido, com estilos de título, idioma e título nas propriedades, igual para as mesmas folhas; um arquivo por folha em pasta nova, subpasta por caderno, nomes limpos e repetidos numerados, nada sobrescrito; caderno vazio, sem cadernos, cancelar e falha de gravação falados sem gravar nada; caracteres inválidos em XML descartados | pure, gui |
 | FUN-20 | Novo nome (1.1.0) | Arquivo antigo da pasta copiado para o nome novo e nunca alterado; o novo vence e a cópia é feita uma vez; primeiro início traz folhas, cópia de segurança e configurações do NotasWorkflow 1.0.0, com aviso falado; nada do antigo muda | pure, gui |
 | FUN-19 | Datas | Formato do `toISOString()` do JavaScript; datas inválidas recusadas | pure |
 
@@ -79,7 +80,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 |---|---|---|
 | ACE-01 | Nomes | Todo controle que recebe foco tem nome, conferido também pelo MSAA, em todas as janelas (principal em árvore e em tabela, Nova folha, folha, Buscar, Cadernos e pastas, Configurações) |
 | ACE-02 | Letras de atalho | Únicas em cada janela; todo botão e rótulo tem uma; mantidas na tradução |
-| ACE-03 | Ordem de tabulação | Principal: Mostrar, Visualização, Folhas, ações, Fechar; Nova folha; folha; Buscar; a tabela substitui a árvore |
+| ACE-03 | Ordem de tabulação | Principal: Mostrar, Folhas, ações, Buscar, Cadernos e pastas, Exportar (1.4.0), Fechar; Nova folha; folha; Buscar; a tabela substitui a árvore |
 | ACE-04 | Botões indisponíveis | Fora da tabulação quando não servem (sem folha; "Sem pasta"; Criar folha sem título); Criar folha é o botão padrão (Enter cria) |
 | ACE-05 | Teclado | Esc fecha (e salva na folha); Alt+Shift+Setas movem; Enter abre e busca |
 | ACE-06 | Foco | Começa nas folhas, no título (Nova folha e abrir folha), no conteúdo (folha recém-criada), no campo de busca e na árvore de cadernos; fica na folha movida; vai para a vizinha depois de excluir; Enter na busca vai aos resultados |
@@ -99,14 +100,14 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 
 | ID | Caso | Resultado esperado |
 |---|---|---|
-| SEG-01 | Sem rede | Nenhum módulo de rede importado; nenhum endereço web no código; usar o complemento (criar, buscar, abrir, exportar, importar) não abre nenhuma conexão (`socket` bloqueado no teste) |
+| SEG-01 | Sem rede | Nenhum módulo de rede importado; nenhum endereço web no código (os únicos endereços são os nomes fixos de XML que todo documento do Word declara, só em `exporter.py`, nunca abertos); usar o complemento (criar, buscar, abrir, exportar, importar) não abre nenhuma conexão (`socket` bloqueado no teste) |
 | SEG-02 | Log | Títulos, conteúdos e tags nunca vão para o log, nem em erros de gravação, arquivo danificado ou importação inválida; erros registrados só pelo tipo; detalhe limitado a 200 caracteres |
-| SEG-03 | Código perigoso | Nenhum `eval`, `exec`, `pickle`, `marshal`, `subprocess`, shell ou `ctypes`; só biblioteca padrão e NVDA |
+| SEG-03 | Código perigoso | Nenhum `eval`, `exec`, `pickle`, `marshal`, `subprocess`, shell ou `ctypes`; só biblioteca padrão (incluindo `zipfile` para o .docx) e NVDA |
 | SEG-04 | Tamanho | Importação acima de 20 MB recusada **sem abrir** o arquivo; arquivo de dados acima de 20 MB não carregado e guardado à parte (nunca apagado) |
 | SEG-05 | Dados não confiáveis | IDs com caracteres de caminho recusados; nomes, títulos, conteúdo e tags limitados; cores validadas; raia desconhecida trocada; referências inexistentes removidas; campos desconhecidos descartados; tipos errados viram vazios; JSON aninhado demais e arquivo binário recusados sem derrubar o NVDA |
-| SEG-06 | HTML | O que a pessoa digita é escapado; HTML de arquivos perde scripts, estilos, quadros e atributos; o complemento nunca exibe HTML |
+| SEG-06 | HTML | O que a pessoa digita é escapado; HTML de arquivos perde scripts, estilos, quadros e atributos; o complemento nunca exibe HTML; o HTML exportado (1.4.0) só tem as tags dos formatos do editor, sem scripts, quadros, links, imagens ou atributos vindos das folhas, com títulos e textos escapados |
 | SEG-07 | Gravação atômica | Falha de gravação é avisada e deixa o arquivo salvo intacto, sem `.tmp`; `os.fsync` e `os.replace` |
-| SEG-08 | Nomes de arquivo | Dados nunca decidem nome de arquivo; nada é gravado fora da pasta; exportação só com as folhas (sem configurações nem caminhos) |
+| SEG-08 | Nomes de arquivo | Dados nunca decidem o nome do arquivo de dados; nada é gravado fora da pasta; exportação só com as folhas (sem configurações nem caminhos). Exportar um arquivo por folha (1.4.0): títulos com `..`, barras, unidades, nomes reservados (CON, NUL…), caracteres proibidos e nomes longos viram nomes limpos, e tudo fica dentro da pasta nova criada na pasta escolhida |
 | SEG-09 | Confirmações | Excluir folha, caderno ou pasta sempre pergunta, com Não como padrão; qualquer resposta diferente de Sim mantém; excluir caderno nunca apaga folhas |
 | SEG-10 | Telas seguras | Complemento desligado |
 | SEG-11 | Desinstalar e migrar | Sem tarefa de desinstalação: as folhas ficam; a migração do NotasWorkflow 1.0.0 só copia (sem mover, renomear ou apagar); o único arquivo apagado é o temporário do próprio complemento |
@@ -131,6 +132,7 @@ Com 100 mil folhas em 80 cadernos e 12 pastas, geradas por `tests/gerar_massa.py
 | PERF-11 | Abrir Cadernos e pastas, abrir um caderno com as folhas, reconstruir a árvore | 3 s / 2 s / 3 s |
 | PERF-12 | Fechar a janela | 2 s |
 | PERF-13 | Encerrar o NVDA com tudo gravado | 20 s |
+| PERF-14 | Exportar a maior pasta (1.4.0) num arquivo Word e num Markdown por folha: a janela continua respondendo e a gravação termina em segundo plano | 1 s / 60 s |
 
 ## 6.1 Casos do manual de uso (DOC)
 

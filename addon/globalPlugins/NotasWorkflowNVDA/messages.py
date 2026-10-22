@@ -168,6 +168,101 @@ def createLabels():
 	]
 
 
+def exportLabels(withNote):
+	"""Items of the Export menu: the selected note only when there is one."""
+	labels = [
+		# Translators: item of the Export menu: exports a notebook.
+		_("Note&book…"),
+		# Translators: item of the Export menu: exports a folder.
+		_("&Folder…"),
+	]
+	if withNote:
+		# Translators: item of the Export menu: exports the note selected in the list.
+		labels.insert(0, _("Selected &note…"))
+	return labels
+
+
+def exportFormats():
+	"""Names of the export formats, in the order of exporter.FORMATS."""
+	return [
+		# Translators: export format.
+		_("Word document (.docx)"),
+		# Translators: export format.
+		_("Markdown (.md)"),
+		# Translators: export format.
+		_("HTML page (.html)"),
+	]
+
+
+def exportWildcard(fmt):
+	wildcards = {
+		# Translators: type of file in the dialog that chooses where to export.
+		"docx": _("Word document (*.docx)|*.docx"),
+		# Translators: type of file in the dialog that chooses where to export.
+		"md": _("Markdown (*.md)|*.md"),
+		# Translators: type of file in the dialog that chooses where to export.
+		"html": _("HTML page (*.html)|*.html"),
+	}
+	return wildcards[fmt]
+
+
+def exportModes():
+	return [
+		# Translators: how a notebook or folder is exported.
+		_("One file with all the notes"),
+		# Translators: how a notebook or folder is exported.
+		_("One file for each note"),
+	]
+
+
+def noteDetails(note, place=""):
+	"""Lines written under the title of an exported note: status, place, tags and dates."""
+	# Translators: line of an exported note: its status (lane).
+	lines = [_("Status: {lane}").format(lane=laneName(note["laneId"]))]
+	if place:
+		# Translators: line of an exported note: its notebook or folder.
+		lines.append(_("Location: {place}").format(place=place))
+	if note.get("tags"):
+		# Translators: line of an exported note: its tags.
+		lines.append(_("Tags: {tags}").format(tags=", ".join(note["tags"])))
+	created = formatDate(note.get("createdAt"))
+	updated = formatDate(note.get("updatedAt"))
+	if created and updated:
+		# Translators: line of an exported note: when it was created and changed last.
+		lines.append(_("Created on {created}, updated on {updated}").format(created=created, updated=updated))
+	return lines
+
+
+def exportIntro(count):
+	# Translators: paragraph at the start of an exported notebook or folder; {count} is "3 notes".
+	return _("Exported from Notas Workflow NVDA on {date}: {count}.").format(date=formatDate(model.nowIso()), count=notesCount(count))
+
+
+def directInFolder():
+	# Translators: heading, in an exported folder, of the notes put directly in it (not in a notebook).
+	return _("Notes directly in the folder")
+
+
+def nothingToExport(name):
+	# Translators: spoken when the notebook or folder chosen to export has no notes.
+	return _("Nothing to export: {name} has no notes.").format(name=name)
+
+
+def exported(count, path):
+	# Translators: spoken after exporting to one file; {count} is "3 notes", {file} the name of the file.
+	return _("Exported: {count}, in {file}").format(count=notesCount(count), file=path)
+
+
+def exportedSeparate(count, folder):
+	# Translators: spoken after exporting one file for each note; {count} is "3 notes", {folder} the folder created.
+	return _("Exported: {count}, one file for each note, in the folder {folder}").format(count=notesCount(count), folder=folder)
+
+
+def exportFailed(path):
+	# Translators: error when the exported file cannot be written; {path} is the file or folder.
+	return _("Could not export to {path}. Check that the folder exists and can be written.").format(path=path)
+
+
 def askNotebookName(folder=None):
 	if folder:
 		# Translators: question when creating a notebook inside a folder.

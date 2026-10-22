@@ -12,6 +12,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 * **Atualizar o status da tarefa…**: um menu com os outros status.
 * **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
 * **Excluir**, **Buscar…**, **Cadernos e pastas…** e **Fechar** (Esc).
+* **Exportar…**: exporta a folha selecionada, um caderno ou uma pasta como documento (veja abaixo).
 
 ## Folhas
 
@@ -40,6 +41,10 @@ O botão **Formatação…** abre um menu com todos os formatos; ele vale para o
 ## Cadernos e pastas
 
 A janela **Cadernos e pastas…** mostra cada pasta com os seus cadernos e as suas folhas, um ramo "Sem pasta" com os outros cadernos e um ramo "Folhas soltas". Enter abre uma folha. **Criar…** cria uma folha, um caderno ou uma pasta no lugar selecionado; **Renomear…** (F2) renomeia uma pasta ou um caderno ou muda o título de uma folha; **Mover para…** move uma folha ou um caderno; **Excluir** (tecla Delete) exclui. Excluir um caderno ou uma pasta nunca apaga folhas: elas ficam soltas.
+
+## Exportar como documento
+
+**Exportar…** (Alt+E) na janela principal abre um menu com **Folha selecionada…**, **Caderno…** e **Pasta…** e depois pergunta o formato: **Documento do Word (.docx)**, **Markdown (.md)** ou **Página HTML (.html)**. Um caderno ou uma pasta pode ir para **um arquivo com todas as folhas** ou para **um arquivo para cada folha** (numa pasta nova com o nome do caderno ou da pasta e uma subpasta para cada caderno). Cada folha leva título, status, tags, datas e o conteúdo com a formatação; os títulos são títulos de verdade, fáceis de navegar com o leitor de telas. Nada é sobrescrito sem perguntar, os arquivos são gravados em segundo plano e o NVDA fala quantas folhas foram exportadas e onde.
 
 ## Atalhos
 

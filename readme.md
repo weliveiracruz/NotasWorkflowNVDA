@@ -12,6 +12,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 * **Update the task status…**: a menu with the other statuses.
 * **Move to…**: moves the note to a notebook, directly to a folder, or makes it loose.
 * **Delete**, **Search…**, **Notebooks and folders…** and **Close** (Esc).
+* **Export…**: exports the selected note, a notebook or a folder as a document (see below).
 
 ## Notes
 
@@ -40,6 +41,10 @@ The **Formatting…** button opens a menu with every format; it applies to the s
 ## Notebooks and folders
 
 The **Notebooks and folders…** window shows each folder with its notebooks and its notes, a "Without folder" branch with the other notebooks and a "Loose notes" branch. Enter opens a note. **Create…** creates a note, notebook or folder in the selected place; **Rename…** (F2) renames a folder or notebook or changes the title of a note; **Move to…** moves a note or a notebook; **Delete** (Delete key) deletes. Deleting a notebook or a folder never deletes notes: they become loose.
+
+## Export as a document
+
+**Export…** (Alt+X) in the main window opens a menu with **Selected note…**, **Notebook…** and **Folder…**, then asks the format: **Word document (.docx)**, **Markdown (.md)** or **HTML page (.html)**. A notebook or a folder can go to **one file with all the notes** or to **one file for each note** (in a new folder named after the notebook or folder, with a subfolder for each notebook). Each note brings its title, status, tags, dates and formatted content; the titles are real headings, easy to navigate with a screen reader. Nothing is overwritten without asking, the files are written in the background, and NVDA says how many notes were exported and where.
 
 ## Shortcuts
 

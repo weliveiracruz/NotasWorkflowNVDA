@@ -224,7 +224,7 @@ def run():
 
 	# -- main window, empty -----------------------------------------------------------------------
 	ctrls = checkWindow("main window, no notes", dlg)
-	R.check("ACE-04 without a note: Update the task status, Move to and Delete out of the tab order", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-04 without a note: Update the task status, Move to and Delete out of the tab order", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-06 focus starts on the notes", lastFocus() is dlg.tree, lastFocus())
 	R.check("ACE-05 Esc closes the window", dlg.GetEscapeId() == wx.ID_CLOSE and dlg.closeButton.GetId() == wx.ID_CLOSE)
 	R.check("ACE-03 a single view (lanes): no View box and no table", not hasattr(dlg, "viewChoice") and not hasattr(dlg, "table"))
@@ -236,7 +236,7 @@ def run():
 	store.addNote("Revisar", "inprogress")
 	dlg.refresh(a["id"])
 	ctrls = checkWindow("main window, lanes", dlg)
-	R.check("ACE-03 tab order: show, notes, create, update the task status, move to, delete, search, notebooks and folders, close", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.statusButton, dlg.moveButton, dlg.deleteButton, dlg.searchButton, dlg.organizeButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-03 tab order: show, notes, create, update the task status, move to, delete, search, notebooks and folders, export, close", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.statusButton, dlg.moveButton, dlg.deleteButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-14 list label says what it shows and how many", plain(structuralName(dlg.tree)) == plain(T("Not&es: {filter} ({count})")).format(filter=T("All notes"), count=2), structuralName(dlg.tree))
 	dlg.setFilter(("notebook", nb["id"]))
 	label = structuralName(dlg.tree)

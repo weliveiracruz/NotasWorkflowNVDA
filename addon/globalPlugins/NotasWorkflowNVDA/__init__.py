@@ -45,6 +45,16 @@ LEGACY_DATA_FILE = "NotasWorkflow-data.json"
 SCRIPT_CATEGORY = _("Notas Workflow NVDA")
 
 
+def documentLanguage():
+	"""Language of the exported documents (pt-BR...): the language of NVDA."""
+	try:
+		import languageHandler
+
+		return (languageHandler.getLanguage() or "en").replace("_", "-")
+	except Exception:
+		return "en"
+
+
 def disableInSecureMode(cls):
 	"""Does not load the add-on on secure screens (logon, UAC), as recommended by NV Access."""
 	if globalVars.appArgs.secure:
@@ -404,6 +414,128 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# Translators: spoken after a note is deleted.
 			self.speak(_("Note deleted: {title}").format(title=messages.noteTitle(note)))
 		return ok
+
+	# -- export as a document --------------------------------------------------------------
+
+	def exportPlan(self, kind, ident):
+		"""What exporting a note, notebook or folder writes: (name, document title, sections,
+		number of notes) or None when it no longer exists. sections: [(heading or None, notes,
+		subfolder name or None)], with copies of the notes (they may change while the file is
+		written); the subfolder is where the notes go when each note is a file."""
+		def lanes(notes):
+			grouped = model.byLane(notes)
+			return [dict(n) for lane in model.LANE_IDS for n in grouped[lane]]
+
+		if kind == "note":
+			note = self.store.getNote(ident)
+			if note is None:
+				return None
+			return messages.noteTitle(note), None, [(None, [dict(note)], None)], 1
+		if kind == "notebook":
+			notebook = self.store.getNotebook(ident)
+			if notebook is None:
+				return None
+			notes = lanes(self.store.notesIn(ident))
+			return notebook["name"], messages.notebookPlace(notebook), [(None, notes, None)], len(notes)
+		folder = self.store.getFolder(ident)
+		if folder is None:
+			return None
+		sections = [(messages.directInFolder(), lanes(self.store.notesInFolder(ident)), None)]
+		for notebook in self.store.notebooksIn(ident):
+			sections.append((messages.notebookPlace(notebook), lanes(self.store.notesIn(notebook["id"])), notebook["name"]))
+		return folder["name"], messages.folderPlace(folder), sections, sum(len(s[1]) for s in sections)
+
+	def exportItem(self, parent, kind, ident):
+		"""Export… of the main window: asks the format, one file or one per note (notebook and
+		folder) and where, then writes in the background and speaks the result.
+		kind: note, notebook or folder. True when the export started."""
+		from . import exporter
+
+		self.ensureLoaded()
+		plan = self.exportPlan(kind, ident)
+		if plan is None:
+			self.speak(messages.storeError(StoreError("notFound")))
+			return False
+		name, title, sections, count = plan
+		if not count:
+			self.speak(messages.nothingToExport(title))
+			return False
+		# Translators: title of the dialogs that export notes.
+		caption = _("Export")
+		index = prompts.chooseItem(
+			parent,
+			# Translators: question of the dialog that chooses the format of the export; {name} is what is exported.
+			_("Export {name} as:").format(name=title or name),
+			caption,
+			messages.exportFormats(),
+		)
+		if index is None:
+			return False
+		fmt = exporter.FORMATS[index]
+		separate = False
+		if kind != "note":
+			mode = prompts.chooseItem(
+				parent,
+				# Translators: question of the dialog that chooses one file or one file per note; {count} is "3 notes".
+				_("How to export {count}:").format(count=messages.notesCount(count)),
+				caption,
+				messages.exportModes(),
+			)
+			if mode is None:
+				return False
+			separate = mode == 1
+		if separate:
+			# Translators: title of the dialog that chooses where the folder of the exported notes is created.
+			target = prompts.askFolder(parent, _("Choose where to create the folder {name}").format(name=name))
+		else:
+			target = prompts.askSaveFile(
+				parent,
+				# Translators: title of the dialog that chooses the exported file; {name} is what is exported.
+				_("Export {name}").format(name=name),
+				exporter.safeName(name, messages.untitled()) + exporter.EXTENSIONS[fmt],
+				messages.exportWildcard(fmt),
+			)
+		if not target:
+			return False
+		if not separate and not target.lower().endswith(exporter.EXTENSIONS[fmt]):
+			target += exporter.EXTENSIONS[fmt]
+		place = messages.placeOf(self.store, sections[0][1][0]) if kind == "note" else ""
+		self.exportThread = threading.Thread(
+			target=self._writeExport,
+			args=(exporter, fmt, separate, target, name, title, sections, count, place),
+			name="NotasWorkflowNVDA export",
+			daemon=True,
+		)
+		self.exportThread.start()
+		return True
+
+	def _writeExport(self, exporter, fmt, separate, target, name, title, sections, count, place):
+		"""Runs in a thread: builds and writes the document(s), then speaks the result."""
+		lang = documentLanguage()
+		fallback = messages.untitled()
+
+		def describe(note):
+			return messages.noteDetails(note, place)
+
+		try:
+			if separate:
+				groups = [(subfolder, notes) for _heading, notes, subfolder in sections]
+				folder, written = exporter.writeSeparate(
+					target, name, fmt, groups,
+					lambda note: exporter.buildDocument(None, None, [(None, [note])], describe, messages.noteTitle),
+					messages.noteTitle, lang, fallback,
+				)
+				result = messages.exportedSeparate(written, folder)
+			else:
+				intro = messages.exportIntro(count) if title is not None else None
+				blocks = exporter.buildDocument(title, intro, [(heading, notes) for heading, notes, _s in sections], describe, messages.noteTitle)
+				exporter.writeDocument(target, fmt, blocks, title or name, lang)
+				result = messages.exported(count, os.path.basename(target))
+		except Exception as e:
+			# Never log the notes or the path: only the kind of error.
+			log.warning("NotasWorkflowNVDA: export (%s)" % type(e).__name__)
+			result = messages.exportFailed(target)
+		self.speak(result)
 
 	def editNote(self, parent, noteId, focusContent=False):
 		from .noteDialog import NoteDialog

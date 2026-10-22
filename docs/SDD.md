@@ -60,6 +60,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-16 | Resumo das raias | Comando sem atalho padrão: fala quantas folhas há em cada raia |
 | RF-18 | Novo nome (1.1.0) | O complemento passou de NotasWorkflow para Notas Workflow NVDA (nome interno NotasWorkflowNVDA). No primeiro início, copia uma vez as configurações da seção [NotasWorkflow] e as folhas da pasta padrão antiga; numa pasta escolhida, copia NotasWorkflow-data.json para o nome novo. Nada do complemento antigo é movido ou apagado, e a cópia é anunciada |
 | RF-17 | Atualização externa | Ao abrir a janela, se o arquivo foi mudado por outro computador (pasta sincronizada), as folhas são lidas de novo |
+| RF-19 | Exportar como documento (1.4.0) | Botão **Exportar…** da janela principal: menu Folha selecionada… (só com folha selecionada), Caderno… e Pasta… (lista que começa no caderno ou na pasta do filtro ou da folha selecionada). Formatos Word (.docx), Markdown (.md) e HTML (.html), gerados só com a biblioteca padrão (`exporter.py`). Caderno e pasta: um arquivo com todas as folhas (título 1 = caderno ou pasta; na pasta, título 2 = "Folhas direto na pasta" e cada caderno; folhas na ordem das raias) ou um arquivo para cada folha (pasta nova com o nome, subpasta por caderno, nomes limpos, nunca sobrescreve). Cada folha: título, Status, Local (só na folha sozinha), Tags, datas e o conteúdo com os formatos do editor; títulos do conteúdo abaixo do título da folha. Gravação em segundo plano, com o resultado falado. Sem PDF por enquanto |
 
 ### 3.2 Requisitos de acessibilidade (RA)
 
@@ -88,9 +89,9 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RS-03 | Só JSON: nenhum `eval`, `exec`, `pickle`, `subprocess` ou shell |
 | RS-04 | Arquivos de dados e de importação acima de 200 MB são recusados sem ler tudo |
 | RS-05 | Dados importados ou lidos são validados: tipos, tamanhos (título 200, tag 50, conteúdo 1 MB), IDs (só letras, números, `-` e `_`, até 64), raias conhecidas, referências a cadernos e pastas existentes |
-| RS-06 | O HTML do conteúdo nunca é executado nem exibido como página: é convertido em texto por um analisador que descarta `script`, `style` e atributos; o HTML gerado escapa tudo o que a pessoa digitou (sem injeção quando o web abrir a folha) |
+| RS-06 | O HTML do conteúdo nunca é executado nem exibido como página: é convertido em texto por um analisador que descarta `script`, `style` e atributos; o HTML gerado escapa tudo o que a pessoa digitou (sem injeção quando o web abrir a folha). Na exportação (1.4.0), o conteúdo passa pela marcação do editor e volta a HTML: o documento só tem as tags dos formatos do editor, e títulos, tags e textos são escapados |
 | RS-07 | Gravação atômica (arquivo temporário + `os.replace`) com cópia de segurança: queda de energia ou erro não corrompe as folhas |
-| RS-08 | Nenhum caminho de arquivo vem dos dados: o nome do arquivo é fixo; a pasta e os arquivos de importação/exportação são escolhidos pela pessoa |
+| RS-08 | Nenhum caminho de arquivo vem dos dados: o nome do arquivo é fixo; a pasta e os arquivos de importação/exportação são escolhidos pela pessoa. Na exportação de um arquivo por folha (1.4.0), os nomes vêm dos títulos, mas sem separadores de caminho nem caracteres proibidos, sem nomes reservados do Windows, com até 80 caracteres, sempre dentro de uma pasta nova criada na pasta escolhida, e nada é sobrescrito |
 | RS-09 | Excluir folha, caderno ou pasta sempre pede confirmação; excluir caderno ou pasta nunca apaga folhas |
 | RS-10 | Complemento desligado nas telas seguras (logon, controle de conta) |
 | RS-11 | Desinstalar **não apaga** as folhas (são documentos da pessoa); a documentação diz onde ficam |
@@ -112,6 +113,7 @@ NVDA
      markup.py          Marcação leve <-> HTML; HTML -> texto; formatação de seleção
      search.py          Índice da busca (texto preparado de cada folha), normalização sem acentos, pontuação, trecho
      store.py           NotesStore: operações, índice por id, arquivo JSON com gravação em segundo plano
+     exporter.py        Exportar como documento: blocos comuns -> Word (.docx), Markdown e HTML; nomes de arquivo seguros
      messages.py        Textos traduzidos: raias, contagens, lugares, datas, descrição das folhas
      prompts.py         Menus e caixas de escolha compartilhados pelas janelas
      mainDialog.py      Janela "Notas Workflow NVDA": Mostrar, árvore de raias paginada, ações
@@ -123,7 +125,7 @@ NVDA
 
 Camadas:
 
-1. **Núcleo sem interface** (`model`, `markup`, `search`, `store`): não importa `wx` nem módulos do NVDA; é testado em Python 3.11 e 3.13.
+1. **Núcleo sem interface** (`model`, `markup`, `search`, `store`, `exporter`): não importa `wx` nem módulos do NVDA; é testado em Python 3.11 e 3.13.
 2. **Interface** (`messages`, `prompts`, `mainDialog`, `noteDialog`, `searchDialog`, `organizeDialog`, `settingsPanel`): wxPython e `gui.guiHelper` do NVDA.
 3. **Integração** (`__init__`): scripts, menu Ferramentas, registro do painel. A interface roda na linha principal do NVDA; a leitura do arquivo, a preparação da busca e a gravação rodam em linhas de execução próprias (seção 4.6).
 
@@ -216,7 +218,7 @@ Ordem de tabulação:
 
 1. **Mostrar** (caixa): Todas as folhas, Folhas soltas, Folhas recentes, Caderno: <nome>…, Pasta: <nome>…
 2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… fechados no início (só a raia da folha selecionada abre); cada folha: "Título, caderno Trabalho, tags x, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
-3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Fechar** (Esc).
+3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Exportar…** (menu Folha selecionada…, Caderno…, Pasta…; RF-19), **Fechar** (Esc).
 
 A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo o arquivo de novo se outro computador o mudou.
 

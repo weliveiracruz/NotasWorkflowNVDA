@@ -83,6 +83,7 @@ Os controles aparecem nesta ordem de tabulação:
 | Excluir | Alt+X | Exclui a folha selecionada, depois de confirmar. |
 | Buscar… | Alt+B | Abre a janela Buscar folhas. |
 | Cadernos e pastas… | Alt+T | Abre a janela Cadernos e pastas, que também lista e abre as folhas. |
+| Exportar… | Alt+E | Exporta a folha selecionada, um caderno ou uma pasta como documento do Word, Markdown ou HTML (veja Exportar como documento). |
 | Fechar | Alt+H ou Esc | Fecha a janela. |
 
 Os botões Atualizar o status da tarefa…, Mover para… e Excluir só ficam disponíveis (e só entram na tabulação) quando uma folha está selecionada.
@@ -303,6 +304,52 @@ Cada folha é lida com o título, o status, as tags e a data. **Enter sobre uma 
 
 Excluir uma pasta ou um caderno **nunca apaga folhas**: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções da caixa Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.
 
+## Exportar como documento
+
+O botão **Exportar… (Alt+E)** da janela principal grava folhas como documentos para ler, imprimir ou enviar a outras pessoas: um documento do **Word**, um arquivo **Markdown** ou uma **página HTML**, que abre em qualquer navegador. É diferente de Exportar folhas… das configurações, que grava a cópia de segurança `.json` (veja Importar e exportar).
+
+### O que exportar
+
+O botão abre um menu com:
+
+| Opção | O que exporta |
+|---|---|
+| Folha selecionada… | A folha selecionada na lista. Só aparece quando uma folha está selecionada. |
+| Caderno… | Todas as folhas de um caderno. Uma lista pergunta qual caderno, começando no caderno mostrado na caixa Mostrar ou no caderno da folha selecionada. |
+| Pasta… | Todas as folhas de uma pasta: as guardadas direto nela e as dos cadernos dela. Uma lista pergunta qual pasta, começando na pasta mostrada ou na pasta da folha selecionada. |
+
+Se não houver nenhum caderno (ou nenhuma pasta), o NVDA fala "Não há cadernos." (ou "Não há pastas."). Um caderno ou uma pasta sem folhas não é exportado: o NVDA fala "Nada para exportar:" e o nome.
+
+### Formato e arquivos
+
+Depois, uma lista pergunta o formato:
+
+| Formato | Arquivo | Bom para |
+|---|---|---|
+| Documento do Word (.docx) | `.docx` | Abrir no Word, no LibreOffice ou no Google Docs, imprimir e enviar. |
+| Markdown (.md) | `.md` | Texto simples com marcação, para outros programas de anotações. |
+| Página HTML (.html) | `.html` | Abrir no navegador, sem nenhum programa a mais. |
+
+Num caderno ou numa pasta, outra lista pergunta como exportar:
+
+- **Um arquivo com todas as folhas**: uma janela do Windows pergunta o nome e o lugar do arquivo, já com o nome do caderno ou da pasta. Se o arquivo já existe, o Windows pergunta antes de substituir.
+- **Um arquivo para cada folha**: uma janela do Windows pergunta em que pasta gravar. O complemento cria ali uma pasta nova com o nome do caderno ou da pasta e grava um arquivo para cada folha, com o título da folha como nome. Numa pasta, as folhas de cada caderno ficam numa subpasta com o nome do caderno. **Nada é sobrescrito**: se a pasta "Trabalho" já existe, a nova se chama "Trabalho (2)"; duas folhas com o mesmo título viram "Título.md" e "Título (2).md". Caracteres que o Windows não aceita em nomes de arquivo são tirados do nome.
+
+Para uma folha só, o complemento pergunta apenas o formato e o arquivo.
+
+A gravação acontece em segundo plano, então o NVDA continua respondendo mesmo com milhares de folhas. Ao terminar, o NVDA fala, por exemplo, "Exportado: 3 folhas, em Trabalho.docx" ou "Exportado: 12 folhas, um arquivo por folha, na pasta" e o caminho. Se não for possível gravar (pasta sem permissão, disco cheio), o NVDA fala "Não foi possível exportar para" e o caminho.
+
+### Como fica o documento
+
+- Um caderno exportado num arquivo só começa com o título 1 "Caderno" e o nome, seguido da frase "Exportado do Notas Workflow NVDA em" com a data e o número de folhas. Cada folha é um **título 2**.
+- Uma pasta começa com o título 1 "Pasta" e o nome. As folhas guardadas direto nela ficam sob o título 2 "Folhas direto na pasta", e as de cada caderno sob o título 2 "Caderno" e o nome; cada folha é um **título 3**.
+- Uma folha sozinha (ou cada arquivo de "um arquivo para cada folha") tem o título da folha como **título 1**.
+- As folhas aparecem na ordem das raias: A fazer, Em andamento, Bloqueada e Concluída.
+- Logo abaixo do título de cada folha vêm as linhas **Status:**, **Tags:** (quando há tags) e **Criada em … , atualizada em …**. Na exportação de uma folha só, vem também **Local:** com o caderno ou a pasta.
+- O conteúdo mantém a formatação: negrito, itálico, tachado, código, listas com marcadores e numeradas, citações, blocos de código e divisores. Os títulos do conteúdo ficam um nível abaixo do título da folha, para a estrutura de títulos continuar em ordem.
+
+O documento é feito para leitores de telas: no Word, os títulos usam os estilos Título 1, Título 2… e aparecem no painel de navegação; na página HTML, são títulos de verdade, navegáveis com a tecla H do NVDA. O documento tem o idioma do NVDA e o título nas propriedades do arquivo.
+
 ## Configurações
 
 Abra o menu do NVDA, Preferências, Configurações, categoria **Notas Workflow NVDA**.
@@ -349,7 +396,7 @@ Escolha como pasta das folhas uma pasta do **OneDrive** ou do **Google Drive par
 
 ### Exportar
 
-**Exportar folhas… (Alt+E)** nas configurações grava todas as folhas, cadernos e pastas num arquivo `.json`. O NVDA fala "Exportado:" e o número de folhas. O arquivo serve como cópia de segurança e para levar as folhas para outro computador.
+**Exportar folhas… (Alt+E)** nas configurações grava todas as folhas, cadernos e pastas num arquivo `.json`. O NVDA fala "Exportado:" e o número de folhas. O arquivo serve como cópia de segurança e para levar as folhas para outro computador. Para ter as folhas num documento para ler ou enviar, use o botão **Exportar…** da janela principal (veja Exportar como documento); esses documentos não podem ser importados de volta.
 
 ### Importar
 
@@ -403,6 +450,11 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 | Caderno … criado, Pasta … criada, Renomeado para …, … excluído | Criar, renomear e excluir cadernos, pastas e folhas. |
 | Carregando as folhas… | Um comando foi usado logo depois de o NVDA iniciar, enquanto as folhas ainda eram lidas. |
 | Importado: … / Exportado: … | Importação e exportação. |
+| Exportado: 3 folhas, em Trabalho.docx | Exportar… gravou o documento. |
+| Exportado: 3 folhas, um arquivo por folha, na pasta … | Exportar… gravou um arquivo para cada folha. |
+| Nada para exportar: Caderno … não tem folhas. | O caderno ou a pasta escolhida está vazia. |
+| Não há cadernos. / Não há pastas. | Exportar… > Caderno… ou Pasta… sem nenhum caderno ou pasta. |
+| Não foi possível exportar para … | O documento exportado não pôde ser gravado: confira a pasta. |
 | Folhas salvas na nova pasta / Usando as folhas da nova pasta | A pasta das folhas mudou. |
 | Folhas da versão anterior trazidas para o Notas Workflow NVDA: 2 folhas… | Primeiro início depois de trocar o NotasWorkflow 1.0.0 pelo Notas Workflow NVDA. |
 | Esta folha foi excluída. | A folha aberta foi excluída por outro caminho; nada é recriado. |
@@ -420,6 +472,7 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 - Arquivos importados são conferidos: tamanhos, tipos e identificadores inválidos são corrigidos ou descartados, e o conteúdo nunca é exibido como página nem executado.
 - O complemento fica desligado nas telas seguras do Windows (tela de logon e controle de conta de usuário).
 - As folhas ficam num arquivo de texto legível na pasta do seu perfil do Windows.
+- Os documentos exportados levam só o que está nas folhas e na formatação do editor: scripts, estilos, links e imagens que viessem de um arquivo importado são descartados, e a página HTML não carrega nada da internet.
 
 ## Perguntas frequentes
 
@@ -451,3 +504,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.1.0 | Novo nome do complemento, Notas Workflow NVDA, com os novos nomes de pasta e arquivo; nova seção "Quem usava o NotasWorkflow 1.0.0" com a migração das folhas; nova mensagem falada da migração. |
 | 1.3.0 | As raias começam fechadas e ficam como você as deixou; ao mudar o status ou o local na janela da folha, o foco vai para a próxima folha da mesma raia (nova seção "Trabalhar a pilha de uma raia"). |
 | 1.2.0 | Botão Criar (folha, caderno e pasta); Atualizar o status da tarefa; Mover para (caderno ou pasta, e folhas guardadas direto em pastas); Enter abre a folha; sem a visualização em tabela e sem o botão Abrir; folhas listadas e abertas na janela Cadernos e pastas; campo Local; listas de 200 em 200; desempenho com 100 mil folhas; sem menções a outras plataformas. |
+| 1.4.0 | Novo botão Exportar… na janela principal e novo capítulo "Exportar como documento": folha selecionada, caderno ou pasta em Word, Markdown ou HTML, num arquivo só ou num arquivo para cada folha; novas mensagens faladas da exportação. |

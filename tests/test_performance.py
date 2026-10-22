@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from _guiapp import (  # noqa: E402
-	NotasWorkflowNVDA, closeWindow, config, fakeModal, gui, noteDialog, organizeDialog, pump, searchDialog, store,
+	NotasWorkflowNVDA, closeWindow, config, fakeModal, gui, noteDialog, organizeDialog, prompts, pump, replaced, searchDialog, store,
 )
 import _helpers  # noqa: E402
 import gerar_massa  # noqa: E402
@@ -88,6 +88,19 @@ def run():
 	check("PERF-11 a notebook with its notes is opened in the tree", lambda: od.expandKey(("notebook", plugin.store.notebooks[0]["id"])), 2, plugin)
 	check("PERF-11 the tree of notebooks and folders is rebuilt", od.refresh, 3, plugin)
 	od.close()
+
+	# PERF-14 export: the folder with the most notes, in one Word file and one Markdown file per note.
+	s = plugin.store
+	biggest = max(s.folders, key=lambda f: len(s.notesInFolder(f["id"])) + sum(len(s.notesIn(nb["id"])) for nb in s.notebooksIn(f["id"])))
+	out = _helpers.tempFolder()
+	for fmt, mode, label in ((0, 0, "one Word file"), (1, 1, "one Markdown file per note")):
+		answers = [fmt, mode]
+		with replaced(prompts, "chooseItem", lambda *a, **k: answers.pop(0)), replaced(prompts, "askSaveFile", lambda *a: os.path.join(out, "pasta.docx")), replaced(prompts, "askFolder", lambda *a: out):
+			started = check("PERF-14 export of a folder (%s) does not stop NVDA" % label, lambda: plugin.exportItem(dlg, "folder", biggest["id"]), 1, plugin)
+		_r, elapsed = timed(lambda: plugin.exportThread.join(120))
+		print("   %6.2f s  PERF-14 written in the background (%s)" % (elapsed, label))
+		R.check("PERF-14 the export (%s) ends in the background (limit 60 s)" % label, started and not plugin.exportThread.is_alive() and elapsed <= 60, "%.2f s" % elapsed)
+	R.check("PERF-14 the files were written", os.path.getsize(os.path.join(out, "pasta.docx")) > 100000 and len(os.listdir(out)) == 2, os.listdir(out))
 	check("PERF-12 the window closes", closeWindow, 2, plugin)
 	_r, elapsed = timed(plugin.terminate)
 	print("   %6.2f s  PERF-13 exit" % elapsed)

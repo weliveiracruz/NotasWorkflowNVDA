@@ -17,6 +17,7 @@
 <li><strong>Update the task status…</strong>: a menu with the other statuses.</li>
 <li><strong>Move to…</strong>: moves the note to a notebook, directly to a folder, or makes it loose.</li>
 <li><strong>Delete</strong>, <strong>Search…</strong>, <strong>Notebooks and folders…</strong> and <strong>Close</strong> (Esc).</li>
+<li><strong>Export…</strong>: exports the selected note, a notebook or a folder as a document (see below).</li>
 </ul>
 <h2>Notes</h2>
 <p><strong>Create… &gt; Note…</strong> (or NVDA+Alt+F from anywhere) asks for the title, the location (loose, a folder or a notebook) and the status, and then opens the note window. The note window has the title, location, status, tags (separated by commas) and the content. If you change the status or the location there, closing the window puts the focus on the next note of the same lane, so a lane can be handled one note after the other. It saves by itself 2 seconds after you stop typing; Ctrl+S saves at once and closing the window (Esc or Save and close) always saves. Nothing is lost.</p>
@@ -38,6 +39,8 @@
 <p><strong>NVDA+Alt+B</strong> (or Search… in the window) searches the title, the content and the tags, ignoring accents and case, while you type. Results show the title, an excerpt, the relevance and the date; Enter opens the note. The search takes a fraction of a second even with 100,000 notes.</p>
 <h2>Notebooks and folders</h2>
 <p>The <strong>Notebooks and folders…</strong> window shows each folder with its notebooks and its notes, a "Without folder" branch with the other notebooks and a "Loose notes" branch. Enter opens a note. <strong>Create…</strong> creates a note, notebook or folder in the selected place; <strong>Rename…</strong> (F2) renames a folder or notebook or changes the title of a note; <strong>Move to…</strong> moves a note or a notebook; <strong>Delete</strong> (Delete key) deletes. Deleting a notebook or a folder never deletes notes: they become loose.</p>
+<h2>Export as a document</h2>
+<p><strong>Export…</strong> (Alt+X) in the main window opens a menu with <strong>Selected note…</strong>, <strong>Notebook…</strong> and <strong>Folder…</strong>, then asks the format: <strong>Word document (.docx)</strong>, <strong>Markdown (.md)</strong> or <strong>HTML page (.html)</strong>. A notebook or a folder can go to <strong>one file with all the notes</strong> or to <strong>one file for each note</strong> (in a new folder named after the notebook or folder, with a subfolder for each notebook). Each note brings its title, status, tags, dates and formatted content; the titles are real headings, easy to navigate with a screen reader. Nothing is overwritten without asking, the files are written in the background, and NVDA says how many notes were exported and where.</p>
 <h2>Shortcuts</h2>
 <table>
 <tr><th>Shortcut</th><th>Action</th></tr>

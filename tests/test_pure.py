@@ -15,7 +15,7 @@ sys.path.insert(0, HERE)
 import _helpers  # noqa: E402
 
 core = _helpers.loadCore()
-model, markup, search, store = core.model, core.markup, core.search, core.store
+model, markup, search, store, exporter = core.model, core.markup, core.search, core.store, core.exporter
 
 
 def newStore(folder=None):
@@ -684,6 +684,140 @@ class FUN19_Dates(unittest.TestCase):
 		self.assertIsNotNone(model.parseIso("2026-10-12T18:41:05+03:00"))
 		for bad in (None, 5, "", "ontem", "x" * 100):
 			self.assertIsNone(model.parseIso(bad))
+
+
+class FUN27_Export(unittest.TestCase):
+	"""Export as Word, Markdown and HTML (exporter.py, 1.4.0)."""
+
+	CONTENT = markup.textToHtml(
+		"Intro **negrito** e *itálico* ~~riscado~~ `cod`\n# Grande\n## Seção\n### Sub\n- a\n- b\n3. três\n4. quatro\n"
+		"> citação\n```\nx = 1 < 2\n```\n---"
+	)
+
+	def notes(self):
+		return [
+			{"id": "a", "title": "Nota *A* & <b>", "content": self.CONTENT, "tags": ["t"], "laneId": "todo"},
+			{"id": "b", "title": "", "content": "<p>texto</p>", "tags": [], "laneId": "done"},
+		]
+
+	def document(self, title="Caderno X"):
+		return exporter.buildDocument(title, "Exportado: 2 folhas", [(None, self.notes())], lambda n: ["Status: A fazer"], lambda n: n["title"] or "Sem título")
+
+	def test_document_structure(self):
+		blocks = self.document()
+		headings = [(b["level"], b["runs"][0][0]) for b in blocks if b["kind"] == "h"]
+		self.assertEqual(headings[:2], [(1, "Caderno X"), (2, "Nota *A* & <b>")])
+		# Headings of the content stay below the note: # and ## -> 3, ### -> 4.
+		self.assertEqual(headings[2:5], [(3, "Grande"), (3, "Seção"), (4, "Sub")])
+		self.assertEqual(headings[-1], (2, "Sem título"))
+		self.assertTrue(any(b["kind"] == "p" and b.get("meta") for b in blocks))
+
+	def test_single_note_is_heading_1(self):
+		blocks = exporter.buildDocument(None, None, [(None, self.notes()[:1])], lambda n: [], lambda n: n["title"])
+		self.assertEqual((blocks[0]["kind"], blocks[0]["level"]), ("h", 1))
+		self.assertEqual([b["level"] for b in blocks if b["kind"] == "h"][1:4], [2, 2, 3])
+
+	def test_folder_sections(self):
+		blocks = exporter.buildDocument("Pasta P", None, [("Direto", []), ("Caderno C", self.notes()[1:])], lambda n: [], lambda n: "N")
+		self.assertEqual([(b["level"], b["runs"][0][0]) for b in blocks if b["kind"] == "h"], [(1, "Pasta P"), (2, "Caderno C"), (3, "N")])
+
+	def test_markdown(self):
+		md = exporter.toMarkdown(self.document())
+		for expected in (
+			"# Caderno X\n", "## Nota \\*A\\* & \\<b\\>\n", "Intro **negrito** e *itálico* ~~riscado~~ `cod`\n",
+			"### Grande", "#### Sub", "- a\n- b\n", "3. três\n4. quatro\n", "> citação\n", "```\nx = 1 < 2\n```\n", "---\n",
+			"Status: A fazer",
+		):
+			self.assertIn(expected, md)
+		self.assertNotIn("\n\n\n", md)
+		# Lines that would become a list, a heading or a quote in Markdown are escaped.
+		meta = exporter.toMarkdown(exporter.buildDocument(None, None, [(None, self.notes()[1:])], lambda n: ["1. um", "# dois", "- três", "> quatro"], lambda n: "T"))
+		self.assertIn("\n1\\. um\n\n\\# dois\n\n\\- três\n\n\\> quatro\n", meta)
+
+	def test_html(self):
+		page = exporter.toHtml(self.document(), "Caderno <X>", "pt-BR")
+		self.assertTrue(page.startswith('<!DOCTYPE html>\n<html lang="pt-BR">'))
+		self.assertIn("<title>Caderno &lt;X&gt;</title>", page)
+		self.assertIn("<h2>Nota *A* &amp; &lt;b&gt;</h2>", page)
+		self.assertIn('<p class="meta">Status: A fazer</p>', page)
+		self.assertIn("<ul>\n<li>a</li>\n<li>b</li>\n</ul>", page)
+		self.assertIn('<ol start="3">', page)
+		self.assertIn("<blockquote>\n<p>citação</p>\n</blockquote>", page)
+		self.assertIn("<pre><code>x = 1 &lt; 2</code></pre>", page)
+		self.assertIn("<strong>negrito</strong>", page)
+		self.assertIn("<h3>Grande</h3>", page)
+
+	def test_docx(self):
+		import zipfile
+		from xml.dom import minidom
+
+		path = os.path.join(_helpers.tempFolder(), "x.docx")
+		exporter.writeDocx(path, self.document(), "Caderno X", "pt-BR")
+		with zipfile.ZipFile(path) as z:
+			parts = {name: z.read(name).decode("utf-8") for name in z.namelist()}
+		for xml in parts.values():
+			minidom.parseString(xml.encode("utf-8"))
+		doc = parts["word/document.xml"]
+		self.assertIn('<w:pStyle w:val="Heading1"/>', doc)
+		self.assertIn('<w:pStyle w:val="Heading4"/>', doc)
+		self.assertIn("Nota *A* &amp; &lt;b&gt;", doc)
+		self.assertIn("<w:b/>", doc)
+		self.assertIn("<w:strike/>", doc)
+		self.assertIn('<w:numId w:val="1"/>', doc)
+		self.assertIn('<w:startOverride w:val="3"/>', parts["word/numbering.xml"])
+		self.assertIn('w:outlineLvl w:val="0"', parts["word/styles.xml"])
+		self.assertIn('w:lang w:val="pt-BR"', parts["word/styles.xml"])
+		self.assertIn("<dc:title>Caderno X</dc:title>", parts["docProps/core.xml"])
+		# Same notes, same file.
+		again = os.path.join(_helpers.tempFolder(), "x.docx")
+		exporter.writeDocx(again, self.document(), "Caderno X", "pt-BR")
+		with open(path, "rb") as f1, open(again, "rb") as f2:
+			self.assertEqual(f1.read(), f2.read())
+
+	def test_ordered_lists_restart(self):
+		content = markup.textToHtml("1. um\n2. dois\n\n1. outro")
+		blocks = exporter.contentBlocks(content)
+		self.assertEqual([(b["number"], b["list"]) for b in blocks if b["kind"] == "li"], [(1, 1), (2, 1), (1, 2)])
+
+	def test_characters_that_cannot_be_written(self):
+		note = {"id": "x", "title": "a\x01b\ud800c", "content": "<p>d\x0be</p>", "tags": [], "laneId": "todo"}
+		blocks = exporter.buildDocument(None, None, [(None, [note])], lambda n: [], lambda n: n["title"])
+		folder = _helpers.tempFolder()
+		for fmt in exporter.FORMATS:
+			path = os.path.join(folder, "x" + exporter.EXTENSIONS[fmt])
+			exporter.writeDocument(path, fmt, blocks, note["title"], "en")
+			self.assertTrue(os.path.getsize(path) > 0)
+		self.assertEqual(exporter.toMarkdown(blocks), "# abc\n\nde\n")
+
+	def test_empty_content(self):
+		blocks = exporter.buildDocument(None, None, [(None, [{"id": "x", "title": "T", "content": "", "tags": [], "laneId": "todo"}])], lambda n: [], lambda n: "T")
+		self.assertEqual(len(blocks), 1)
+		path = os.path.join(_helpers.tempFolder(), "x.docx")
+		exporter.writeDocx(path, [], "T", "en")
+		self.assertTrue(os.path.isfile(path))
+
+	def test_safe_names(self):
+		self.assertEqual(exporter.safeName('a<b>:"c/d\\e|f?g*h', "x"), "abcdefgh")
+		self.assertEqual(exporter.safeName("CON", "x"), "_CON")
+		self.assertEqual(exporter.safeName("com1.txt", "x"), "_com1.txt")
+		self.assertEqual(exporter.safeName(" ... ", "Sem título"), "Sem título")
+		self.assertEqual(exporter.safeName("..\\..\\fora", "x"), "....fora")
+		self.assertEqual(len(exporter.safeName("x" * 500, "y")), exporter.MAX_NAME)
+
+	def test_one_file_for_each_note_never_overwrites(self):
+		folder = _helpers.tempFolder()
+		with open(os.path.join(folder, "Caderno"), "w") as f:
+			f.write("já existe")
+		same = [{"id": "1", "title": "Igual", "content": "", "tags": [], "laneId": "todo"}, {"id": "2", "title": "igual", "content": "", "tags": [], "laneId": "todo"}]
+		root, count = exporter.writeSeparate(
+			folder, "Caderno", "md", [(None, same), ("Sub", same[:1]), ("sub", same[:1])],
+			lambda n: exporter.buildDocument(None, None, [(None, [n])], lambda x: [], lambda x: x["title"]),
+			lambda n: n["title"], "en", "Sem título",
+		)
+		self.assertEqual((os.path.basename(root), count), ("Caderno (2)", 4))
+		self.assertEqual(sorted(os.listdir(root)), ["Igual.md", "Sub", "igual (2).md", "sub (2)"])
+		with open(os.path.join(folder, "Caderno")) as f:
+			self.assertEqual(f.read(), "já existe")
 
 
 class FUN16_Compiles(unittest.TestCase):

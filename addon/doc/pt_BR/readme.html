@@ -17,6 +17,7 @@
 <li><strong>Atualizar o status da tarefa…</strong>: um menu com os outros status.</li>
 <li><strong>Mover para…</strong>: move a folha para um caderno, direto para uma pasta ou a deixa solta.</li>
 <li><strong>Excluir</strong>, <strong>Buscar…</strong>, <strong>Cadernos e pastas…</strong> e <strong>Fechar</strong> (Esc).</li>
+<li><strong>Exportar…</strong>: exporta a folha selecionada, um caderno ou uma pasta como documento (veja abaixo).</li>
 </ul>
 <h2>Folhas</h2>
 <p><strong>Criar… &gt; Folha…</strong> (ou NVDA+Alt+F de qualquer lugar) pede o título, o local (solta, uma pasta ou um caderno) e o status e depois abre a janela da folha. A janela da folha tem título, local, status, tags (separadas por vírgula) e o conteúdo. Se você mudar o status ou o local ali, ao fechar a janela o foco vai para a próxima folha da mesma raia, para tratar a raia uma folha depois da outra. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.</p>
@@ -38,6 +39,8 @@
 <p><strong>NVDA+Alt+B</strong> (ou Buscar… na janela) procura no título, no conteúdo e nas tags, sem diferenciar acentos e maiúsculas, enquanto você digita. Os resultados mostram título, trecho, relevância e data; Enter abre a folha. A busca leva uma fração de segundo mesmo com 100 mil folhas.</p>
 <h2>Cadernos e pastas</h2>
 <p>A janela <strong>Cadernos e pastas…</strong> mostra cada pasta com os seus cadernos e as suas folhas, um ramo "Sem pasta" com os outros cadernos e um ramo "Folhas soltas". Enter abre uma folha. <strong>Criar…</strong> cria uma folha, um caderno ou uma pasta no lugar selecionado; <strong>Renomear…</strong> (F2) renomeia uma pasta ou um caderno ou muda o título de uma folha; <strong>Mover para…</strong> move uma folha ou um caderno; <strong>Excluir</strong> (tecla Delete) exclui. Excluir um caderno ou uma pasta nunca apaga folhas: elas ficam soltas.</p>
+<h2>Exportar como documento</h2>
+<p><strong>Exportar…</strong> (Alt+E) na janela principal abre um menu com <strong>Folha selecionada…</strong>, <strong>Caderno…</strong> e <strong>Pasta…</strong> e depois pergunta o formato: <strong>Documento do Word (.docx)</strong>, <strong>Markdown (.md)</strong> ou <strong>Página HTML (.html)</strong>. Um caderno ou uma pasta pode ir para <strong>um arquivo com todas as folhas</strong> ou para <strong>um arquivo para cada folha</strong> (numa pasta nova com o nome do caderno ou da pasta e uma subpasta para cada caderno). Cada folha leva título, status, tags, datas e o conteúdo com a formatação; os títulos são títulos de verdade, fáceis de navegar com o leitor de telas. Nada é sobrescrito sem perguntar, os arquivos são gravados em segundo plano e o NVDA fala quantas folhas foram exportadas e onde.</p>
 <h2>Atalhos</h2>
 <table>
 <tr><th>Atalho</th><th>Ação</th></tr>
