@@ -8,7 +8,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 
 * **Show**: all notes, loose notes (neither in a notebook nor in a folder), recent notes (the 10 changed last), one notebook or one folder.
 * **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Lanes start closed: Right Arrow opens one, Left Arrow closes it. Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status, **Ctrl+Shift+Up Arrow** and **Ctrl+Shift+Down Arrow** move it up or down inside its lane. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
-* **Create…**: a menu to create a note, a notebook or a folder.
+* **Create…**: a menu to create a note, a notebook (New notebook asks the name and the folder), a folder or a **note from a document**.
 * **Update the task status…**: a menu with the other statuses.
 * **Move to…**: moves the note to a notebook, directly to a folder, or makes it loose.
 * **Location** (in New note, in the note window and in Move to) is a tree that opens like the lanes: each folder starts closed, with its notebooks inside; choosing the folder itself puts the note directly in it.
@@ -43,6 +43,10 @@ The **Formatting…** button opens a menu with every format; it applies to the s
 ## Notebooks and folders
 
 The **Notebooks and folders…** window shows each folder with its notebooks and its notes, a "Without folder" branch with the other notebooks and a "Loose notes" branch. Enter opens a note. **Create…** creates a note, notebook or folder in the selected place; **Rename…** (F2) renames a folder or notebook or changes the title of a note; **Move to…** moves a note or a notebook; **Delete** (Delete key) deletes. Deleting a notebook or a folder never deletes notes: they become loose.
+
+## Note from a document
+
+**Create… > Note from document…** asks for a Word (.docx), PowerPoint (.pptx), text (.txt), HTML or e-mail (.eml) file, reads it in the background and creates a note with its title and its text in the content: headings, lists, bold and italic are kept, each slide becomes a heading, a table row becomes one line ("a | b"), and an e-mail starts with From, To, Cc, Date and Attachments. In the note window, **Insert document…** (Alt+D) puts the text of a document at the cursor of an existing note. A note holds up to 1 MB: longer documents are cut, with a warning. Old Office formats (.doc, .ppt, .rtf), PDF and Outlook .msg files are not read.
 
 ## Export as a document
 

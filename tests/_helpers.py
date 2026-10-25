@@ -12,7 +12,7 @@ ROOT = os.path.abspath(os.path.join(HERE, ".."))
 PKG_DIR = os.path.join(ROOT, "addon", "globalPlugins", "NotasWorkflowNVDA")
 sys.path.insert(0, HERE)
 
-CORE = ("model", "markup", "search", "store", "exporter")
+CORE = ("model", "markup", "search", "store", "exporter", "importer")
 
 
 def loadCore():

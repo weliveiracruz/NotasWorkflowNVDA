@@ -106,6 +106,29 @@ def run():
 		print("   %6.2f s  PERF-14 written in the background (%s)" % (elapsed, label))
 		R.check("PERF-14 the export (%s) ends in the background (limit 60 s)" % label, started and not plugin.exportThread.is_alive() and elapsed <= 60, "%.2f s" % elapsed)
 	R.check("PERF-14 the files were written", os.path.getsize(os.path.join(out, "pasta.docx")) > 100000 and len(os.listdir(out)) == 2, os.listdir(out))
+	# PERF-16 a Word document of about 300 pages (6,000 paragraphs) read into a note (1.8.0).
+	import _documents
+
+	body = []
+	for i in range(6000):
+		if i % 20 == 0:
+			body.append(_documents.para("Capítulo %d" % i, style="Ttulo1"))
+		elif i % 7 == 0:
+			body.append(_documents.para("Item da lista %d" % i, num="1"))
+		else:
+			body.append(_documents.para("Parágrafo %d com " % i, _documents.run("negrito", bold=True), " e um texto comum que ocupa uma linha inteira da página."))
+	big = _documents.docx(os.path.join(out, "grande.docx"), body)
+	got = []
+	check("PERF-16 reading a 300-page Word document does not stop NVDA", lambda: plugin.readDocument(big, lambda *a: got.append(a)), 0.2, plugin)
+	_r, elapsed = timed(lambda: plugin.documentThread.join(60))
+	pump(lambda: got, 5)
+	print("   %6.2f s  PERF-16 read in the background" % elapsed)
+	R.check("PERF-16 the 300-page document is read in the background (limit 15 s), with its headings", got and got[0][3] is None and got[0][1].count("\n# Cap") >= 290 and elapsed <= 15, "%.2f s" % elapsed)
+	from NotasWorkflowNVDA import markup as markup_
+
+	_r, elapsed = timed(lambda: markup_.textToHtml(got[0][1]))
+	print("   %6.2f s  PERF-16 HTML of the note" % elapsed)
+	R.check("PERF-16 the text becomes the HTML of the note on NVDA's main thread quickly (limit 0.5 s)", elapsed <= 0.5, "%.2f s" % elapsed)
 	check("PERF-12 the window closes", closeWindow, 2, plugin)
 	_r, elapsed = timed(plugin.terminate)
 	print("   %6.2f s  PERF-13 exit" % elapsed)

@@ -13,6 +13,7 @@ import re
 import socket
 import subprocess  # nosec B404 - runs bandit in the test only
 import sys
+import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -69,7 +70,7 @@ def run():
 	namespaces = re.compile(r"https?://(schemas\.openxmlformats\.org|purl\.org/dc|www\.w3\.org/2001/XMLSchema-instance)")
 	addresses = [p for p, s in sources.items() if re.search(r"https?://", namespaces.sub("", s))]
 	R.check("SEG-01 no web address in the code (nothing is sent anywhere)", not addresses, addresses)
-	R.check("SEG-01 the XML namespaces of the Word export are only in exporter.py", all(os.path.basename(p) == "exporter.py" for p, s in sources.items() if namespaces.search(s)))
+	R.check("SEG-01 the XML namespaces of Word and PowerPoint are only in exporter.py and importer.py", all(os.path.basename(p) in ("exporter.py", "importer.py") for p, s in sources.items() if namespaces.search(s)))
 	attempts = []
 	original = socket.socket
 
@@ -123,7 +124,7 @@ def run():
 	pattern = re.compile(r"(?<![\w.])(eval|exec|compile)\s*\(|\bpickle\b|\bmarshal\b|\bshelve\b|\bsubprocess\b|os\.system|os\.popen|os\.startfile|shell\s*=\s*True|__import__|yaml\.load|ctypes")
 	bad = ["%s: %s" % (p, m.group(0)) for p, s in sources.items() for m in pattern.finditer(s)]
 	R.check("SEG-03 no eval, exec, pickle, subprocess, shell or ctypes in the add-on", not bad, bad)
-	allowed = {"datetime", "heapq", "html", "json", "os", "re", "shutil", "threading", "time", "uuid", "unicodedata", "zipfile",
+	allowed = {"datetime", "heapq", "html", "json", "os", "re", "shutil", "threading", "time", "uuid", "unicodedata", "zipfile", "email", "io", "posixpath", "xml",
 		"addonHandler", "languageHandler", "config", "globalPluginHandler", "globalVars", "gui", "queueHandler", "ui", "wx", "logHandler", "scriptHandler"}
 	R.check("SEG-03 only the standard library and NVDA (no third-party dependency)", imported <= allowed, sorted(imported - allowed))
 
@@ -211,6 +212,46 @@ def run():
 		(sorted(tags - safeTags), attributes, page[:300]),
 	)
 	R.check("SEG-06 the add-on never renders HTML (no wx.html, no browser)", not any(re.search(r"wx\.html|webbrowser|WebView", s) for s in sources.values()))
+
+	# -- SEG-13 documents read into notes (1.8.0) ----------------------------------------------------------
+	import _documents
+	from NotasWorkflowNVDA import importer
+
+	docs = _documents.folder()
+
+	def readKind(path):
+		try:
+			importer.readDocument(path)
+			return "read"
+		except importer.DocumentError as e:
+			return e.kind
+
+	bomb = os.path.join(docs, "bomba.docx")
+	with zipfile.ZipFile(bomb, "w", zipfile.ZIP_DEFLATED) as z:
+		z.writestr("word/document.xml", b"<a>" + b"x" * (importer.MAX_PART + 10) + b"</a>")
+	R.check("SEG-13 a zip bomb (part above 100 MB once uncompressed) is refused", readKind(bomb) == "tooBig", readKind(bomb))
+	laughs = '<?xml version="1.0"?><!DOCTYPE w [<!ENTITY a "aaaaaaaaaa"><!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">]><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>&b;</w:t></w:r></w:p></w:body></w:document>'
+	R.check("SEG-13 XML with a DTD (entity expansion, external entities) is refused", readKind(_documents._zip(os.path.join(docs, "risadas.docx"), {"word/document.xml": laughs})) == "damaged")
+	external = '<?xml version="1.0"?><!DOCTYPE w [<!ENTITY x SYSTEM "file:///c:/windows/win.ini">]><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>&x;</w:t></w:r></w:p></w:body></w:document>'
+	R.check("SEG-13 an external entity never reads another file", readKind(_documents._zip(os.path.join(docs, "externa.docx"), {"word/document.xml": external})) == "damaged")
+	page = os.path.join(docs, "ataque.html")
+	with open(page, "w", encoding="utf-8") as fh:
+		fh.write('<p onclick="x()">texto</p><script>alert(1)</script><iframe src="http://x"></iframe><img src=x onerror=alert(2)><a href="javascript:alert(3)">link</a>')
+	title, text = importer.readDocument(page)
+	html = markup.textToHtml(text)
+	R.check("SEG-13 a page read into a note keeps only its words: no script, frame, image, link or attribute", "<script" not in html and "<iframe" not in html and "<img" not in html and "href" not in html and "onclick" not in html and "alert" not in text, html)
+	plugin2 = newPlugin()
+	secretDoc = _documents.docx(os.path.join(docs, "segredo.docx"), [_documents.para("texto " + SECRET)])
+	got = []
+	plugin2.readDocument(secretDoc, lambda *a: got.append(a))
+	plugin2.documentThread.join(10)
+	pump(lambda: got, 3)
+	broken = _documents.text(os.path.join(docs, "quebrado.pptx"), SECRET)
+	plugin2.readDocument(broken, lambda *a: got.append(a))
+	plugin2.documentThread.join(10)
+	pump(lambda: len(got) > 1, 3)
+	R.check("SEG-13 the text of a document never reaches the NVDA log", len(got) == 2 and not any(SECRET in x for x in RECORD["log"]), [x for x in RECORD["log"] if SECRET in x][:2])
+	plugin2.terminate()
 
 	# -- SEG-07 atomic write --------------------------------------------------------------------------------------
 	s = _helpers.newStore(_helpers.loadCore())

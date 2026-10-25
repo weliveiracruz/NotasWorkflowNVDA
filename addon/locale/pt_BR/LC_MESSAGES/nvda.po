@@ -158,10 +158,6 @@ msgstr "Sem título"
 msgid "Loose note (no notebook or folder)"
 msgstr "Folha solta (sem caderno nem pasta)"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/messages.py:176
-msgid "Name of the new notebook:"
-msgstr "Nome do novo caderno:"
-
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:191
 msgid "Already in the first lane"
 msgstr "Já está na primeira raia"
@@ -337,10 +333,6 @@ msgstr "{format} removido"
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:67
 msgid "Notebook {name} (folder {folder})"
 msgstr "Caderno {name} (pasta {folder})"
-
-#: addon/globalPlugins/NotasWorkflowNVDA/messages.py:174
-msgid "Name of the new notebook (in the folder {folder}):"
-msgstr "Nome do novo caderno (na pasta {folder}):"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:224
 msgid "The saved notes were damaged. The file was kept as {name} and the backup copy was used."
@@ -705,3 +697,96 @@ msgstr "Não há cadernos."
 #: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
 msgid "There are no folders."
 msgstr "Não há pastas."
+
+msgid "&Name:"
+msgstr "&Nome:"
+
+msgid "&Folder:"
+msgstr "&Pasta:"
+
+msgid "No folder"
+msgstr "Nenhuma pasta"
+
+msgid "Note from &document…"
+msgstr "Folha a partir de &documento…"
+
+msgid "Documents (*.docx, *.pptx, *.txt, *.html, *.eml)"
+msgstr "Documentos (*.docx, *.pptx, *.txt, *.html, *.eml)"
+
+msgid "Word document (*.docx)"
+msgstr "Documento do Word (*.docx)"
+
+msgid "PowerPoint presentation (*.pptx)"
+msgstr "Apresentação do PowerPoint (*.pptx)"
+
+msgid "Text (*.txt)"
+msgstr "Texto (*.txt)"
+
+msgid "HTML page (*.html, *.htm)"
+msgstr "Página HTML (*.html, *.htm)"
+
+msgid "E-mail message (*.eml)"
+msgstr "Mensagem de e-mail (*.eml)"
+
+msgid "Slide {number}"
+msgstr "Slide {number}"
+
+msgid "Slide {number}: {title}"
+msgstr "Slide {number}: {title}"
+
+msgid "Speaker notes:"
+msgstr "Anotações do orador:"
+
+msgid "From:"
+msgstr "De:"
+
+msgid "To:"
+msgstr "Para:"
+
+msgid "Cc:"
+msgstr "Cc:"
+
+msgid "Date:"
+msgstr "Data:"
+
+msgid "Attachments:"
+msgstr "Anexos:"
+
+msgid "{file} cannot be read. Choose a Word (.docx), PowerPoint (.pptx), text (.txt), HTML or e-mail (.eml) document."
+msgstr "{file} não pode ser lido. Escolha um documento do Word (.docx), do PowerPoint (.pptx), de texto (.txt), HTML ou de e-mail (.eml)."
+
+msgid "{file} has more than 50 MB and was not read."
+msgstr "{file} tem mais de 50 MB e não foi lido."
+
+msgid "Could not read {file}: the file is damaged or protected by a password."
+msgstr "Não foi possível ler {file}: o arquivo está danificado ou protegido por senha."
+
+msgid "{file} has no text."
+msgstr "{file} não tem texto."
+
+msgid "Could not open {file}."
+msgstr "Não foi possível abrir {file}."
+
+msgid "Reading the document…"
+msgstr "Lendo o documento…"
+
+msgid "The note is full (up to 1 MB): nothing was inserted."
+msgstr "A folha está cheia (até 1 MB): nada foi inserido."
+
+msgid "The text was too long: only its first part was used (a note holds up to 1 MB)."
+msgstr "O texto era longo demais: só a primeira parte foi usada (uma folha guarda até 1 MB)."
+
+msgid "Choose the document"
+msgstr "Escolha o documento"
+
+msgid "Note created in {lane} with the text of {file}"
+msgstr "Folha criada em {lane} com o texto de {file}"
+
+msgid "Notas Workflow NVDA: creates a note with the text of a document (Word, PowerPoint, text, HTML or e-mail)"
+msgstr "Notas Workflow NVDA: cria uma folha com o texto de um documento (Word, PowerPoint, texto, HTML ou e-mail)"
+
+msgid "Insert &document…"
+msgstr "Inserir &documento…"
+
+msgid "Text of {file} inserted"
+msgstr "Texto de {file} inserido"

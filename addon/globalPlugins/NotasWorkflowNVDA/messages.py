@@ -167,7 +167,87 @@ def createLabels():
 		_("Note&book…"),
 		# Translators: item of the Create menu.
 		_("&Folder…"),
+		# Translators: item of the Create menu: a note with the text of a Word, PowerPoint, text, HTML or e-mail document.
+		_("Note from &document…"),
 	]
+
+
+def documentWildcard():
+	"""Types of file of the dialog that chooses a document to read."""
+	parts = [
+		# Translators: type of file in the dialog that chooses a document to read into a note.
+		_("Documents (*.docx, *.pptx, *.txt, *.html, *.eml)") + "|*.docx;*.pptx;*.txt;*.html;*.htm;*.eml",
+		# Translators: type of file in the dialog that chooses a document to read into a note.
+		_("Word document (*.docx)") + "|*.docx",
+		# Translators: type of file in the dialog that chooses a document to read into a note.
+		_("PowerPoint presentation (*.pptx)") + "|*.pptx",
+		# Translators: type of file in the dialog that chooses a document to read into a note.
+		_("Text (*.txt)") + "|*.txt",
+		# Translators: type of file in the dialog that chooses a document to read into a note.
+		_("HTML page (*.html, *.htm)") + "|*.html;*.htm",
+		# Translators: type of file in the dialog that chooses a document to read into a note.
+		_("E-mail message (*.eml)") + "|*.eml",
+	]
+	return "|".join(parts)
+
+
+def documentLabels():
+	"""Words written in the text of a presentation or an e-mail read into a note."""
+	return {
+		# Translators: heading of a slide of a presentation read into a note.
+		"slide": _("Slide {number}"),
+		# Translators: heading of a slide of a presentation read into a note, with the title of the slide.
+		"slideTitled": _("Slide {number}: {title}"),
+		# Translators: line before the speaker notes of a slide read into a note.
+		"notes": _("Speaker notes:"),
+		# Translators: line of an e-mail read into a note: who sent it.
+		"from": _("From:"),
+		# Translators: line of an e-mail read into a note: to whom it was sent.
+		"to": _("To:"),
+		# Translators: line of an e-mail read into a note: copy.
+		"cc": _("Cc:"),
+		# Translators: line of an e-mail read into a note: when it was sent.
+		"date": _("Date:"),
+		# Translators: line of an e-mail read into a note: the names of the attached files.
+		"attachments": _("Attachments:"),
+	}
+
+
+def documentDate(when):
+	"""Date and time of an e-mail read into a note."""
+	return "%s %s" % (formatDate(model.nowIso(when)), formatTime(when.astimezone()))
+
+
+def documentError(kind, name):
+	if kind == "unsupported":
+		# Translators: spoken when the chosen file cannot be read; {file} is its name.
+		return _("{file} cannot be read. Choose a Word (.docx), PowerPoint (.pptx), text (.txt), HTML or e-mail (.eml) document.").format(file=name)
+	if kind == "tooBig":
+		# Translators: spoken when the chosen document is too big; {file} is its name.
+		return _("{file} has more than 50 MB and was not read.").format(file=name)
+	if kind == "damaged":
+		# Translators: spoken when the chosen document is damaged or protected; {file} is its name.
+		return _("Could not read {file}: the file is damaged or protected by a password.").format(file=name)
+	if kind == "empty":
+		# Translators: spoken when the chosen document has no text; {file} is its name.
+		return _("{file} has no text.").format(file=name)
+	# Translators: spoken when the chosen document could not be opened; {file} is its name.
+	return _("Could not open {file}.").format(file=name)
+
+
+def readingDocument():
+	# Translators: spoken while a document is read to create a note or to insert it in a note.
+	return _("Reading the document…")
+
+
+def documentNoRoom():
+	# Translators: spoken by Insert document when the note already has the most text a note can hold.
+	return _("The note is full (up to 1 MB): nothing was inserted.")
+
+
+def documentCut():
+	# Translators: spoken when the text of a document did not fit in the note.
+	return _("The text was too long: only its first part was used (a note holds up to 1 MB).")
 
 
 def exportLabels(withNote):
@@ -262,12 +342,6 @@ def exportFailed(path):
 	return _("Could not export to {path}. Check that the folder exists and can be written.").format(path=path)
 
 
-def askNotebookName(folder=None):
-	if folder:
-		# Translators: question when creating a notebook inside a folder.
-		return _("Name of the new notebook (in the folder {folder}):").format(folder=folder["name"])
-	# Translators: question when creating a notebook.
-	return _("Name of the new notebook:")
 
 
 def notebookCreated(name):

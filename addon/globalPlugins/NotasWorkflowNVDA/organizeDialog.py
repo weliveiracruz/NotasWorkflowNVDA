@@ -298,6 +298,11 @@ class OrganizeDialog(wx.Dialog):
 			noteId = self.plugin.newNote(self, model.DEFAULT_LANE, notebookId, folderId)
 			if noteId:
 				self.refresh(("note", noteId))
+		elif index == 3:
+			notebookId, folderId = self.place()
+			# The document is read in the background: the note comes later.
+			if self.plugin.noteFromDocument(self, model.DEFAULT_LANE, notebookId, folderId, done=self.noteCreated):
+				return
 		elif index == 1:
 			notebook = self.plugin.createNotebook(self, self.targetFolder())
 			if notebook:
@@ -306,6 +311,14 @@ class OrganizeDialog(wx.Dialog):
 			folder = self.plugin.createFolder(self)
 			if folder:
 				self.refresh(("folder", folder["id"]))
+		self.tree.SetFocus()
+
+	def noteCreated(self, noteId):
+		# The window may have been closed while the document was read.
+		if not self:
+			return
+		if noteId:
+			self.refresh(("note", noteId))
 		self.tree.SetFocus()
 
 	def onRename(self, evt):

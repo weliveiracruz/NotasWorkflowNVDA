@@ -12,7 +12,7 @@ sys.path.insert(0, HERE)
 
 from _guiapp import (  # noqa: E402
 	RECORD, VK_RETURN, Key, MainDialog, NotasWorkflowNVDA, click, closeWindow, config, creating, fakeModal, gui, mainDialog,
-	mark, menu, model, newPlugin, noteDialog, openWindow, organizeDialog, postKey, prompts, pump, realChoosePlace, replaced, searchDialog,
+	mark, menu, model, newPlugin, noteDialog, openWindow, organizeDialog, postKey, prompts, pump, realAskNotebook, realChoosePlace, replaced, searchDialog,
 	settingsPanel, spokenSince, store, tableRows, treeFind, treeTexts, waitSpoken, wx,
 )
 import _helpers  # noqa: E402
@@ -94,7 +94,7 @@ def run():
 		click(dlg.createButton)
 	R.check("FUN-01 Create menu closed: nothing created", len(plugin.store.notes) == 1 and not plugin.store.notebooks)
 	n = mark()
-	with menu(1), replaced(prompts, "askText", lambda *a, **k: "Trabalho"):
+	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId: ("Trabalho", folderId)):
 		click(dlg.createButton)
 	nb = plugin.store.notebooks[0] if plugin.store.notebooks else None
 	R.check("FUN-01 Create > Notebook creates a notebook", nb is not None and nb["name"] == "Trabalho" and "Notebook Trabalho created" in spokenSince(n), spokenSince(n))
@@ -103,14 +103,46 @@ def run():
 		click(dlg.createButton)
 	f = plugin.store.folders[0] if plugin.store.folders else None
 	R.check("FUN-01 Create > Folder creates a folder", f is not None and f["name"] == "Projetos" and "Folder Projetos created" in spokenSince(n), spokenSince(n))
-	with menu(1), replaced(prompts, "askText", lambda *a, **k: None):
+	with menu(1), replaced(prompts, "askNotebook", lambda *a, **k: None):
 		click(dlg.createButton)
 	R.check("FUN-01 cancelled name creates nothing", len(plugin.store.notebooks) == 1)
 	dlg.setFilter(("folder", f["id"]))
-	with menu(1), replaced(prompts, "askText", lambda *a, **k: "Dentro da pasta"):
+	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId: ("Dentro da pasta", folderId)):
 		click(dlg.createButton)
 	R.check("FUN-01 notebook created while a folder is shown goes into it", plugin.store.notebooks[-1]["folderId"] == f["id"])
 	plugin.store.deleteNotebook(plugin.store.notebooks[-1]["id"])
+	# -- FUN-32 New notebook asks the folder (1.8.0) ------------------------------------------------
+	dlg.setFilter(("all", None))
+	seen = {}
+
+	def fillNotebook(name, folderIndex):
+		def action(d):
+			seen["folders"] = d.folderChoice.GetItems()
+			seen["start"] = d.folderChoice.GetSelection()
+			seen["disabled"] = not d.createButton.IsEnabled()
+			d.nameEdit.SetValue(name)
+			if folderIndex is not None:
+				d.folderChoice.SetSelection(folderIndex)
+			return wx.ID_OK
+		return action
+
+	with menu(1), replaced(prompts, "askNotebook", realAskNotebook), fakeModal(prompts.NotebookDialog, fillNotebook("Escolhida", 1)):
+		click(dlg.createButton)
+	chosen = plugin.store.notebooks[-1]
+	R.check("FUN-32 New notebook has a Folder box with No folder and each folder; Create waits for a name", seen.get("folders") == ["No folder", "Projetos"] and seen.get("disabled") is True, seen)
+	R.check("FUN-32 with all notes shown, the folder starts on No folder", seen.get("start") == 0, seen)
+	R.check("FUN-32 the folder chosen in New notebook is the notebook's folder", chosen["name"] == "Escolhida" and chosen["folderId"] == f["id"], chosen)
+	plugin.store.deleteNotebook(chosen["id"])
+	dlg.setFilter(("folder", f["id"]))
+	with menu(1), replaced(prompts, "askNotebook", realAskNotebook), fakeModal(prompts.NotebookDialog, fillNotebook("Fora da pasta", 0)):
+		click(dlg.createButton)
+	chosen = plugin.store.notebooks[-1]
+	R.check("FUN-32 with a folder shown, it comes chosen and can be changed to No folder", seen.get("start") == 1 and chosen["name"] == "Fora da pasta" and chosen["folderId"] is None, (seen, chosen))
+	plugin.store.deleteNotebook(chosen["id"])
+	with menu(1), replaced(prompts, "askNotebook", realAskNotebook), fakeModal(prompts.NotebookDialog, lambda d: wx.ID_CANCEL):
+		click(dlg.createButton)
+	R.check("FUN-32 Cancel in New notebook creates nothing", len(plugin.store.notebooks) == 1)
+	dlg.setFilter(("all", None))
 	dlg.setFilter(("all", None))
 	dlg.refresh(note["id"])
 
@@ -367,7 +399,7 @@ def run():
 	R.check("FUN-12 Rename, Move to and Delete available on a note", od.renameButton.IsEnabled() and od.moveButton.IsEnabled() and od.deleteButton.IsEnabled())
 	od.refresh(("folder", f["id"]))
 	n = mark()
-	with menu(1), replaced(prompts, "askText", lambda *a, **k: "Pessoal"):
+	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId: ("Pessoal", folderId)):
 		click(od.createButton)
 	pessoal = next(x for x in plugin.store.notebooks if x["name"] == "Pessoal")
 	R.check("FUN-12 Create > Notebook inside the selected folder", pessoal["folderId"] == f["id"] and "Notebook Pessoal created" in spokenSince(n) and od.selected() == ("notebook", pessoal["id"]))
@@ -891,8 +923,157 @@ def runExport():
 	plugin.terminate()
 
 
+def documentRead(plugin):
+	"""Waits for the document read in the background and for what comes after it."""
+	thread = getattr(plugin, "documentThread", None)
+	if thread is not None:
+		thread.join(30)
+	pump(timeout=0.3)
+
+
+def runDocuments():
+	"""FUN-34: Create > Note from document and Insert document (1.8.0)."""
+	import _documents
+
+	plugin = newPlugin()
+	s = plugin.store
+	docs = _documents.folder()
+	word = _documents.sampleDocx(os.path.join(docs, "relatorio.docx"))
+	dlg = openWindow(plugin)
+	R.check("FUN-34 the Create menu has Note from document", __import__("NotasWorkflowNVDA.messages", fromlist=["x"]).createLabels()[3] == "Note from &document…")
+	seen = {}
+
+	def newNoteAction(d):
+		seen["title"] = d.titleEdit.GetValue()
+		seen["enabled"] = d.createButton.IsEnabled()
+		d.laneChoice.SetSelection(1)
+		return wx.ID_OK
+
+	def noteAction(d):
+		seen["content"] = d.contentEdit.GetValue()
+		seen["focus"] = d.FindFocus() is d.contentEdit
+		d.finish()
+
+	def askDocument(path):
+		def ask(parent, wildcard):
+			seen["wildcard"] = wildcard
+			return path
+		return ask
+
+	n = mark()
+	with menu(3), replaced(prompts, "askOpenDocument", askDocument(word)), fakeModal(noteDialog.NewNoteDialog, newNoteAction), fakeModal(noteDialog.NoteDialog, noteAction):
+		click(dlg.createButton)
+		R.check("FUN-34 the document is read in the background, with Reading the document said", "Reading the document…" in spokenSince(n), spokenSince(n))
+		documentRead(plugin)
+	note = s.notes[-1] if s.notes else {}
+	R.check("FUN-34 the file dialog offers the documents that can be read", seen.get("wildcard", "").startswith("Documents (*.docx, *.pptx, *.txt, *.html, *.eml)|*.docx;*.pptx;*.txt;*.html;*.htm;*.eml"), seen.get("wildcard"))
+	R.check("FUN-34 New note comes with the title of the document", seen.get("title") == "Relatório trimestral" and seen.get("enabled") is True, seen)
+	R.check("FUN-34 the note has the text of the document, with its formats, in the lane chosen", note.get("title") == "Relatório trimestral" and note.get("laneId") == "inprogress" and "<h2>Metas</h2>" in note.get("content", "") and "<strong>negrito</strong>" in note.get("content", ""), note)
+	R.check("FUN-34 the note window opens on the content, with the text", seen.get("focus") is True and seen.get("content", "").startswith("# Relatório\n# Resumo"), seen.get("content", "")[:60])
+	R.check("FUN-34 created is said with the lane and the file", "Note created in In progress with the text of relatorio.docx" in spokenSince(n), spokenSince(n))
+	R.check("FUN-34 the new note is selected in the list", dlg.selectedNoteId() == note.get("id"), dlg.selectedNoteId())
+
+	count = len(s.notes)
+	n = mark()
+	with menu(3), replaced(prompts, "askOpenDocument", askDocument(_documents.text(os.path.join(docs, "velho.doc"), "x"))):
+		click(dlg.createButton)
+		documentRead(plugin)
+	R.check("FUN-34 a file that cannot be read is said and nothing is created", len(s.notes) == count and "velho.doc cannot be read. Choose a Word (.docx), PowerPoint (.pptx), text (.txt), HTML or e-mail (.eml) document." in spokenSince(n), spokenSince(n))
+	n = mark()
+	with menu(3), replaced(prompts, "askOpenDocument", askDocument(_documents.text(os.path.join(docs, "quebrado.docx"), "x"))):
+		click(dlg.createButton)
+		documentRead(plugin)
+	R.check("FUN-34 a damaged document is said", "Could not read quebrado.docx: the file is damaged or protected by a password." in spokenSince(n), spokenSince(n))
+	with menu(3), replaced(prompts, "askOpenDocument", lambda *a: None):
+		click(dlg.createButton)
+	R.check("FUN-34 cancelling the file dialog reads and creates nothing", len(s.notes) == count)
+	with menu(3), replaced(prompts, "askOpenDocument", askDocument(word)), fakeModal(noteDialog.NewNoteDialog, lambda d: wx.ID_CANCEL):
+		click(dlg.createButton)
+		documentRead(plugin)
+	R.check("FUN-34 cancelling New note creates nothing", len(s.notes) == count)
+
+	# The command without a gesture (Input gestures) does the same from anywhere.
+	slides = _documents.samplePptx(os.path.join(docs, "apresentacao.pptx"))
+	with replaced(prompts, "askOpenDocument", askDocument(slides)), fakeModal(noteDialog.NewNoteDialog, lambda d: wx.ID_OK), fakeModal(noteDialog.NoteDialog, lambda d: d.finish()):
+		plugin.script_noteFromDocument(None)
+		pump(lambda: getattr(plugin, "documentThread", None) is not None and not plugin.documentThread.is_alive(), 5)
+		documentRead(plugin)
+	R.check("FUN-34 the command Creates a note with the text of a document works", s.notes[-1]["title"] == "apresentacao" and "<h2>Slide 2: Agenda</h2>" in s.notes[-1]["content"], s.notes[-1]["title"])
+
+	# -- Insert document in the note window --------------------------------------------------------------
+	target = s.addNote("Destino", content="<p>primeira linha</p><p>última linha</p>")
+	mail = _documents.eml(os.path.join(docs, "mensagem.eml"))
+	nd = noteDialog.NoteDialog(gui.mainFrame, plugin, target["id"])
+	nd.Show()
+	R.check("FUN-34 the note window has the button Insert document", nd.insertButton.GetLabel() == "Insert &document…")
+	nd.contentEdit.SetInsertionPoint(len("primeira linha"))
+	n = mark()
+	with replaced(prompts, "askOpenDocument", askDocument(mail)):
+		click(nd.insertButton)
+		documentRead(plugin)
+	lines = nd.contentEdit.GetValue().split("\n")
+	R.check("FUN-34 Insert document puts the text at the cursor, on lines of its own", lines[0] == "primeira linha" and lines[1] == "**From:** Ana <ana@example.com>" and lines[-1] == "última linha" and "- **Orçamento**" in lines, lines)
+	R.check("FUN-34 the cursor goes to the end of the inserted text and it is said", nd.contentEdit.GetInsertionPoint() == len("\n".join(lines[:-1])) and "Text of mensagem.eml inserted" in spokenSince(n), (nd.contentEdit.GetInsertionPoint(), spokenSince(n)))
+	nd.save()
+	R.check("FUN-34 the inserted text is saved with the note", "<h2>Pauta</h2>" in target["content"] and target["content"].endswith("<p>última linha</p>"), target["content"][-80:])
+	before = nd.contentEdit.GetValue()
+	n = mark()
+	with replaced(prompts, "askOpenDocument", askDocument(_documents.text(os.path.join(docs, "vazio.txt"), "  "))):
+		click(nd.insertButton)
+		documentRead(plugin)
+	R.check("FUN-34 a document without text inserts nothing and it is said", nd.contentEdit.GetValue() == before and "vazio.txt has no text." in spokenSince(n), spokenSince(n))
+	with replaced(prompts, "askOpenDocument", lambda *a: None):
+		click(nd.insertButton)
+	R.check("FUN-34 cancelling Insert document changes nothing", nd.contentEdit.GetValue() == before)
+	# A note almost full: only the first part of the document fits, and it is said.
+	big = "\n".join("linha de texto número %d" % i for i in range(60000))
+	nd.contentEdit.SetValue(big[: model.MAX_CONTENT // 2 - 2000])
+	nd.contentEdit.SetInsertionPointEnd()
+	longText = _documents.text(os.path.join(docs, "longo.txt"), big)
+	n = mark()
+	with replaced(prompts, "askOpenDocument", askDocument(longText)):
+		click(nd.insertButton)
+		documentRead(plugin)
+	html = __import__("NotasWorkflowNVDA.markup", fromlist=["x"]).textToHtml(nd.contentEdit.GetValue())
+	R.check("FUN-34 a long document is cut to fit in the note (1 MB) and it is said", len(html) <= model.MAX_CONTENT and "The text was too long: only its first part was used (a note holds up to 1 MB)." in spokenSince(n), (len(html), spokenSince(n)))
+	nd.contentEdit.SetValue("x" * (model.MAX_CONTENT // 6) + "<" * (model.MAX_CONTENT // 4))
+	n = mark()
+	with replaced(prompts, "askOpenDocument", askDocument(word)):
+		click(nd.insertButton)
+	R.check("FUN-34 a full note: nothing is read or inserted, and it is said", spokenSince(n) == ["The note is full (up to 1 MB): nothing was inserted."], spokenSince(n))
+	nd.contentEdit.SetValue("x")
+	nd.finish()
+	# The window closed while the document is read: nothing happens and nothing breaks.
+	nd = noteDialog.NoteDialog(gui.mainFrame, plugin, target["id"])
+	nd.Show()
+	with replaced(prompts, "askOpenDocument", askDocument(word)):
+		click(nd.insertButton)
+		nd.finish()
+		documentRead(plugin)
+	R.check("FUN-34 a note window closed while the document is read: nothing breaks", s.getNote(target["id"])["content"] == "<p>x</p>", s.getNote(target["id"])["content"])
+
+	# -- Notebooks and folders: Create > Note from document goes into the selected notebook ----------------
+	nb = s.addNotebook("Caderno")
+	from NotasWorkflowNVDA.organizeDialog import OrganizeDialog
+
+	od = OrganizeDialog(dlg, plugin)
+	od.Show()
+	od.refresh(("notebook", nb["id"]))
+	with menu(3), replaced(prompts, "askOpenDocument", askDocument(word)), fakeModal(noteDialog.NewNoteDialog, lambda d: wx.ID_OK), fakeModal(noteDialog.NoteDialog, lambda d: d.finish()):
+		click(od.createButton)
+		documentRead(plugin)
+	created = s.notes[-1]
+	R.check("FUN-34 in Notebooks and folders, the note from a document goes into the selected notebook and is selected", created["notebookId"] == nb["id"] and od.selected() == ("note", created["id"]), (created["notebookId"], od.selected()))
+	od.Destroy()
+	R.check("FUN-34 no real menu or dialog opened without an answer", not RECORD["blocked"], RECORD["blocked"])
+	plugin.terminate()
+
+
 if __name__ == "__main__":
 	try:
+		# Before run(): events pumped for long after run() crash the test process (T-01 of
+		# reports/PROBLEMAS-1.8.0.md, also in 1.7.0); the documents are read in the background.
+		runDocuments()
 		run()
 		runExport()
 	except Exception:

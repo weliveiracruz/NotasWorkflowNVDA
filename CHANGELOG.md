@@ -1,5 +1,14 @@
 # Histórico de versões
 
+## 1.8.0
+
+* **Folha a partir de documento**: novo item **Criar… > Folha a partir de documento…** (e um comando sem atalho em Definir comandos). Escolha um documento do **Word (.docx)**, do **PowerPoint (.pptx)**, de **texto (.txt)**, uma **página HTML** ou um **e-mail (.eml)**: ele é lido em segundo plano, a janela Nova folha vem com o título do documento (ou o assunto do e-mail) e a folha nasce com o texto no Conteúdo.
+* **Inserir documento… (Alt+D)** na janela da folha: coloca o texto de um documento no cursor de uma folha que já existe, em linhas próprias.
+* O que tem formato continua com formato: títulos, listas, negrito, itálico e tachado. Cada slide vira um título, com as anotações do orador; cada linha de tabela vira uma linha "a | b"; o e-mail começa com De, Para, Cc, Data e Anexos. Imagens não vêm.
+* Uma folha guarda até 1 MB: documentos maiores são cortados, com aviso. Arquivos até 50 MB; documentos danificados, protegidos por senha, sem texto ou de outros tipos (.doc, .ppt, .rtf, .pdf, .msg) são avisados e nada é criado.
+* **Novo caderno com pasta**: Criar > Caderno abre a janela Novo caderno, com o nome e a **pasta** (Nenhuma pasta ou uma das pastas); a pasta em uso já vem escolhida.
+* Correção: a janela da folha para o salvamento automático quando é destruída, mesmo sem passar por Salvar e fechar.
+
 ## 1.7.0
 
 * **Sem o campo Tags**: a janela da folha ficou com Título, Local, Status e Conteúdo; o Tab vai de **Status** direto para **Conteúdo**.

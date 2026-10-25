@@ -8,7 +8,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 
 * **Mostrar**: todas as folhas, folhas soltas (sem caderno nem pasta), folhas recentes (as 10 alteradas por último), um caderno ou uma pasta.
 * **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). As raias começam fechadas: Seta para a direita abre, Seta para a esquerda fecha. Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status, **Ctrl+Shift+Seta para cima** e **Ctrl+Shift+Seta para baixo** sobem ou descem a folha dentro da raia. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
-* **Criar…**: um menu para criar uma folha, um caderno ou uma pasta.
+* **Criar…**: um menu para criar uma folha, um caderno (Novo caderno pede o nome e a pasta), uma pasta ou uma **folha a partir de documento**.
 * **Atualizar o status da tarefa…**: um menu com os outros status.
 * **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
 * **Local** (na Nova folha, na janela da folha e em Mover para) é uma árvore que se abre como as raias: cada pasta começa fechada, com os cadernos dela dentro; escolher a própria pasta guarda a folha direto nela.
@@ -43,6 +43,10 @@ O botão **Formatação…** abre um menu com todos os formatos; ele vale para o
 ## Cadernos e pastas
 
 A janela **Cadernos e pastas…** mostra cada pasta com os seus cadernos e as suas folhas, um ramo "Sem pasta" com os outros cadernos e um ramo "Folhas soltas". Enter abre uma folha. **Criar…** cria uma folha, um caderno ou uma pasta no lugar selecionado; **Renomear…** (F2) renomeia uma pasta ou um caderno ou muda o título de uma folha; **Mover para…** move uma folha ou um caderno; **Excluir** (tecla Delete) exclui. Excluir um caderno ou uma pasta nunca apaga folhas: elas ficam soltas.
+
+## Folha a partir de documento
+
+**Criar… > Folha a partir de documento…** pede um arquivo do Word (.docx), do PowerPoint (.pptx), de texto (.txt), HTML ou de e-mail (.eml), lê o arquivo em segundo plano e cria uma folha com o título e o texto dele no conteúdo: títulos, listas, negrito e itálico continuam, cada slide vira um título, cada linha de tabela vira uma linha ("a | b") e um e-mail começa com De, Para, Cc, Data e Anexos. Na janela da folha, **Inserir documento…** (Alt+D) coloca o texto de um documento no cursor de uma folha que já existe. Uma folha guarda até 1 MB: documentos maiores são cortados, com aviso. Os formatos antigos do Office (.doc, .ppt, .rtf), PDF e mensagens .msg do Outlook não são lidos.
 
 ## Exportar como documento
 

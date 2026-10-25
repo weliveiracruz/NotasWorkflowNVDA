@@ -6,11 +6,13 @@
 # Copyright (C) 2026 Wellington Cruz <weliveiracruz@gmail.com>
 # This file is covered by the GNU General Public License, version 2.
 
+import os
+
 import addonHandler
 import wx
 from gui import guiHelper
 
-from . import markup, messages, model
+from . import markup, messages, model, prompts
 from .locationTree import LocationTree
 from .store import StoreError
 
@@ -40,7 +42,7 @@ def chooseFormat(window):
 
 
 class NewNoteDialog(wx.Dialog):
-	def __init__(self, parent, store, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None):
+	def __init__(self, parent, store, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None, title=""):
 		# Translators: title of the window that creates a note.
 		super().__init__(parent, title=_("New note"))
 		self.store = store
@@ -48,6 +50,7 @@ class NewNoteDialog(wx.Dialog):
 		# Translators: label of the title field of a note.
 		self.titleEdit = sHelper.addLabeledControl(_("&Title:"), wx.TextCtrl, size=(380, -1))
 		self.titleEdit.SetMaxLength(model.MAX_TITLE)
+		self.titleEdit.ChangeValue(title)
 		# Translators: label of the tree with the place of a note: loose, a folder or a notebook (inside its folder).
 		self.locationTree = sHelper.addLabeledControl(_("&Location:"), LocationTree, store=store)
 		self.locationTree.setPlace(store.location(notebookId, folderId))
@@ -115,8 +118,12 @@ class NoteDialog(wx.Dialog):
 			style=wx.TE_MULTILINE | wx.TE_RICH2,
 			size=(520, 300),
 		)
+		contentButtons = guiHelper.ButtonHelper(wx.HORIZONTAL)
 		# Translators: button that opens the menu with the formats of the content (bold, lists...).
-		self.formatButton = sHelper.addItem(wx.Button(self, label=_("&Formatting…")))
+		self.formatButton = contentButtons.addButton(self, label=_("&Formatting…"))
+		# Translators: button that puts the text of a Word, PowerPoint, text, HTML or e-mail document in the content, at the cursor.
+		self.insertButton = contentButtons.addButton(self, label=_("Insert &document…"))
+		sHelper.addItem(contentButtons)
 		self.statusEdit = sHelper.addLabeledControl(
 			# Translators: label of the read-only field that says if the note is saved.
 			_("Save stat&us:"),
@@ -136,11 +143,15 @@ class NoteDialog(wx.Dialog):
 
 		self.timer = wx.Timer(self)
 		self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+		# A timer still running after its window is gone calls into freed memory (NVDA would
+		# crash): the window stops it however it is destroyed.
+		self.Bind(wx.EVT_WINDOW_DESTROY, self.onDestroy)
 		self.titleEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("title"))
 		self.locationTree.Bind(wx.EVT_TREE_SEL_CHANGED, lambda evt: self.onChange("location"))
 		self.laneChoice.Bind(wx.EVT_CHOICE, lambda evt: self.onChange("laneId"))
 		self.contentEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("content"))
 		self.formatButton.Bind(wx.EVT_BUTTON, self.onFormatButton)
+		self.insertButton.Bind(wx.EVT_BUTTON, self.onInsertDocument)
 		self.saveButton.Bind(wx.EVT_BUTTON, lambda evt: self.finish())
 		self.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
 		self.Bind(wx.EVT_CLOSE, lambda evt: self.finish())
@@ -150,6 +161,11 @@ class NoteDialog(wx.Dialog):
 	@property
 	def store(self):
 		return self.plugin.store
+
+	def onDestroy(self, evt):
+		if evt.GetEventObject() is self:
+			self.timer.Stop()
+		evt.Skip()
 
 	def load(self, note):
 		self._loading = True
@@ -249,6 +265,44 @@ class NoteDialog(wx.Dialog):
 			self.applyFormat(kind)
 		else:
 			self.contentEdit.SetFocus()
+
+	def onInsertDocument(self, evt):
+		"""Insert document…: the text of a document goes into the content, at the cursor (in
+		place of the selected text), on lines of its own. The document is read in the background."""
+		path = prompts.askOpenDocument(self, messages.documentWildcard())
+		if not path:
+			self.contentEdit.SetFocus()
+			return
+		start, end = self.contentEdit.GetSelection()
+		text = self.contentEdit.GetValue()
+		# Room left in the note (some characters for the line breaks around the text).
+		room = model.MAX_CONTENT - len(markup.textToHtml(text[:start] + text[end:])) - 16
+		if room <= 0:
+			self.plugin.speak(messages.documentNoRoom())
+			self.contentEdit.SetFocus()
+			return
+		name = os.path.basename(path)
+		self.plugin.readDocument(path, lambda title, inserted, cut, error: self.insertDocument(name, inserted, cut, error), limit=room)
+
+	def insertDocument(self, name, inserted, cut, error):
+		"""Puts the text read at the cursor (where it is now: the person may have moved it)."""
+		# The window may have been closed while the document was read.
+		if not self:
+			return
+		if error:
+			self.plugin.speak(messages.documentError(error, name))
+			return
+		start, end = self.contentEdit.GetSelection()
+		text = self.contentEdit.GetValue()
+		before = "" if start == 0 or text[start - 1] == "\n" else "\n"
+		after = "" if end >= len(text) or text[end] == "\n" else "\n"
+		self.contentEdit.SetValue(text[:start] + before + inserted + after + text[end:])
+		self.contentEdit.SetFocus()
+		self.contentEdit.SetInsertionPoint(start + len(before) + len(inserted))
+		# Translators: spoken after Insert document puts the text of a document in the note; {file} is its name.
+		self.plugin.speak(_("Text of {file} inserted").format(file=name))
+		if cut:
+			self.plugin.speak(messages.documentCut())
 
 	def applyFormat(self, kind):
 		start, end = self.contentEdit.GetSelection()

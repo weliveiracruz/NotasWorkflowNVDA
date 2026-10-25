@@ -257,7 +257,7 @@ def run():
 	R.check("ACE-19 the status is said by its name, never only by its colour", all(not re.search(r"#[0-9A-Fa-f]{6}", dlg.tree.GetItemText(item)) for item in _allItems(dlg.tree)) and T("To do") in dlg.tree.GetItemText(dlg.tree.GetFirstChild(dlg.root)[0]))
 	createLabels = messages.createLabels()
 	present = [k for k in (mnemonic(lbl) for lbl in createLabels) if k]
-	R.check("ACE-02 the Create menu items have unique Alt shortcuts", len(present) == 3 and len(set(present)) == 3, createLabels)
+	R.check("ACE-02 the Create menu items have unique Alt shortcuts", len(present) == len(createLabels) == 4 and len(set(present)) == 4, createLabels)
 
 	# status and place: announced, focus stays
 	dlg.refresh(a["id"])
@@ -327,6 +327,12 @@ def run():
 	R.check("ACE-03 Move to: the Location tree, OK, Cancel; the tree starts with the focus", ctrls == [pd.tree, pd.okButton, pd.cancelButton] and lastFocus() is pd.tree, [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-08 Move to: the window title says the note; the tree is the Location", pd.GetTitle() == "Move x & y to" and plain(structuralName(pd.tree)) == plain(T("&Location:")), (pd.GetTitle(), structuralName(pd.tree)))
 	pd.Destroy()
+	nbd = prompts.NotebookDialog(dlg, store, pasta["id"])
+	nbd.Show()
+	ctrls = checkWindow("New notebook", nbd)
+	R.check("ACE-03 New notebook: name, folder, create (disabled until there is a name), cancel; starts on the name", ctrls == [nbd.nameEdit, nbd.folderChoice, nbd.cancelButton] and lastFocus() is nbd.nameEdit, [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-08 New notebook: the box is named Folder and the folder shown comes chosen", plain(structuralName(nbd.folderChoice)) == plain(T("&Folder:")) and nbd.folderChoice.GetStringSelection() == pasta["name"], (structuralName(nbd.folderChoice), nbd.folderChoice.GetStringSelection()))
+	nbd.Destroy()
 	store.deleteNotebook(store.notebooksIn(pasta["id"])[0]["id"])
 	store.deleteFolder(pasta["id"])
 
@@ -350,7 +356,7 @@ def run():
 	with fakeModal(noteDialog.NoteDialog, inspect):
 		plugin.editNote(dlg, note["id"])
 	d = seen["dlg"]
-	R.check("ACE-03 note window: title, location, status, content (no tags since 1.7.0), formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationTree, d.laneChoice, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
+	R.check("ACE-03 note window: title, location, status, content (no tags since 1.7.0), formatting, insert document (1.8.0), save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationTree, d.laneChoice, d.contentEdit, d.formatButton, d.insertButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
 	R.check("ACE-06 opening a note starts on the title", seen["focus"] is d.titleEdit, seen["focus"])
 	R.check("ACE-13 save status is read-only and reachable with Tab", seen["status"] is False)
 	R.check("ACE-07 formatting is announced", seen["spoken"] == [T("Italic")], seen["spoken"])

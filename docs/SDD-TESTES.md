@@ -75,6 +75,9 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | FUN-29 | Manual de uso (1.5.0) | Botão Manual de uso… na janela principal e comando sem atalho abrem o manual inteiro (em português, com títulos e tabelas) na janela de leitura do NVDA (`ui.browseableMessage` com HTML); manual ausente: o NVDA fala e nada abre | gui |
 | FUN-30 | Ordem na raia (1.6.0) | `placeNoteBeside` põe antes ou depois da vizinha, só muda a ordem (outras raias e `updatedAt` iguais), já no lugar ou ela mesma não muda nada, folha desconhecida é erro, ordem gravada no arquivo; Ctrl+Shift+Seta para cima/baixo sobem e descem com a seleção acompanhando e "Posição n de total"; topo e fim falados sem mudar; a ordem continua depois de refazer a árvore; num caderno passa a vizinha mostrada; Folhas recentes avisa e não muda; numa raia nada muda; no fim de uma página passa a primeira folha ainda não mostrada | pure, gui |
 | FUN-31 | Sem tags (1.7.0) | Janela da folha sem o campo Tags (ordem de Tab: Título, Local, Status, Conteúdo…); descrição das folhas e documentos exportados sem tags; a busca não acha folha só pela tag; tags do arquivo e da importação continuam guardadas e validadas | pure, gui, accessibility |
+| FUN-32 | Novo caderno com pasta (1.8.0) | Caixa Pasta com Nenhuma pasta e as pastas; Criar espera um nome; pasta do filtro já escolhida (Nenhuma pasta com todas as folhas); a pasta escolhida é a do caderno; trocar para Nenhuma pasta; Cancelar não cria | gui, accessibility |
+| FUN-33 | Leitura de documentos (1.8.0) | Word com títulos (Title, heading 1-6, estilo baseado em título), listas, negrito, itálico, tachado, tabulação, quebra, texto apagado ignorado, tabela e título das propriedades; sem título usa o nome do arquivo; negrito e itálico juntos ficam negrito; PowerPoint na ordem da apresentação, título do slide, marcadores, sem marcador, numeração, tabela e anotações; rótulos traduzidos; e-mail com cabeçalhos, anexos e corpo HTML ou texto; HTML em UTF-8 e cp1252 com título, sem script e estilo; texto em UTF-8, UTF-8 com BOM, UTF-16 e cp1252, marcador • vira lista; erros: tipo não aceito, arquivo inexistente, vazio, danificado, sem corpo, grande demais; corte para caber em 1 MB; linhas de tabela no conversor HTML; folha criada já com conteúdo | pure |
+| FUN-34 | Folha a partir de documento e Inserir documento (1.8.0) | Item do menu Criar; leitura em segundo plano com "Lendo o documento…"; tipos na janela de arquivo; Nova folha com o título do documento; conteúdo com os formatos, no status escolhido; janela da folha com o foco no conteúdo; anúncio com status e arquivo; folha selecionada na lista; tipo não aceito e documento danificado falados; cancelar o arquivo ou a Nova folha não cria; comando sem atalho; botão Inserir documento; texto no cursor em linhas próprias, cursor no fim, anúncio, salvo; documento sem texto, cancelar, documento cortado com aviso, folha cheia; janela fechada durante a leitura; em Cadernos e pastas a folha vai para o caderno selecionado | gui |
 | FUN-20 | Novo nome (1.1.0) | Arquivo antigo da pasta copiado para o nome novo e nunca alterado; o novo vence e a cópia é feita uma vez; primeiro início traz folhas, cópia de segurança e configurações do NotasWorkflow 1.0.0, com aviso falado; nada do antigo muda | pure, gui |
 | FUN-19 | Datas | Formato do `toISOString()` do JavaScript; datas inválidas recusadas | pure |
 
@@ -116,6 +119,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | SEG-10 | Telas seguras | Complemento desligado |
 | SEG-11 | Desinstalar e migrar | Sem tarefa de desinstalação: as folhas ficam; a migração do NotasWorkflow 1.0.0 só copia (sem mover, renomear ou apagar); o único arquivo apagado é o temporário do próprio complemento |
 | SEG-12 | Análise estática | bandit sem nenhum aviso (nem baixo) |
+| SEG-13 | Documentos lidos (1.8.0) | Bomba zip recusada; XML com DTD (expansão de entidades, entidade externa) recusado sem ler outro arquivo; página com script, frame, imagem, link e atributos vira só texto; o texto do documento nunca vai para o log |
 
 ## 6.2 Casos de desempenho (PERF)
 
@@ -138,6 +142,7 @@ Com 100 mil folhas em 80 cadernos e 12 pastas, geradas por `tests/gerar_massa.py
 | PERF-13 | Encerrar o NVDA com tudo gravado | 20 s |
 | PERF-14 | Exportar a maior pasta (1.4.0) num arquivo Word e num Markdown por folha: a janela continua respondendo e a gravação termina em segundo plano | 1 s / 60 s |
 | PERF-15 | Ctrl+Shift+Seta muda a folha de lugar na raia (1.6.0), com a folha continuando selecionada | 1 s |
+| PERF-16 | Documento do Word de 300 páginas (6.000 parágrafos) lido para uma folha (1.8.0): a chamada volta na hora, a leitura termina em segundo plano com os títulos, e o HTML da folha é feito rápido | 0,2 s / 15 s / 0,5 s |
 
 ## 6.1 Casos do manual de uso (DOC)
 

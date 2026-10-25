@@ -367,13 +367,93 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.editNote(parent, note["id"], focusContent=True)
 		return note["id"]
 
-	def createNotebook(self, parent, folderId=None):
-		"""Asks the name and creates a notebook (inside folderId). Returns it or None."""
-		folder = self.store.getFolder(folderId) if folderId else None
-		# Translators: title of the dialog that creates a notebook.
-		name = prompts.askText(parent, messages.askNotebookName(folder), _("New notebook"))
-		if name is None or not name.strip():
+	def readDocument(self, path, done, limit=model.MAX_CONTENT):
+		"""Reads a document in a thread (a long one takes seconds), then calls on NVDA's main
+		thread done(title, text, cut, error): the text in the light markup of the editor, cut to
+		fit in limit (HTML), or error (unsupported, tooBig, unreadable, damaged, empty)."""
+		from . import importer
+
+		labels = messages.documentLabels()
+		self.speak(messages.readingDocument())
+
+		def run():
+			try:
+				title, text = importer.readDocument(path, labels, messages.documentDate)
+				text, cut = importer.fitContent(text, limit)
+				result = (title, text, cut, None)
+			except importer.DocumentError as e:
+				result = (None, None, False, e.kind)
+			except Exception as e:
+				# Only the type of the error: the text of the document never goes to the log.
+				log.warning("NotasWorkflowNVDA: document not read (%s)" % type(e).__name__)
+				result = (None, None, False, "damaged")
+			wx.CallAfter(done, *result)
+
+		self.documentThread = threading.Thread(target=run, name="NotasWorkflowNVDA document", daemon=True)
+		self.documentThread.start()
+
+	def noteFromDocument(self, parent=None, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None, done=None):
+		"""Create > Note from document: chooses a document and reads it in the background; then
+		the New note window comes with the title of the document, and the note window with its
+		text. done(noteId or None) is called at the end. True when a document is being read."""
+		self.ensureLoaded()
+		path = prompts.askOpenDocument(parent or gui.mainFrame, messages.documentWildcard())
+		if not path:
+			return False
+		name = os.path.basename(path)
+
+		def read(title, text, cut, error):
+			noteId = None
+			try:
+				if error:
+					self.speak(messages.documentError(error, name))
+				else:
+					# The window that asked may have been closed while the document was read.
+					owner = parent if parent else None
+
+					def create():
+						return self._noteWithText(owner, name, title, text, cut, laneId, notebookId, folderId)
+
+					noteId = create() if owner else self._popup(create)
+			finally:
+				if done:
+					done(noteId)
+
+		self.readDocument(path, read)
+		return True
+
+	def _noteWithText(self, parent, name, title, text, cut, laneId, notebookId, folderId):
+		from . import markup
+		from .noteDialog import NewNoteDialog
+
+		dlg = NewNoteDialog(parent or gui.mainFrame, self.store, laneId, notebookId, folderId, title=title)
+		try:
+			if dlg.ShowModal() != wx.ID_OK:
+				return None
+			values = dlg.values()
+		finally:
+			dlg.Destroy()
+		if not values["title"]:
 			return None
+		ok, note = self.safe(
+			self.store.addNote, values["title"], values["laneId"], values["notebookId"], values["folderId"], markup.textToHtml(text)
+		)
+		if not ok:
+			return None
+		# Translators: spoken after a note is created from a document; {lane} is its status, {file} the name of the document.
+		self.speak(_("Note created in {lane} with the text of {file}").format(lane=messages.laneName(note["laneId"]), file=name))
+		if cut:
+			self.speak(messages.documentCut())
+		self.editNote(parent, note["id"], focusContent=True)
+		return note["id"]
+
+	def createNotebook(self, parent, folderId=None):
+		"""Asks the name and the folder (folderId comes chosen) and creates a notebook.
+		Returns it or None."""
+		answer = prompts.askNotebook(parent, self.store, folderId if self.store.getFolder(folderId) else None)
+		if answer is None or not answer[0].strip():
+			return None
+		name, folderId = answer
 		ok, notebook = self.safe(self.store.addNotebook, name, folderId)
 		if not ok:
 			return None
@@ -629,6 +709,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	)
 	def script_newNote(self, gesture):
 		wx.CallAfter(self._popup, lambda: self.notesChanged(self.newNote()))
+
+	@script(
+		# Translators: description of a command in the Input gestures dialog.
+		description=_("Notas Workflow NVDA: creates a note with the text of a document (Word, PowerPoint, text, HTML or e-mail)"),
+	)
+	def script_noteFromDocument(self, gesture):
+		wx.CallAfter(self._popup, lambda: self.noteFromDocument(done=self.notesChanged))
 
 	@script(
 		# Translators: description of a command in the Input gestures dialog.

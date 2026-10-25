@@ -118,6 +118,8 @@ class _Converter(HTMLParser):
 		self.quote = 0
 		self.pre = False
 		self.skip = 0
+		#: Cells already written in the table row (a row becomes one line: "a | b | c").
+		self.cells = None
 
 	def emit(self):
 		quote = "" if self.plain else "> " * self.quote
@@ -134,6 +136,11 @@ class _Converter(HTMLParser):
 			self.buf.append(text)
 
 	def handle_starttag(self, tag, attrs):
+		if tag in ("p", "div") and self.cells is not None:
+			# Paragraphs inside a table cell stay on the line of the row.
+			if self.buf and self.buf[-1] != " | ":
+				self.buf.append(" ")
+			return
 		if tag in self._SKIP:
 			self.skip += 1
 			return
@@ -175,6 +182,13 @@ class _Converter(HTMLParser):
 				self.emitRaw("---")
 		elif tag == "br":
 			self.emit()
+		elif tag == "tr":
+			self.flush()
+			self.cells = 0
+		elif tag in ("td", "th"):
+			if self.cells:
+				self.buf.append(" | ")
+			self.cells = (self.cells or 0) + 1
 		elif tag in self._MARKS:
 			self.mark(self._MARKS[tag])
 		elif tag == "code" and not self.pre:
@@ -196,7 +210,11 @@ class _Converter(HTMLParser):
 		if self.skip:
 			return
 		if tag in ("p", "div") or (len(tag) == 2 and tag[0] == "h" and tag[1] in "123456"):
-			self.emit()
+			if self.cells is None:
+				self.emit()
+		elif tag == "tr":
+			self.flush()
+			self.cells = None
 		elif tag == "li":
 			if self.buf or self.prefix:
 				self.emit()

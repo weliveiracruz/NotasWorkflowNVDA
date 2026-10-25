@@ -126,13 +126,23 @@ A caixa **Mostrar** oferece:
 
 ## Criar folhas, cadernos e pastas
 
-O botão **Criar… (Alt+C)** abre um menu com três opções:
+O botão **Criar… (Alt+C)** abre um menu com quatro opções:
 
 | Opção | O que acontece |
 |---|---|
 | Folha… | Abre a janela Nova folha. A folha começa no status selecionado na lista e no caderno ou na pasta do filtro em uso. |
-| Caderno… | Pede o nome do caderno. Se o filtro em uso for uma pasta, o caderno nasce dentro dela. O NVDA fala "Caderno … criado". |
+| Caderno… | Abre a janela Novo caderno, com o nome e a pasta (veja abaixo). O NVDA fala "Caderno … criado". |
 | Pasta… | Pede o nome da pasta. O NVDA fala "Pasta … criada". |
+| Folha a partir de documento… | Cria uma folha com o texto de um documento do Word, do PowerPoint, de texto, HTML ou de e-mail (veja Folha a partir de documento). |
+
+A janela **Novo caderno** tem:
+
+| Campo | Atalho | Descrição |
+|---|---|---|
+| Nome | Alt+N | Obrigatório, até 100 caracteres. |
+| Pasta | Alt+P | Uma lista com **Nenhuma pasta** e cada pasta. Vem escolhida a pasta do filtro em uso (ou a pasta selecionada em Cadernos e pastas); sem pasta em uso, vem Nenhuma pasta. |
+| Criar | Alt+R ou Enter | Cria o caderno na pasta escolhida. Fica indisponível enquanto o nome estiver vazio. |
+| Cancelar | Esc | Fecha sem criar nada. |
 
 Também é possível criar uma folha de qualquer lugar com **NVDA+Alt+F**. A janela Nova folha tem:
 
@@ -165,6 +175,32 @@ O campo **Local (Alt+O)** é uma árvore, que funciona como as raias da janela p
 
 A mesma árvore aparece na janela Nova folha, na janela da folha e em **Mover para…**.
 
+### Folha a partir de documento
+
+**Criar… > Folha a partir de documento…** traz o texto de um documento para uma folha nova:
+
+1. Abre a janela do Windows para escolher o arquivo. A lista de tipos já mostra os documentos que podem ser lidos.
+2. O NVDA fala "Lendo o documento…". O documento é lido em segundo plano, então o NVDA continua respondendo mesmo com documentos longos.
+3. Abre a janela **Nova folha** com o **título já preenchido**: o título do documento (nas propriedades do Word ou do PowerPoint, ou o título da página HTML), o **assunto** do e-mail ou, se não houver, o nome do arquivo. Local e Status funcionam como sempre.
+4. Ao criar, o NVDA fala "Folha criada em", o status e o nome do arquivo, e a janela da folha abre com o texto no **Conteúdo** e o foco nele.
+
+Também há um comando sem atalho em Definir comandos, que faz o mesmo de qualquer lugar.
+
+| Documento | O que vem para a folha |
+|---|---|
+| Word (.docx) | Os parágrafos, com **títulos** (estilos Título e Título 1 a 6), **listas** com marcadores e numeradas, **negrito**, *itálico* e tachado. |
+| PowerPoint (.pptx) | Cada slide vira um título "Slide 1: título do slide", com os textos e os marcadores; as anotações do orador vêm depois de "Anotações do orador:", como citação. |
+| Texto (.txt) | As linhas do arquivo (UTF-8, UTF-16 ou a codificação padrão do Windows). Linhas que começam com • viram itens de lista. |
+| Página HTML (.html, .htm) | O texto da página, com títulos, listas, negrito e itálico. Scripts, estilos, imagens e links ficam de fora. |
+| E-mail (.eml) | As linhas **De:**, **Para:**, **Cc:**, **Data:** e **Anexos:** (só os nomes dos arquivos), um divisor e o corpo da mensagem. |
+
+- Em todos os documentos, as **tabelas** viram uma linha por linha da tabela, com as células separadas por " | ". Imagens não vêm.
+- Linhas em branco não vêm: cada linha do conteúdo já é um parágrafo.
+- Uma folha guarda até 1 MB. Se o documento for maior, só a primeira parte vem, e o NVDA avisa "O texto era longo demais: só a primeira parte foi usada (uma folha guarda até 1 MB)".
+- Documentos com mais de 50 MB não são lidos.
+- Não são lidos: os formatos antigos do Office (.doc, .ppt, .rtf), PDF e mensagens do Outlook (.msg). Para uma mensagem do Outlook, use **Arquivo, Salvar como** no Outlook e escolha HTML (.htm) ou Somente texto (.txt), ou copie o texto e cole no Conteúdo.
+- Um documento protegido por senha ou danificado não é lido, e o NVDA avisa.
+
 ## Janela da folha
 
 Abre com **Enter** sobre uma folha (na lista, na busca ou em Cadernos e pastas), ou logo depois de criar uma. O título da janela é o título da folha.
@@ -178,8 +214,19 @@ Abre com **Enter** sobre uma folha (na lista, na busca ou em Cadernos e pastas),
 | Status | Alt+S | Muda o status da folha. |
 | Conteúdo | Alt+C | O texto da folha, com várias linhas e a marcação de formatação. |
 | Formatação… | Alt+F | Abre o menu de formatos (veja Formatação do conteúdo). |
+| Inserir documento… | Alt+D | Coloca o texto de um documento no Conteúdo, na posição do cursor (veja Inserir documento). |
 | Situação do salvamento | Alt+I | Campo somente leitura que diz se tudo está salvo. |
 | Salvar e fechar | Alt+L | Salva o que estiver pendente e fecha. |
+
+### Inserir documento
+
+O botão **Inserir documento… (Alt+D)** coloca o texto de um documento numa folha que já existe:
+
+1. Deixe o cursor do **Conteúdo** onde o texto deve entrar (ou selecione o trecho que ele deve substituir).
+2. Pressione **Alt+D** e escolha o arquivo. O NVDA fala "Lendo o documento…".
+3. O texto entra na posição do cursor, em linhas próprias (nunca no meio de uma linha), e o cursor vai para o fim do texto inserido. O NVDA fala "Texto de", o nome do arquivo, e "inserido".
+
+Os documentos aceitos e o que vem deles são os mesmos de Folha a partir de documento. Se a folha já estiver cheia (1 MB), nada é inserido e o NVDA avisa; se só parte do documento couber, entra a primeira parte, com o aviso. O texto inserido é salvo como qualquer outra mudança.
 
 ### Salvamento automático
 
@@ -330,7 +377,7 @@ Cada folha é lida com o título, o status e a data. **Enter sobre uma folha abr
 
 | Botão | Atalho | O que faz |
 |---|---|---|
-| Criar… | Alt+C | Menu com Folha…, Caderno… e Pasta…. A folha nasce no caderno ou na pasta selecionada; o caderno nasce na pasta selecionada. |
+| Criar… | Alt+C | Menu com Folha…, Caderno…, Pasta… e Folha a partir de documento…. A folha nasce no caderno ou na pasta selecionada; na janela Novo caderno, a pasta selecionada já vem escolhida. |
 | Renomear… | Alt+R ou F2 | Renomeia a pasta ou o caderno selecionado; numa folha, muda o título. |
 | Mover para… | Alt+M | Numa folha, move para um caderno, uma pasta ou a deixa solta; num caderno, move para outra pasta ou para Sem pasta. |
 | Excluir | Alt+X ou Delete | Exclui a pasta, o caderno ou a folha selecionada, depois de confirmar. |
@@ -453,8 +500,9 @@ O NVDA fala "Importado:" com o número de folhas, cadernos e pastas trazidos.
 | NVDA+Alt+B | Buscar nas folhas |
 | sem atalho | Falar quantas folhas cada raia tem (por exemplo "A fazer 2, Em andamento 1, Bloqueada 0, Concluída 3") |
 | sem atalho | Abrir o manual de uso |
+| sem atalho | Criar uma folha com o texto de um documento (Word, PowerPoint, texto, HTML ou e-mail) |
 
-Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **Notas Workflow NVDA**, onde também dá para dar um atalho ao resumo das raias e ao manual de uso.
+Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **Notas Workflow NVDA**, onde também dá para dar um atalho ao resumo das raias, ao manual de uso e à folha a partir de documento.
 
 ### Dentro das janelas
 
@@ -479,6 +527,13 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 | Folha criada em A fazer | Uma folha foi criada (com o nome do status escolhido). |
 | Status atualizado para Em andamento | O status da folha mudou. |
 | Já está na primeira raia / Já está na última raia | Não há status anterior ou seguinte. |
+| Lendo o documento… | Um documento está sendo lido (Folha a partir de documento ou Inserir documento). |
+| Folha criada em A fazer com o texto de Relatório.docx | A folha a partir de documento foi criada. |
+| Texto de Relatório.docx inserido | Inserir documento colocou o texto na folha. |
+| O texto era longo demais: só a primeira parte foi usada (uma folha guarda até 1 MB). | O documento não coube inteiro na folha. |
+| A folha está cheia (até 1 MB): nada foi inserido. | Inserir documento numa folha que já tem o máximo de texto. |
+| … não pode ser lido. Escolha um documento do Word (.docx)… | O arquivo escolhido não é de um tipo aceito. |
+| Não foi possível ler …: o arquivo está danificado ou protegido por senha. / … não tem texto. / … tem mais de 50 MB e não foi lido. | O documento não pôde ser usado. |
 | Posição 2 de 5 | Ctrl+Shift+Seta para cima ou para baixo mudou a folha de lugar na raia. |
 | Já está no topo da raia / Já está no fim da raia | A folha já é a primeira ou a última da raia. |
 | Folhas recentes ficam na ordem da última alteração; aqui a ordem não pode ser mudada | Ctrl+Shift+Seta para cima ou para baixo em Folhas recentes. |
@@ -548,3 +603,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.5.0 | O campo Local virou uma árvore de pastas e cadernos, que se abre como as raias (nova seção "O campo Local"), na janela Nova folha, na janela da folha e em Mover para; Enter na árvore cria a folha ou move a folha. O manual deixou de ser um documento do Word: vem dentro do complemento e abre pelo novo botão Manual de uso… e pelo comando Abrir o manual de uso. |
 | 1.6.0 | Ctrl+Shift+Seta para cima e para baixo mudam a ordem da folha dentro da raia (nova seção "Mudar a ordem das folhas na raia"), com as novas mensagens faladas e os atalhos nas tabelas. |
 | 1.7.0 | O campo Tags saiu da janela da folha: o Tab vai de Status direto para Conteúdo. As tags também deixaram de aparecer na lista de folhas, em Cadernos e pastas e nos documentos exportados, e a busca não procura mais nelas (seção "Tags" retirada). |
+| 1.8.0 | Nova opção Criar > Folha a partir de documento… e novo botão Inserir documento… na janela da folha, com as novas seções "Folha a partir de documento" e "Inserir documento" (Word .docx, PowerPoint .pptx, texto, HTML e e-mail .eml), o comando sem atalho e as novas mensagens faladas; a criação de caderno virou a janela Novo caderno, com a escolha da pasta. |

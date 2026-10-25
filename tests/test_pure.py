@@ -12,10 +12,11 @@ import unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
+import _documents  # noqa: E402
 import _helpers  # noqa: E402
 
 core = _helpers.loadCore()
-model, markup, search, store, exporter = core.model, core.markup, core.search, core.store, core.exporter
+model, markup, search, store, exporter, importer = core.model, core.markup, core.search, core.store, core.exporter, core.importer
 
 
 def newStore(folder=None):
@@ -261,6 +262,120 @@ class FUN30_OrderInLane(unittest.TestCase):
 		s.placeNoteBeside(b["id"], a["id"], after=False)
 		again = newStore(folder)
 		self.assertEqual([n["title"] for n in again.notes], ["b", "a"])
+
+
+class FUN33_ReadDocument(unittest.TestCase):
+	"""1.8.0: the text of a document becomes the light markup of the editor."""
+
+	def setUp(self):
+		self.folder = _documents.folder()
+
+	def path(self, name):
+		return os.path.join(self.folder, name)
+
+	def read(self, path):
+		return importer.readDocument(path, formatDate=lambda when: "12/10/2026 14:30")
+
+	def test_word(self):
+		title, text = self.read(_documents.sampleDocx(self.path("relatorio.docx")))
+		self.assertEqual(title, "Relatório trimestral")
+		self.assertEqual(text.split("\n"), [
+			"# Relatório", "# Resumo", "Texto com **negrito** e *itálico* e ~~riscado~~.", "## Metas",
+			"- Primeiro", "- Segundo", "1. Passo um", "2. Passo dois", "antes depois", "linha nova", "Mês | Valor", "Janeiro | 10",
+		])
+		html = markup.textToHtml(text)
+		self.assertIn("<h2>Metas</h2><ul><li><p>Primeiro</p></li><li><p>Segundo</p></li></ul><ol><li><p>Passo um</p></li>", html)
+		self.assertNotIn("apagado", text)
+
+	def test_word_without_title_uses_the_file_name(self):
+		path = _documents.docx(self.path("Sem título.docx"), [_documents.para("só texto")])
+		self.assertEqual(self.read(path), ("Sem título", "só texto"))
+
+	def test_bold_and_italic_together_stay_bold(self):
+		path = _documents.docx(self.path("x.docx"), [_documents.para(_documents.run("ambos", bold=True, italic=True), " fim")])
+		self.assertEqual(self.read(path)[1], "**ambos** fim")
+
+	def test_powerpoint(self):
+		title, text = self.read(_documents.samplePptx(self.path("apresentacao.pptx")))
+		self.assertEqual(title, "apresentacao")
+		self.assertEqual(text.split("\n"), [
+			"## Slide 1: Apresentação", "Subtítulo",
+			"## Slide 2: Agenda", "- Ponto A", "- Ponto B", "Sem marcador", "Speaker notes:", "> Falar devagar",
+			"## Slide 3", "Caixa de texto", "1. Um", "2. Dois", "A | B",
+		])
+
+	def test_labels_come_translated(self):
+		labels = {"slide": "Slide {number}", "slideTitled": "Slide {number}: {title}", "notes": "Anotações do orador:"}
+		text = importer.readDocument(_documents.samplePptx(self.path("p.pptx")), labels)[1]
+		self.assertIn("Anotações do orador:", text)
+
+	def test_email(self):
+		title, text = self.read(_documents.eml(self.path("mensagem.eml")))
+		self.assertEqual(title, "Reunião de segunda")
+		self.assertEqual(text.split("\n"), [
+			"**From:** Ana <ana@example.com>", "**To:** Bruno <bruno@example.com>", "**Cc:** Carla <carla@example.com>",
+			"**Date:** 12/10/2026 14:30", "**Attachments:** pauta.pdf", "---", "## Pauta", "- **Orçamento**", "- Prazos",
+		])
+
+	def test_plain_email(self):
+		text = self.read(_documents.eml(self.path("simples.eml"), html=False, attachment=False))[1]
+		self.assertTrue(text.endswith("---\nOlá,\nsegue a pauta."), text)
+
+	def test_html_page(self):
+		for encoding in ("utf-8", "cp1252"):
+			title, text = self.read(_documents.html(self.path("pagina-%s.html" % encoding), encoding))
+			self.assertEqual(title, "Página de teste")
+			self.assertEqual(text.split("\n"), ["# Título", "Um **texto** com espaços.", "A | B", "1 | 2"])
+
+	def test_text_files(self):
+		for encoding in ("utf-8", "utf-8-sig", "utf-16", "cp1252"):
+			path = _documents.text(self.path("nota-%s.txt" % encoding), "Ação\r\n\r\n\u2022 item\r\n\tfim  ", encoding)
+			self.assertEqual(self.read(path), ("nota-%s" % encoding, "Ação\n- item\nfim"), encoding)
+
+	def test_errors(self):
+		def kind(path):
+			with self.assertRaises(importer.DocumentError) as ctx:
+				self.read(path)
+			return ctx.exception.kind
+
+		self.assertEqual(kind(_documents.text(self.path("velho.doc"), "x")), "unsupported")
+		self.assertEqual(kind(_documents.text(self.path("arquivo.pdf"), "x")), "unsupported")
+		self.assertEqual(kind(self.path("nao-existe.txt")), "unreadable")
+		self.assertEqual(kind(_documents.text(self.path("vazio.txt"), " \n\t\n")), "empty")
+		self.assertEqual(kind(_documents.text(self.path("falso.docx"), "não é zip")), "damaged")
+		self.assertEqual(kind(_documents.text(self.path("falsa.pptx"), "PK")), "damaged")
+		self.assertEqual(kind(_documents._zip(self.path("sem-corpo.docx"), {"x.xml": "<a/>"})), "damaged")
+		saved = importer.MAX_FILE
+		importer.MAX_FILE = 10
+		try:
+			self.assertEqual(kind(_documents.text(self.path("grande.txt"), "x" * 11)), "tooBig")
+		finally:
+			importer.MAX_FILE = saved
+
+	def test_can_read(self):
+		self.assertTrue(importer.canRead("a.DOCX"))
+		self.assertFalse(importer.canRead("a.msg"))
+		self.assertEqual(importer.EXTENSIONS, (".docx", ".pptx", ".txt", ".html", ".htm", ".eml"))
+
+	def test_fit_content(self):
+		text = "\n".join("linha %d" % i for i in range(1000))
+		self.assertEqual(importer.fitContent(text), (text, False))
+		fitted, cut = importer.fitContent(text, 2000)
+		self.assertTrue(cut)
+		self.assertLessEqual(len(markup.textToHtml(fitted)), 2000)
+		self.assertTrue(text.startswith(fitted) and fitted.endswith(fitted.split("\n")[-1]))
+		self.assertGreater(len(markup.textToHtml(text.split("\n")[0] + "\n" + fitted)), 2000 - 30)
+		one, cut = importer.fitContent("<" * 5000, 600)
+		self.assertTrue(cut and len(markup.textToHtml(one)) <= 600)
+		self.assertEqual(importer.fitContent("x", 0), ("", True))
+
+	def test_table_rows_of_html(self):
+		self.assertEqual(markup.htmlToText("<table><tr><td><p>a</p><p>b</p></td><td>c</td></tr></table>"), "a b | c")
+
+	def test_note_created_with_content(self):
+		s = newStore()
+		n = s.addNote("doc", content="<p>texto</p>")
+		self.assertEqual(n["content"], "<p>texto</p>")
 
 
 class FUN07_Filters(unittest.TestCase):

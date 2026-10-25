@@ -71,7 +71,11 @@ prompts.chooseItem = _blocked("prompts.chooseItem")
 realChoosePlace = prompts.choosePlace
 prompts.choosePlace = _blocked("prompts.choosePlace")
 prompts.askText = _blocked("prompts.askText")
+#: The real askNotebook, for the tests of its dialog (with fakeModal).
+realAskNotebook = prompts.askNotebook
+prompts.askNotebook = _blocked("prompts.askNotebook")
 prompts.askSaveFile = _blocked("prompts.askSaveFile")
+prompts.askOpenDocument = _blocked("prompts.askOpenDocument")
 prompts.askFolder = _blocked("prompts.askFolder")
 noteDialog.chooseFormat = _blocked("noteDialog.chooseFormat")
 settingsPanel.askFolder = _blocked("settingsPanel.askFolder")

@@ -462,23 +462,29 @@ class NotesDialog(wx.Dialog):
 	def onCreate(self, evt):
 		index = prompts.chooseFromMenu(self.createButton, messages.createLabels())
 		kind, ident = self.activeFilter
+		where = (self.selectedLane(), ident if kind == "notebook" else None, ident if kind == "folder" else None)
 		if index == 0:
-			noteId = self.plugin.newNote(
-				self,
-				self.selectedLane(),
-				ident if kind == "notebook" else None,
-				ident if kind == "folder" else None,
-			)
-			if noteId:
-				if noteId not in [n["id"] for n in self.store.filtered(self.activeFilter)]:
-					self.activeFilter = model.FILTER_ALL
-				self.refresh(noteId)
+			self.noteCreated(self.plugin.newNote(self, *where))
+		elif index == 3:
+			# The document is read in the background: the note comes later.
+			if self.plugin.noteFromDocument(self, *where, done=self.noteCreated):
+				return
 		elif index == 1:
 			if self.plugin.createNotebook(self, ident if kind == "folder" else None):
 				self.refresh(self.selectedNoteId())
 		elif index == 2:
 			if self.plugin.createFolder(self):
 				self.refresh(self.selectedNoteId())
+		self.focusNotes()
+
+	def noteCreated(self, noteId):
+		"""Shows a new note selected (all notes, if the filter shown leaves it out)."""
+		if self._closing:
+			return
+		if noteId:
+			if noteId not in [n["id"] for n in self.store.filtered(self.activeFilter)]:
+				self.activeFilter = model.FILTER_ALL
+			self.refresh(noteId)
 		self.focusNotes()
 
 	def setStatus(self, noteId, laneId):

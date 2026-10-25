@@ -432,9 +432,9 @@ class NotesStore:
 			raise StoreError("notFound", kind)
 		return item
 
-	def addNote(self, title, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None):
+	def addNote(self, title, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None, content=""):
 		notebookId, folderId = self.location(notebookId, folderId)
-		note = model.makeNote(title, laneId, notebookId, folderId)
+		note = model.makeNote(title, laneId, notebookId, folderId, content[:model.MAX_CONTENT] if isinstance(content, str) else "")
 		self.notes.append(note)
 		self._byId[note["id"]] = note
 		self.save()
