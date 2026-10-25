@@ -9,7 +9,7 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 1. **funciona** como o Notas Workflow web: folhas, raias, cadernos, pastas, edição, salvamento, busca, importação e exportação (prefixo FUN);
 2. **é acessível** para quem usa o NVDA (prefixo ACE);
 3. **não expõe nem perde** as folhas da pessoa (prefixo SEG);
-4. tem o **manual de uso em Word** atualizado e completo (prefixo DOC).
+4. tem o **manual de uso** (HTML dentro do pacote, aberto pelo botão Manual de uso…) atualizado e completo (prefixo DOC).
 
 ## 2. Ambiente de teste
 
@@ -71,6 +71,8 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 | FUN-25 | Raias fechadas (1.3.0) | As raias começam fechadas, com o número de folhas; sem folha a selecionar, o foco fica na primeira raia; selecionar uma folha abre só a raia dela; as raias ficam como a pessoa as deixou quando a lista é refeita | gui |
 | FUN-26 | Pilha da raia (1.3.0) | Status mudado na janela da folha: ao fechar, o foco vai para a próxima folha da raia; última folha: a anterior; única: a raia; folha só editada: o foco volta para ela; folha que sai do filtro pelo Local: a próxima da raia | gui |
 | FUN-27 | Exportar como documento (1.4.0) | Botão Exportar… com menu Folha selecionada (só com folha), Caderno e Pasta; caderno e pasta do filtro ou da folha já escolhidos; folha pergunta só o formato; caderno e pasta perguntam um arquivo ou um por folha; nome sugerido e extensão acrescentada; Word, Markdown e HTML com título do documento, títulos por nível (conteúdo abaixo da folha), Status, Local, Tags, datas, negrito, itálico, tachado, código, listas (numerada recomeça e respeita o início), citação, bloco de código e divisor; Markdown escapa o que viraria lista, título ou citação; .docx válido, com estilos de título, idioma e título nas propriedades, igual para as mesmas folhas; um arquivo por folha em pasta nova, subpasta por caderno, nomes limpos e repetidos numerados, nada sobrescrito; caderno vazio, sem cadernos, cancelar e falha de gravação falados sem gravar nada; caracteres inválidos em XML descartados | pure, gui |
+| FUN-28 | Campo Local em árvore (1.5.0) | Nova folha, janela da folha e Mover para mostram a árvore: Folha solta, cada pasta com o número de cadernos e os cadernos dela dentro, os cadernos sem pasta; pastas começam fechadas e só abre a pasta do local escolhido; a própria pasta é um local (folha direto na pasta); Enter na árvore cria a folha (Nova folha) ou move (Mover para); na janela da folha, o local atual vem escolhido sem nada a salvar, escolher outro é uma mudança salva ao fechar; Mover para começa no local atual, o título da janela diz a folha, Cancelar mantém o local | gui |
+| FUN-29 | Manual de uso (1.5.0) | Botão Manual de uso… na janela principal e comando sem atalho abrem o manual inteiro (em português, com títulos e tabelas) na janela de leitura do NVDA (`ui.browseableMessage` com HTML); manual ausente: o NVDA fala e nada abre | gui |
 | FUN-20 | Novo nome (1.1.0) | Arquivo antigo da pasta copiado para o nome novo e nunca alterado; o novo vence e a cópia é feita uma vez; primeiro início traz folhas, cópia de segurança e configurações do NotasWorkflow 1.0.0, com aviso falado; nada do antigo muda | pure, gui |
 | FUN-19 | Datas | Formato do `toISOString()` do JavaScript; datas inválidas recusadas | pure |
 
@@ -80,20 +82,20 @@ Garantir, a cada nova versão, que o NotasWorkflowNVDA:
 |---|---|---|
 | ACE-01 | Nomes | Todo controle que recebe foco tem nome, conferido também pelo MSAA, em todas as janelas (principal em árvore e em tabela, Nova folha, folha, Buscar, Cadernos e pastas, Configurações) |
 | ACE-02 | Letras de atalho | Únicas em cada janela; todo botão e rótulo tem uma; mantidas na tradução |
-| ACE-03 | Ordem de tabulação | Principal: Mostrar, Folhas, ações, Buscar, Cadernos e pastas, Exportar (1.4.0), Fechar; Nova folha; folha; Buscar; a tabela substitui a árvore |
+| ACE-03 | Ordem de tabulação | Principal: Mostrar, Folhas, ações, Buscar, Cadernos e pastas, Exportar (1.4.0), Manual de uso (1.5.0), Fechar; Nova folha; folha; Buscar; Mover para (1.5.0): árvore Local, OK, Cancelar, com o foco na árvore; a tabela substitui a árvore |
 | ACE-04 | Botões indisponíveis | Fora da tabulação quando não servem (sem folha; "Sem pasta"; Criar folha sem título); Criar folha é o botão padrão (Enter cria) |
 | ACE-05 | Teclado | Esc fecha (e salva na folha); Alt+Shift+Setas movem; Enter abre e busca |
 | ACE-06 | Foco | Começa nas folhas, no título (Nova folha e abrir folha), no conteúdo (folha recém-criada), no campo de busca e na árvore de cadernos; fica na folha movida; vai para a vizinha depois de excluir; Enter na busca vai aos resultados |
 | ACE-07 | Fala | Mover, formatar, criar, excluir e buscar são anunciados |
-| ACE-08 | Títulos | Toda janela tem título; a janela da folha tem o título da folha; o painel tem categoria |
+| ACE-08 | Títulos | Toda janela tem título; a janela da folha tem o título da folha; Mover para diz a folha no título (1.5.0); o painel tem categoria |
 | ACE-09 | Atalhos padrão | Três (NVDA+Alt+N, F, B), sem conflito com o NVDA instalado e com os outros complementos instalados |
 | ACE-10 | Comandos | Todos com descrição, na categoria Notas Workflow NVDA |
 | ACE-12 | Tradutores | Todo texto traduzível tem comentário `# Translators:` |
 | ACE-13 | Situação do salvamento | Somente leitura e alcançável com Tab |
-| ACE-14 | Rótulo da lista | Diz o filtro e a quantidade, também pelo MSAA; `&` em nome de caderno é lido como "&" e não vira letra de atalho |
+| ACE-14 | Rótulo da lista | Diz o filtro e a quantidade, também pelo MSAA; `&` em nome de caderno é lido como "&" e não vira letra de atalho; a árvore Local (1.5.0) tem o nome "Local", também pelo MSAA |
 | ACE-16 | Documentação | HTML com idioma, cabeçalhos e tabelas de verdade, em inglês e português |
 | ACE-17 | Tradução | Toda frase traduzida, sem vazias nem obsoletas, mesmos `{marcadores}`, "…" mantido, nomes das raias iguais aos do web, manifesto e documentação em pt_BR com todos os atalhos |
-| ACE-18 | Árvore pelo MSAA | Folha lida com título, caderno, tags e data; raia lida com nome, número de folhas e "expandido" |
+| ACE-18 | Árvore pelo MSAA | Folha lida com título, caderno, tags e data; raia lida com nome, número de folhas e "expandido"; pasta da árvore Local (1.5.0) lida com o nome, o número de cadernos e "recolhido" |
 | ACE-19 | Cor | A raia é sempre dita pelo nome (nunca só pela cor); a tabela tem a coluna Status |
 
 ## 6. Casos de vulnerabilidade e privacidade (SEG)
@@ -138,12 +140,12 @@ Com 100 mil folhas em 80 cadernos e 12 pastas, geradas por `tests/gerar_massa.py
 
 | ID | Caso | Resultado esperado |
 |---|---|---|
-| DOC-01 | Arquivo Word | `docs/Manual-NotasWorkflowNVDA.docx` existe e todas as partes são XML bem formado |
-| DOC-02 | Atualizado | Gerado do `MANUAL.md` atual (SHA-256 nas propriedades); da versão do manifesto; com linha da versão no histórico e versão na capa |
+| DOC-01 | Arquivo do manual (1.5.0) | `addon/doc/pt_BR/manual.html` existe, é HTML bem formado (todo elemento fechado na ordem) e o pacote da versão tem o mesmo arquivo; não existe mais manual em Word |
+| DOC-02 | Atualizado | Gerado do `MANUAL.md` atual (SHA-256 num `meta`); da versão do manifesto; com linha da versão no histórico e versão no topo |
 | DOC-03 | Completo | Todo botão, campo e menu com letra de atalho (tirados da tradução pt_BR), as 4 raias, os 10 formatos, as opções de Mostrar, Visualização e Situação do salvamento e as colunas das tabelas aparecem no manual |
 | DOC-04 | Atalhos | Todo atalho padrão (lido dos scripts) e as teclas das janelas aparecem no manual |
 | DOC-06 | Só este complemento | Manual, readmes, manifestos e textos da interface não citam outra plataforma |
-| DOC-05 | Acessível | Capítulos com Título 1 do Word; toda tabela com linha de cabeçalho repetida; idioma pt-BR e título nas propriedades; sumário com links para todos os capítulos; nenhuma imagem sem descrição |
+| DOC-05 | Acessível | Idioma pt-BR e título; um só h1, capítulos em h2 e seções em h3; toda tabela com cabeçalho (`th scope="col"`); sumário com links para todos os capítulos; nenhum script, quadro, formulário, arquivo externo ou imagem |
 
 ## 7. Critérios de aprovação
 

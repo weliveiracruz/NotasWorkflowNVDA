@@ -109,7 +109,7 @@ def run():
 		"globalVars.pyc": ["appArgs"],
 		"config/__init__.pyc": ["profiles", "spec"],
 		"scriptHandler.pyc": ["script"],
-		"ui.pyc": ["message"],
+		"ui.pyc": ["message", "browseableMessage", "isHtml"],
 		"addonHandler/__init__.pyc": ["initTranslation"],
 	}
 	absent = []

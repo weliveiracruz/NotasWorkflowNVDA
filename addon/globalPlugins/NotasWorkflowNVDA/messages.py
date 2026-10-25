@@ -74,6 +74,11 @@ def folderPlace(folder):
 	return _("Folder {name}").format(name=folder["name"])
 
 
+def folderLocation(folder, notebooks):
+	# Translators: a folder in the Location tree (the note goes directly into it, or into one of its notebooks, shown inside); {count} is its number of notebooks.
+	return _("Folder {name}, {count}").format(name=folder["name"], count=notebooksCount(notebooks))
+
+
 def locationChoices(store):
 	"""(labels, [(notebookId, folderId)]) of every place a note can be: loose, each
 	folder followed by its notebooks, then the notebooks without folder."""

@@ -12,7 +12,7 @@ sys.path.insert(0, HERE)
 
 from _guiapp import (  # noqa: E402
 	RECORD, VK_RETURN, Key, MainDialog, NotasWorkflowNVDA, click, closeWindow, config, creating, fakeModal, gui, mainDialog,
-	mark, menu, model, newPlugin, noteDialog, openWindow, organizeDialog, postKey, prompts, pump, replaced, searchDialog,
+	mark, menu, model, newPlugin, noteDialog, openWindow, organizeDialog, postKey, prompts, pump, realChoosePlace, replaced, searchDialog,
 	settingsPanel, spokenSince, store, tableRows, treeFind, treeTexts, waitSpoken, wx,
 )
 import _helpers  # noqa: E402
@@ -47,6 +47,25 @@ def run():
 	R.check("FUN-14 the button that creates is called Create", dlg.createButton.GetLabel() == "&Create…")
 	again = openWindow(plugin)
 	R.check("FUN-14 opening again reuses the window", again is dlg)
+
+	# -- FUN-29 User manual -----------------------------------------------------------------------
+	sys.path.insert(0, os.path.join(HERE, "..", "docs", "manual"))
+	import gerar_manual
+
+	gerar_manual.build()
+	shown = len(nvda_stubs.RECORD["browseable"])
+	click(dlg.manualButton)
+	got = nvda_stubs.RECORD["browseable"][shown:]
+	page = got[0][0] if got else ""
+	R.check("FUN-29 User manual shows the manual in NVDA's browseable window (HTML)", len(got) == 1 and got[0][2] is True and got[0][1] == "Notas Workflow NVDA user manual", [g[1:] for g in got])
+	R.check("FUN-29 the manual shown is the whole manual, in Portuguese, with its headings and tables", page.startswith('<main lang="pt-BR">') and page.endswith("</main>") and "<h1" in page and page.count("<h2") >= 10 and "<th scope=\"col\">" in page and "<script" not in page, page[:80])
+	n = mark()
+	with replaced(NotasWorkflowNVDA, "manualPath", lambda: None):
+		ok = plugin.openManual()
+	R.check("FUN-29 a missing manual is said, nothing opens", ok is False and spokenSince(n) == ["The user manual was not found. Install the add-on again."] and len(nvda_stubs.RECORD["browseable"]) == shown + 1, spokenSince(n))
+	plugin.script_openManual(None)
+	pump(lambda: len(nvda_stubs.RECORD["browseable"]) == shown + 2, 2)
+	R.check("FUN-29 the command Opens the user manual (Input gestures) shows it too", len(nvda_stubs.RECORD["browseable"]) == shown + 2)
 
 	# -- FUN-01 Create: note, notebook and folder --------------------------------------------------
 	n = mark()
@@ -167,24 +186,24 @@ def run():
 	# -- FUN-08 Move to: notebook, folder or loose ------------------------------------------------------
 	dlg.refresh(note["id"])
 	n = mark()
-	with replaced(prompts, "chooseItem", lambda parent, message, caption, labels, current=0: labels.index("Notebook Trabalho")):
+	with replaced(prompts, "choosePlace", lambda parent, caption, store, current=0: labels.index("Notebook Trabalho")):
 		click(dlg.moveButton)
 	R.check("FUN-08 Move to a notebook", note["notebookId"] == nb["id"] and note["folderId"] is None and "Moved to Notebook Trabalho" in spokenSince(n), spokenSince(n))
 	n = mark()
-	with replaced(prompts, "chooseItem", lambda parent, message, caption, labels, current=0: labels.index("Folder Projetos")):
+	with replaced(prompts, "choosePlace", lambda parent, caption, store, current=0: labels.index("Folder Projetos")):
 		click(dlg.moveButton)
 	R.check("FUN-08 Move to a folder (directly)", note["folderId"] == f["id"] and note["notebookId"] is None and "Moved to Folder Projetos" in spokenSince(n), spokenSince(n))
 	seen = []
 
-	def keep(parent, message, caption, labels, current=0):
+	def keep(parent, caption, store, current=0):
 		seen.append(current)
 		return current
 
 	n = mark()
-	with replaced(prompts, "chooseItem", keep):
+	with replaced(prompts, "choosePlace", keep):
 		click(dlg.moveButton)
 	R.check("FUN-08 Move to starts on the current place; choosing it changes nothing", seen == [1] and not spokenSince(n), (seen, spokenSince(n)))
-	with replaced(prompts, "chooseItem", lambda *a, **k: 0):
+	with replaced(prompts, "choosePlace", lambda *a, **k: 0):
 		click(dlg.moveButton)
 	R.check("FUN-08 Move to loose", note["folderId"] is None and note["notebookId"] is None)
 
@@ -241,7 +260,7 @@ def run():
 	nd = noteDialog.NoteDialog(gui.mainFrame, plugin, note["id"])
 	nd.Show()
 	R.check("FUN-02 note window shows the note", nd.titleEdit.GetValue() == "Planejar sprint" and nd.contentEdit.GetValue() == "Pauta da **reunião**\n- item um" and nd.GetTitle() == "Planejar sprint")
-	R.check("FUN-02 status and location boxes show the note", nd.laneChoice.GetSelection() == 3 and nd.locationChoice.GetSelection() == 0)
+	R.check("FUN-02 status and location boxes show the note", nd.laneChoice.GetSelection() == 3 and nd.locationTree.place() == (None, None))
 	before = note["updatedAt"]
 	nd.tagsEdit.SetValue("trabalho, Ideia, trabalho")
 	R.check("FUN-03 change shown as unsaved", nd.statusEdit.GetValue() == "Unsaved changes…")
@@ -279,8 +298,7 @@ def run():
 	R.check("FUN-04 other keys go to the field", key.skipped)
 	nd.laneChoice.SetSelection(1)
 	nd.onChange("laneId")
-	nd.locationChoice.SetSelection(nd.places.index((nb["id"], None)))
-	nd.onChange("location")
+	nd.locationTree.setPlace((nb["id"], None))
 	nd.finish()
 	R.check("FUN-03 closing saves what is pending (status and location)", note["laneId"] == "inprogress" and note["notebookId"] == nb["id"], (note["laneId"], note["notebookId"]))
 
@@ -364,7 +382,7 @@ def run():
 	with replaced(prompts, "askText", lambda *a, **k: "Na caderneta 2"):
 		od.handleTreeKey(Key(wx.WXK_F2))
 	R.check("FUN-12 F2 on a note changes its title", nova["title"] == "Na caderneta 2")
-	with replaced(prompts, "chooseItem", lambda *a, **k: 0):
+	with replaced(prompts, "choosePlace", lambda *a, **k: 0):
 		click(od.moveButton)
 	R.check("FUN-12 Move to on a note (to loose), the note stays selected", nova["notebookId"] is None and od.selected() == ("note", nova["id"]) and od.tree.GetItemParent(od.nodes[("note", nova["id"])]) == od.nodes[("loose", None)])
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.YES
@@ -505,6 +523,88 @@ def run():
 	closeWindow()
 	collapsedLanesAndPile()
 	legacyMigration()
+	locationTree()
+
+
+def locationTree():
+	"""FUN-28: the Location field (New note, note window, Move to) is a tree: each folder
+	closed with its notebooks inside, the notebooks without folder and loose."""
+	plugin = newPlugin()
+	s = plugin.store
+	proj = s.addFolder("Projetos")
+	s.addFolder("Vazia")
+	site = s.addNotebook("Site", proj["id"])
+	app = s.addNotebook("App", proj["id"])
+	casa = s.addNotebook("Casa")
+	nd = noteDialog.NewNoteDialog(gui.mainFrame, s)
+	tree = nd.locationTree
+	top = []
+	item, cookie = tree.GetFirstChild(tree.GetRootItem())
+	while item.IsOk():
+		top.append(item)
+		item, cookie = tree.GetNextChild(tree.GetRootItem(), cookie)
+	texts = [tree.GetItemText(i) for i in top]
+	R.check("FUN-28 Location tree: loose, each folder (with its number of notebooks), the notebooks without folder", texts == ["Loose note (no notebook or folder)", "Folder Projetos, 2 notebooks", "Folder Vazia, 0 notebooks", "Notebook Casa"], texts)
+	inside = [tree.GetItemText(i) for i in (tree.GetFirstChild(top[1])[0], tree.GetLastChild(top[1]))]
+	R.check("FUN-28 the notebooks of a folder are inside it", inside == ["Notebook Site", "Notebook App"] and tree.GetChildrenCount(top[2]) == 0, inside)
+	R.check("FUN-28 the folders start closed; loose is chosen", not tree.IsExpanded(top[1]) and tree.place() == (None, None))
+	nd.Destroy()
+	nd = noteDialog.NewNoteDialog(gui.mainFrame, s, notebookId=app["id"])
+	tree = nd.locationTree
+	folderItem = tree.GetItemParent(tree.GetSelection())
+	R.check("FUN-28 a notebook chosen beforehand: selected, only its folder opens", tree.place() == (app["id"], None) and tree.IsExpanded(folderItem) and tree.GetItemText(folderItem).startswith("Folder Projetos"))
+	nd.Destroy()
+
+	def enterOnNotebook(dlg):
+		dlg.titleEdit.SetValue("Pelo Enter")
+		dlg.locationTree.setPlace((site["id"], None))
+		evt = wx.TreeEvent(wx.wxEVT_TREE_ITEM_ACTIVATED, dlg.locationTree, dlg.locationTree.GetSelection())
+		dlg.locationTree.GetEventHandler().ProcessEvent(evt)
+
+	with fakeModal(noteDialog.NewNoteDialog, enterOnNotebook), fakeModal(noteDialog.NoteDialog, lambda d: d.finish()):
+		plugin.newNote(gui.mainFrame)
+	made = s.notes[-1] if s.notes else None
+	R.check("FUN-28 Enter in the Location tree creates the note in the chosen notebook", made is not None and made["title"] == "Pelo Enter" and made["notebookId"] == site["id"], made)
+
+	def toFolder(dlg):
+		dlg.titleEdit.SetValue("Na pasta")
+		dlg.locationTree.setPlace((None, proj["id"]))
+		return wx.ID_OK
+
+	with fakeModal(noteDialog.NewNoteDialog, toFolder), fakeModal(noteDialog.NoteDialog, lambda d: d.finish()):
+		plugin.newNote(gui.mainFrame)
+	R.check("FUN-28 the folder itself is a place: the note goes directly into it", s.notes[-1]["folderId"] == proj["id"] and s.notes[-1]["notebookId"] is None)
+
+	note = s.addNote("Editar local", notebookId=casa["id"])
+	nd = noteDialog.NoteDialog(gui.mainFrame, plugin, note["id"])
+	R.check("FUN-28 note window: the tree shows the place of the note, nothing to save", nd.locationTree.place() == (casa["id"], None) and not nd.dirty)
+	nd.locationTree.setPlace((None, None))
+	R.check("FUN-28 choosing another place in the tree is a change to save", "location" in nd.dirty)
+	nd.finish()
+	R.check("FUN-28 closing the note window moves the note (loose)", note["notebookId"] is None and note["folderId"] is None)
+	nd = noteDialog.NoteDialog(gui.mainFrame, plugin, note["id"])
+	nd.locationTree.setPlace((app["id"], None))
+	nd.finish()
+	R.check("FUN-28 and into a notebook inside a folder", note["notebookId"] == app["id"])
+
+	seen = {}
+
+	def pick(dlg):
+		seen["start"] = dlg.tree.place()
+		seen["title"] = dlg.GetTitle()
+		dlg.tree.setPlace((None, proj["id"]))
+		evt = wx.TreeEvent(wx.wxEVT_TREE_ITEM_ACTIVATED, dlg.tree, dlg.tree.GetSelection())
+		dlg.tree.GetEventHandler().ProcessEvent(evt)
+
+	n = mark()
+	with replaced(prompts, "choosePlace", realChoosePlace), fakeModal(prompts.PlaceDialog, pick):
+		plugin.moveNote(gui.mainFrame, note)
+	R.check("FUN-28 Move to: a tree starting on the current place, Enter moves", seen.get("start") == (app["id"], None) and seen.get("title") == "Move Editar local to" and note["folderId"] == proj["id"] and "Moved to Folder Projetos" in spokenSince(n), (seen, spokenSince(n)))
+	with replaced(prompts, "choosePlace", realChoosePlace), fakeModal(prompts.PlaceDialog, lambda dlg: wx.ID_CANCEL):
+		plugin.moveNote(gui.mainFrame, note)
+	R.check("FUN-28 Move to cancelled keeps the place", note["folderId"] == proj["id"])
+	R.check("FUN-28 no real menu or dialog opened without an answer", not RECORD["blocked"], RECORD["blocked"])
+	plugin.terminate()
 
 
 def collapsedLanesAndPile():
@@ -565,8 +665,7 @@ def collapsedLanesAndPile():
 	dlg.refresh(a2["id"])
 
 	def moveAway(d):
-		d.locationChoice.SetSelection(d.places.index((nb["id"], None)))
-		d.onChange("location")
+		d.locationTree.setPlace((nb["id"], None))
 		d.finish()
 
 	with fakeModal(noteDialog.NoteDialog, moveAway):

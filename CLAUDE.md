@@ -7,14 +7,14 @@ O NotasWorkflowNVDA é o complemento do NVDA equivalente à aplicação web Nota
 Toda nova versão (toda mudança no campo `version` de `addon/manifest.ini`) **precisa** passar por todos os testes antes de ser gerada (`docs/SDD.md`, seção 9, e `docs/SDD-TESTES.md`):
 
 1. Atualize `version` e `changelog` em `addon/manifest.ini` e `addon/locale/pt_BR/manifest.ini`, e o `CHANGELOG.md`.
-2. Atualize o **manual de uso em Word**: edite `docs/manual/MANUAL.md` (a fonte) descrevendo a funcionalidade nova ou alterada, os nomes de botões e campos em português com a letra de atalho, o que o NVDA fala e as teclas; acrescente uma linha da versão em "Histórico deste manual". O `build.py` gera `docs/Manual-NotasWorkflowNVDA.docx` (ou rode `python docs/manual/gerar_manual.py`). Nunca edite o `.docx` à mão. A suíte `tests/test_manual.py` recusa a versão se algum botão, campo, menu, raia, formato ou atalho não estiver no manual, ou se o `.docx` estiver desatualizado.
+2. Atualize o **manual de uso**: edite `docs/manual/MANUAL.md` (a fonte) descrevendo a funcionalidade nova ou alterada, os nomes de botões e campos em português com a letra de atalho, o que o NVDA fala e as teclas; acrescente uma linha da versão em "Histórico deste manual". O `build.py` gera `addon/doc/pt_BR/manual.html` (ou rode `python docs/manual/gerar_manual.py`), que vai dentro do pacote e é aberto pelo botão **Manual de uso…** da janela principal. Nunca edite o `.html` à mão. Não existe mais manual em Word. A suíte `tests/test_manual.py` recusa a versão se algum botão, campo, menu, raia, formato ou atalho não estiver no manual, ou se o `manual.html` estiver desatualizado.
 3. Escreva ou atualize os testes das funções novas ou alteradas (funcionais em `tests/test_pure.py` ou `tests/test_gui.py`, acessibilidade em `tests/test_accessibility.py`, vulnerabilidade em `tests/test_security.py`) e acrescente os casos no `docs/SDD-TESTES.md`.
 4. Rode todas as suítes: `python tests/run_all.py --note "o que mudou"` (precisa de `pip install wxPython bandit comtypes`; Python 3.11 e 3.13).
 5. Se algo falhar: registre em `reports/PROBLEMAS-<versão>.md` (P-xx do complemento, T-xx dos testes), corrija e rode de novo até **0 falhas**.
 6. Gere `reports/RELATORIO-TESTES-<versão>.md` com os números de `reports/execucoes.json`.
 7. Gere o pacote só com `python build.py --release`: ele roda tudo de novo e **recusa** gerar o pacote se algum teste falhar.
 
-Isso vale para **toda** alteração de comportamento ou de interface, mesmo sem versão nova: o manual em Word precisa sempre descrever o complemento como ele está.
+Isso vale para **toda** alteração de comportamento ou de interface, mesmo sem versão nova: o manual de uso precisa sempre descrever o complemento como ele está.
 
 Nunca apague nem edite à mão execuções antigas em `reports/execucoes.json`.
 

@@ -1,17 +1,17 @@
 # -*- coding: UTF-8 -*-
-"""User manual tests (DOC-xx of docs/SDD-TESTES.md): the Word manual
-(docs/Manual-NotasWorkflowNVDA.docx) exists, matches docs/manual/MANUAL.md and the
-version, documents every control, lane, format and shortcut of the interface,
-and is an accessible document.
+"""User manual tests (DOC-xx of docs/SDD-TESTES.md): the HTML manual shown by the
+User manual button (addon/doc/pt_BR/manual.html) exists, goes into the package,
+matches docs/manual/MANUAL.md and the version, documents every control, lane,
+format and shortcut of the interface, and is an accessible document.
 
-Run:  python tests/test_manual.py   (after python build.py, which generates the .docx)"""
+Run:  python tests/test_manual.py   (after python build.py, which generates manual.html)"""
 
 import ast
 import os
 import re
 import sys
 import zipfile
-from xml.dom import minidom
+from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
@@ -46,6 +46,38 @@ def defaultGestures():
 	return out
 
 
+class Structure(HTMLParser):
+	"""Tags, ids, links and open elements of the page (for well-formedness and structure)."""
+
+	VOID = {"meta", "br", "hr", "img", "link", "input"}
+
+	def __init__(self):
+		super().__init__()
+		self.tags = []
+		self.ids = set()
+		self.links = []
+		self.stack = []
+		self.errors = []
+		self.attrs = []
+
+	def handle_starttag(self, tag, attrs):
+		attrs = dict(attrs)
+		self.tags.append(tag)
+		self.attrs.append((tag, attrs))
+		if "id" in attrs:
+			self.ids.add(attrs["id"])
+		if tag == "a" and "href" in attrs:
+			self.links.append(attrs["href"])
+		if tag not in self.VOID:
+			self.stack.append(tag)
+
+	def handle_endtag(self, tag):
+		if not self.stack or self.stack[-1] != tag:
+			self.errors.append(tag)
+		else:
+			self.stack.pop()
+
+
 def run():
 	man = build.readManifest()
 	version = man["version"]
@@ -53,26 +85,32 @@ def run():
 	with open(gerar_manual.SOURCE, encoding="utf-8") as f:
 		md = f.read()
 
-	# -- DOC-01 the Word file ---------------------------------------------------------------------
-	R.check("DOC-01 the Word manual exists in the documentation folder", os.path.isfile(path) and os.path.dirname(path) == os.path.join(ROOT, "docs"), path)
+	# -- DOC-01 the HTML file, inside the package ------------------------------------------------------
+	R.check("DOC-01 the manual is in the add-on (addon/doc/pt_BR/manual.html)", os.path.isfile(path) and path == os.path.join(ROOT, "addon", "doc", "pt_BR", "manual.html"), path)
 	try:
-		z = zipfile.ZipFile(path)
-		parts = {n: z.read(n).decode("utf-8") for n in z.namelist()}
-		for xml in parts.values():
-			minidom.parseString(xml.encode("utf-8"))
-		valid = {"[Content_Types].xml", "word/document.xml", "word/styles.xml", "docProps/core.xml"} <= set(parts)
-	except Exception as e:
-		parts, valid = {}, False
-		R.check("DOC-01 the Word manual opens", False, repr(e))
-	R.check("DOC-01 the Word manual is a valid .docx (every part is well-formed XML)", valid)
+		with open(path, encoding="utf-8") as f:
+			page = f.read()
+	except OSError as e:
+		page = ""
+		R.check("DOC-01 the manual opens", False, repr(e))
+	parser = Structure()
+	parser.feed(page)
+	R.check("DOC-01 the manual is well-formed HTML (every element closed in order)", page and not parser.errors and not parser.stack, (parser.errors[:5], parser.stack[:5]))
+	package = os.path.join(build.DIST, "%s-%s.nvda-addon" % (man["name"], man["version"]))
+	try:
+		with zipfile.ZipFile(package) as z:
+			packed = z.read("doc/pt_BR/manual.html").decode("utf-8")
+	except (OSError, KeyError, zipfile.BadZipFile):
+		packed = None
+	R.check("DOC-01 the package of the version has the same manual", packed == page, package)
+	R.check("DOC-01 no Word manual is generated any more", not os.path.exists(os.path.join(ROOT, "docs", "Manual-NotasWorkflowNVDA.docx")))
 
 	# -- DOC-02 up to date --------------------------------------------------------------------------
 	info = gerar_manual.builtInfo(path)
-	R.check("DOC-02 the .docx was generated from the current MANUAL.md (run python build.py)", info is not None and info[1] == gerar_manual.sourceHash(md), info)
-	R.check("DOC-02 the .docx is of the current version %s" % version, info is not None and info[0] == version, info)
+	R.check("DOC-02 the manual was generated from the current MANUAL.md (run python build.py)", info is not None and info[1] == gerar_manual.sourceHash(md), info)
+	R.check("DOC-02 the manual is of the current version %s" % version, info is not None and info[0] == version, info)
 	R.check("DOC-02 the manual history has a row for version %s" % version, re.search(r"^\|\s*%s\s*\|" % re.escape(version), md, re.M) is not None)
-	document = parts.get("word/document.xml", "")
-	R.check("DOC-02 the cover shows the version", "versão %s" % version in document)
+	R.check("DOC-02 the top of the manual shows the version", "versão %s" % version in page)
 
 	# -- DOC-03 every control of the interface is documented ------------------------------------------
 	po = build.parsePo(PO)
@@ -96,15 +134,14 @@ def run():
 	R.check("DOC-04 the keys inside the windows are in the manual", all(k in md for k in keys), [k for k in keys if k not in md])
 
 	# -- DOC-05 accessible document ---------------------------------------------------------------------------------
-	styles = parts.get("word/styles.xml", "")
-	core = parts.get("docProps/core.xml", "")
-	R.check("DOC-05 headings use Word heading styles (navigable with a screen reader)", document.count('w:pStyle w:val="Heading1"') >= 10 and 'w:outlineLvl w:val="0"' in styles)
-	R.check("DOC-05 every table has a header row repeated on each page", document.count("<w:tbl>") == document.count("<w:tblHeader/>") and document.count("<w:tbl>") >= 10)
-	R.check("DOC-05 language pt-BR and title in the properties", 'w:lang w:val="pt-BR"' in styles and "<dc:language>pt-BR</dc:language>" in core and "<dc:title>" in core)
-	links = re.findall(r'w:hyperlink w:anchor="(\w+)"', document)
-	marks = set(re.findall(r'w:bookmarkStart w:id="\d+" w:name="(\w+)"', document))
-	R.check("DOC-05 the table of contents links to every chapter", links and all(a in marks for a in links), len(links))
-	R.check("DOC-05 no image without description (the manual has no images)", "<w:drawing" not in document and "<pic:" not in document)
+	tags = parser.tags
+	R.check("DOC-05 language pt-BR and a title", '<html lang="pt-BR">' in page and '<main lang="pt-BR">' in page and re.search(r"<title>[^<]+</title>", page) is not None)
+	R.check("DOC-05 one h1, chapters in h2 and sections in h3 (navigable with H, 1, 2 and 3)", tags.count("h1") == 1 and tags.count("h2") >= 10 and tags.count("h3") >= 10 and "h4" not in tags, (tags.count("h1"), tags.count("h2"), tags.count("h3")))
+	tables = tags.count("table")
+	heads = [a for t, a in parser.attrs if t == "th"]
+	R.check("DOC-05 every table has a header row (th scope=col)", tables >= 10 and tags.count("thead") == tables and heads and all(a.get("scope") == "col" for a in heads), tables)
+	R.check("DOC-05 the table of contents links to every chapter", parser.links and all(h.startswith("#") and h[1:] in parser.ids for h in parser.links) and len(parser.links) == tags.count("h2") - 1, len(parser.links))
+	R.check("DOC-05 no script, frame, form, external file or image", not {"script", "iframe", "form", "img", "link", "object"} & set(tags) and "http" not in page.lower())
 
 	# -- DOC-06 only this add-on ------------------------------------------------------------------------------------
 	userTexts = {"docs/manual/MANUAL.md": md}

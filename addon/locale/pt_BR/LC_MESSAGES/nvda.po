@@ -26,10 +26,6 @@ msgstr "Nome da nova pasta:"
 msgid "New folder"
 msgstr "Nova pasta"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:378
-msgid "Move to"
-msgstr "Mover para"
-
 #: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:396
 msgid "Delete note"
 msgstr "Excluir folha"
@@ -75,8 +71,8 @@ msgid "Note created in {lane}"
 msgstr "Folha criada em {lane}"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:376
-msgid "Move {title} to:"
-msgstr "Mover {title} para:"
+msgid "Move {title} to"
+msgstr "Mover {title} para"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/__init__.py:394
 msgid "Delete the note {title}? This cannot be undone."
@@ -281,6 +277,10 @@ msgstr "Caderno {name}"
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:74
 msgid "Folder {name}"
 msgstr "Pasta {name}"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py:79
+msgid "Folder {name}, {count}"
+msgstr "Pasta {name}, {count}"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:115
 msgid "{month}/{day}/{year}"
@@ -577,6 +577,22 @@ msgstr "&Anunciar o salvamento automático"
 #: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
 msgid "E&xport…"
 msgstr "&Exportar…"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+msgid "User ma&nual…"
+msgstr "Ma&nual de uso…"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "The user manual was not found. Install the add-on again."
+msgstr "O manual de uso não foi encontrado. Instale o complemento de novo."
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "Notas Workflow NVDA user manual"
+msgstr "Manual de uso do Notas Workflow NVDA"
+
+#: addon/globalPlugins/NotasWorkflowNVDA/__init__.py
+msgid "Notas Workflow NVDA: opens the user manual"
+msgstr "Notas Workflow NVDA: abre o manual de uso"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py
 msgid "Selected &note…"

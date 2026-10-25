@@ -10,7 +10,7 @@ Only the Python standard library is needed. The script:
   1. checks manifest.ini;
   2. compiles the translations (locale/*/LC_MESSAGES/nvda.po -> nvda.mo);
   3. converts the documentation (readme.md, docs/pt_BR/readme.md) to addon/doc/<lang>/readme.html
-     and generates the Word user manual (docs/manual/MANUAL.md -> docs/Manual-NotasWorkflowNVDA.docx);
+     and generates the user manual shown by the add-on (docs/manual/MANUAL.md -> addon/doc/pt_BR/manual.html);
   4. zips the addon folder and prints the SHA-256 (needed by the Add-on Store).
 """
 
@@ -227,7 +227,7 @@ def buildPackage(man):
 
 
 def buildManual():
-	"""Word user manual, regenerated at every build so it never lags behind MANUAL.md."""
+	"""HTML user manual (inside the package), regenerated at every build so it never lags behind MANUAL.md."""
 	sys.path.insert(0, os.path.join(ROOT, "docs", "manual"))
 	import gerar_manual
 

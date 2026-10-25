@@ -106,6 +106,8 @@ class NotesDialog(wx.Dialog):
 		self.organizeButton = actions2.addButton(self, label=_("Notebooks and &folders…"))
 		# Translators: button that opens the menu to export the selected note, a notebook or a folder.
 		self.exportButton = actions2.addButton(self, label=_("E&xport…"))
+		# Translators: button that opens the user manual of the add-on.
+		self.manualButton = actions2.addButton(self, label=_("User ma&nual…"))
 		# Translators: button that closes the window.
 		self.closeButton = actions2.addButton(self, id=wx.ID_CLOSE, label=_("C&lose"))
 		sHelper.addItem(actions2)
@@ -133,6 +135,7 @@ class NotesDialog(wx.Dialog):
 		self.searchButton.Bind(wx.EVT_BUTTON, self.onSearch)
 		self.organizeButton.Bind(wx.EVT_BUTTON, self.onOrganize)
 		self.exportButton.Bind(wx.EVT_BUTTON, self.onExport)
+		self.manualButton.Bind(wx.EVT_BUTTON, lambda evt: self.plugin.openManual())
 		self.closeButton.Bind(wx.EVT_BUTTON, lambda evt: self.Close())
 		self.Bind(wx.EVT_CLOSE, self.onClose)
 

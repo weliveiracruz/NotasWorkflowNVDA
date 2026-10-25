@@ -4,6 +4,8 @@
 
 Este manual descreve, em detalhe, todas as funcionalidades do complemento **Notas Workflow NVDA** para o leitor de telas NVDA, versão {{versao}}. Ele é atualizado a cada nova versão do complemento.
 
+O manual vem dentro do complemento: o botão **Manual de uso… (Alt+N)** da janela principal o abre na janela de leitura do NVDA, onde dá para navegar como numa página: **H** passa pelos títulos, **2** pelos capítulos, **3** pelas seções, **T** pelas tabelas e **K** pelos links do sumário. **Esc** fecha o manual.
+
 O Notas Workflow NVDA organiza **folhas** (anotações e tarefas) em **raias** de status, agrupadas em **cadernos** e **pastas**, com tags, conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.
 
 > **Dica:** os nomes de botões e campos deste manual são os da interface em português. Entre parênteses aparece a letra de atalho com Alt de cada um, por exemplo **Criar… (Alt+C)**.
@@ -84,6 +86,7 @@ Os controles aparecem nesta ordem de tabulação:
 | Buscar… | Alt+B | Abre a janela Buscar folhas. |
 | Cadernos e pastas… | Alt+T | Abre a janela Cadernos e pastas, que também lista e abre as folhas. |
 | Exportar… | Alt+E | Exporta a folha selecionada, um caderno ou uma pasta como documento do Word, Markdown ou HTML (veja Exportar como documento). |
+| Manual de uso… | Alt+N | Abre este manual na janela de leitura do NVDA (veja Sobre este manual). |
 | Fechar | Alt+H ou Esc | Fecha a janela. |
 
 Os botões Atualizar o status da tarefa…, Mover para… e Excluir só ficam disponíveis (e só entram na tabulação) quando uma folha está selecionada.
@@ -138,12 +141,31 @@ Também é possível criar uma folha de qualquer lugar com **NVDA+Alt+F**. A jan
 | Campo | Atalho | Descrição |
 |---|---|---|
 | Título | Alt+T | Obrigatório, até 200 caracteres. |
-| Local | Alt+O | Folha solta (sem caderno nem pasta), uma pasta ou um caderno. Os cadernos aparecem com a pasta deles, por exemplo "Caderno Site (pasta Projetos)". |
+| Local | Alt+O | Uma árvore com Folha solta (sem caderno nem pasta), cada pasta com os cadernos dela dentro e os cadernos sem pasta (veja O campo Local). |
 | Status | Alt+S | A Fazer, Em andamento, Bloqueada ou Concluída. |
-| Criar | Alt+R ou Enter | Cria a folha. Fica indisponível enquanto o título estiver vazio. |
+| Criar | Alt+R ou Enter | Cria a folha. Fica indisponível enquanto o título estiver vazio. Enter na árvore Local também cria. |
 | Cancelar | Esc | Fecha sem criar nada. |
 
 Depois de criar, o NVDA fala "Folha criada em" e o nome do status, e a janela da folha abre com o foco no conteúdo. Nomes de cadernos e pastas têm até 100 caracteres e não podem ficar vazios.
+
+### O campo Local
+
+O campo **Local (Alt+O)** é uma árvore, que funciona como as raias da janela principal: as pastas começam **fechadas** e mostram quantos cadernos têm, e os cadernos de cada pasta ficam **dentro** dela. A árvore tem, nesta ordem:
+
+| Item | Onde a folha fica |
+|---|---|
+| Folha solta (sem caderno nem pasta) | Em nenhum caderno e em nenhuma pasta. |
+| Pasta Projetos, 2 cadernos | Direto na pasta, sem caderno. |
+| Caderno Site (dentro da pasta Projetos) | No caderno, que está na pasta. |
+| Caderno Casa (no fim, fora das pastas) | No caderno sem pasta. |
+
+- **Seta para baixo e Seta para cima** passam pelos itens visíveis.
+- **Seta para a direita** abre a pasta e mostra os cadernos dela; **Seta para a esquerda** fecha a pasta (ou, num caderno, volta para a pasta dele).
+- O item selecionado é o local da folha: selecionar a própria pasta guarda a folha **direto na pasta**; selecionar um caderno guarda a folha **no caderno**.
+- A árvore já começa no local atual (ou no caderno ou na pasta do filtro em uso, numa folha nova), e só a pasta desse local vem aberta.
+- O NVDA lê cada pasta com o número de cadernos e diz se está aberta ou fechada.
+
+A mesma árvore aparece na janela Nova folha, na janela da folha e em **Mover para…**.
 
 ## Janela da folha
 
@@ -154,7 +176,7 @@ Abre com **Enter** sobre uma folha (na lista, na busca ou em Cadernos e pastas),
 | Campo | Atalho | Descrição |
 |---|---|---|
 | Título | Alt+T | O título da folha. Uma folha sem título aparece como "Sem título". |
-| Local | Alt+O | Muda o caderno ou a pasta da folha. |
+| Local | Alt+O | A árvore de pastas e cadernos (veja O campo Local): escolher outro item muda o caderno ou a pasta da folha, salvo como as outras mudanças. |
 | Status | Alt+S | Muda o status da folha. |
 | Tags (separadas por vírgula) | Alt+G | Por exemplo: urgente, cliente, ideia. |
 | Conteúdo | Alt+C | O texto da folha, com várias linhas e a marcação de formatação. |
@@ -242,13 +264,14 @@ Também é possível mudar o status (ou o local) pelos campos **Status** e **Loc
 
 ### Mover para um caderno ou uma pasta
 
-**Mover para… (Alt+M)** mostra uma lista com todos os lugares possíveis, começando no lugar atual da folha:
+**Mover para… (Alt+M)** abre a janela "Mover … para" (com o título da folha) e a árvore **Local**, a mesma da janela da folha (veja O campo Local), começando no lugar atual da folha:
 
 - Folha solta (sem caderno nem pasta);
-- cada pasta ("Pasta Projetos"), para guardar a folha direto nela;
-- cada caderno, com a pasta dele ("Caderno Site (pasta Projetos)").
+- cada pasta ("Pasta Projetos, 2 cadernos"), para guardar a folha direto nela; Seta para a direita abre a pasta;
+- dentro de cada pasta, os cadernos dela ("Caderno Site");
+- no fim, os cadernos sem pasta.
 
-O NVDA confirma com "Agora em:" e o lugar escolhido. Se o filtro em uso deixar de mostrar a folha, a seleção vai para a folha vizinha. O mesmo botão existe na janela Cadernos e pastas, e o campo Local da janela da folha faz o mesmo.
+**Enter** ou **OK** move a folha; **Cancelar** ou **Esc** deixa a folha onde estava. O NVDA confirma com "Agora em:" e o lugar escolhido, com a pasta do caderno ("Caderno Site (pasta Projetos)"). Se o filtro em uso deixar de mostrar a folha, a seleção vai para a folha vizinha. O mesmo botão existe na janela Cadernos e pastas, e o campo Local da janela da folha faz o mesmo.
 
 ### Excluir
 
@@ -418,8 +441,9 @@ O NVDA fala "Importado:" com o número de folhas, cadernos e pastas trazidos.
 | NVDA+Alt+F | Nova folha |
 | NVDA+Alt+B | Buscar nas folhas |
 | sem atalho | Falar quantas folhas cada raia tem (por exemplo "A fazer 2, Em andamento 1, Bloqueada 0, Concluída 3") |
+| sem atalho | Abrir o manual de uso |
 
-Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **Notas Workflow NVDA**, onde também dá para dar um atalho ao resumo das raias.
+Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **Notas Workflow NVDA**, onde também dá para dar um atalho ao resumo das raias e ao manual de uso.
 
 ### Dentro das janelas
 
@@ -505,3 +529,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.3.0 | As raias começam fechadas e ficam como você as deixou; ao mudar o status ou o local na janela da folha, o foco vai para a próxima folha da mesma raia (nova seção "Trabalhar a pilha de uma raia"). |
 | 1.2.0 | Botão Criar (folha, caderno e pasta); Atualizar o status da tarefa; Mover para (caderno ou pasta, e folhas guardadas direto em pastas); Enter abre a folha; sem a visualização em tabela e sem o botão Abrir; folhas listadas e abertas na janela Cadernos e pastas; campo Local; listas de 200 em 200; desempenho com 100 mil folhas; sem menções a outras plataformas. |
 | 1.4.0 | Novo botão Exportar… na janela principal e novo capítulo "Exportar como documento": folha selecionada, caderno ou pasta em Word, Markdown ou HTML, num arquivo só ou num arquivo para cada folha; novas mensagens faladas da exportação. |
+| 1.5.0 | O campo Local virou uma árvore de pastas e cadernos, que se abre como as raias (nova seção "O campo Local"), na janela Nova folha, na janela da folha e em Mover para; Enter na árvore cria a folha ou move a folha. O manual deixou de ser um documento do Word: vem dentro do complemento e abre pelo novo botão Manual de uso… e pelo comando Abrir o manual de uso. |

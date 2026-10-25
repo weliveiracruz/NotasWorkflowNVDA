@@ -10,6 +10,7 @@ import wx
 from gui import guiHelper
 
 from . import markup, messages, model
+from .locationTree import LocationTree
 from .store import StoreError
 
 addonHandler.initTranslation()
@@ -46,11 +47,9 @@ class NewNoteDialog(wx.Dialog):
 		# Translators: label of the title field of a note.
 		self.titleEdit = sHelper.addLabeledControl(_("&Title:"), wx.TextCtrl, size=(380, -1))
 		self.titleEdit.SetMaxLength(model.MAX_TITLE)
-		labels, self.places = messages.locationChoices(store)
-		# Translators: label of the box with the place of a note: loose, a folder or a notebook.
-		self.locationChoice = sHelper.addLabeledControl(_("&Location:"), wx.Choice, choices=labels)
-		place = store.location(notebookId, folderId)
-		self.locationChoice.SetSelection(self.places.index(place) if place in self.places else 0)
+		# Translators: label of the tree with the place of a note: loose, a folder or a notebook (inside its folder).
+		self.locationTree = sHelper.addLabeledControl(_("&Location:"), LocationTree, store=store)
+		self.locationTree.setPlace(store.location(notebookId, folderId))
 		# Translators: label of the status (lane) box of a note.
 		self.laneChoice = sHelper.addLabeledControl(_("&Status:"), wx.Choice, choices=messages.laneNames())
 		self.laneChoice.SetSelection(model.laneIndex(laneId))
@@ -66,6 +65,8 @@ class NewNoteDialog(wx.Dialog):
 		main.Fit(self)
 		self.createButton.SetDefault()
 		self.titleEdit.Bind(wx.EVT_TEXT, self.onTitle)
+		# Enter in the Location tree creates the note, as in the other fields.
+		self.locationTree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.create())
 		self.onTitle(None)
 		self.CentreOnScreen()
 		self.titleEdit.SetFocus()
@@ -73,8 +74,12 @@ class NewNoteDialog(wx.Dialog):
 	def onTitle(self, evt):
 		self.createButton.Enable(bool(self.titleEdit.GetValue().strip()))
 
+	def create(self):
+		if self.createButton.IsEnabled():
+			self.EndModal(wx.ID_OK)
+
 	def values(self):
-		notebookId, folderId = self.places[max(0, self.locationChoice.GetSelection())]
+		notebookId, folderId = self.locationTree.place()
 		return {
 			"title": self.titleEdit.GetValue().strip(),
 			"notebookId": notebookId,
@@ -98,9 +103,8 @@ class NoteDialog(wx.Dialog):
 		# Translators: label of the title field of a note.
 		self.titleEdit = sHelper.addLabeledControl(_("&Title:"), wx.TextCtrl, size=(520, -1))
 		self.titleEdit.SetMaxLength(model.MAX_TITLE)
-		labels, self.places = messages.locationChoices(self.store)
-		# Translators: label of the box with the place of a note: loose, a folder or a notebook.
-		self.locationChoice = sHelper.addLabeledControl(_("&Location:"), wx.Choice, choices=labels)
+		# Translators: label of the tree with the place of a note: loose, a folder or a notebook (inside its folder).
+		self.locationTree = sHelper.addLabeledControl(_("&Location:"), LocationTree, store=self.store, size=(520, 150))
 		# Translators: label of the status (lane) box of a note.
 		self.laneChoice = sHelper.addLabeledControl(_("&Status:"), wx.Choice, choices=messages.laneNames())
 		# Translators: label of the tags field of a note.
@@ -134,7 +138,7 @@ class NoteDialog(wx.Dialog):
 		self.timer = wx.Timer(self)
 		self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
 		self.titleEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("title"))
-		self.locationChoice.Bind(wx.EVT_CHOICE, lambda evt: self.onChange("location"))
+		self.locationTree.Bind(wx.EVT_TREE_SEL_CHANGED, lambda evt: self.onChange("location"))
 		self.laneChoice.Bind(wx.EVT_CHOICE, lambda evt: self.onChange("laneId"))
 		self.tagsEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("tags"))
 		self.contentEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("content"))
@@ -152,8 +156,7 @@ class NoteDialog(wx.Dialog):
 	def load(self, note):
 		self._loading = True
 		self.titleEdit.ChangeValue(note["title"])
-		place = (note["notebookId"], None) if note["notebookId"] else (None, note["folderId"])
-		self.locationChoice.SetSelection(self.places.index(place) if place in self.places else 0)
+		self.locationTree.setPlace((note["notebookId"], None) if note["notebookId"] else (None, note["folderId"]))
 		self.laneChoice.SetSelection(model.laneIndex(note["laneId"]))
 		self.tagsEdit.ChangeValue(", ".join(note["tags"]))
 		self.contentEdit.ChangeValue(markup.htmlToText(note["content"]))
@@ -184,7 +187,7 @@ class NoteDialog(wx.Dialog):
 		}
 		patch = {field: values[field]() for field in self.dirty if field in values}
 		if "location" in self.dirty:
-			notebookId, folderId = self.places[max(0, self.locationChoice.GetSelection())]
+			notebookId, folderId = self.locationTree.place()
 			patch.update(notebookId=notebookId, folderId=folderId)
 		return patch
 
@@ -221,6 +224,8 @@ class NoteDialog(wx.Dialog):
 		"""Save and close (also Esc and the window close button): nothing is lost."""
 		self.save()
 		self.timer.Stop()
+		# Destroying the Location tree still sends a selection event: it is not a change.
+		self._loading = True
 		if self.IsModal():
 			self.EndModal(wx.ID_OK)
 		else:

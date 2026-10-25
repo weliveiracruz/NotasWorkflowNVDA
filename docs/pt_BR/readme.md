@@ -11,8 +11,10 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 * **Criar…**: um menu para criar uma folha, um caderno ou uma pasta.
 * **Atualizar o status da tarefa…**: um menu com os outros status.
 * **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
+* **Local** (na Nova folha, na janela da folha e em Mover para) é uma árvore que se abre como as raias: cada pasta começa fechada, com os cadernos dela dentro; escolher a própria pasta guarda a folha direto nela.
 * **Excluir**, **Buscar…**, **Cadernos e pastas…** e **Fechar** (Esc).
 * **Exportar…**: exporta a folha selecionada, um caderno ou uma pasta como documento (veja abaixo).
+* **Manual de uso…** (Alt+N): abre o manual de uso detalhado na janela de leitura do NVDA, com títulos, tabelas e sumário. Um comando sem atalho em Definir comandos também o abre.
 
 ## Folhas
 

@@ -49,7 +49,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-05 | Ver as folhas por raia | Árvore (a única visualização): cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); **as raias começam fechadas** (1.3.0) e ficam como a pessoa as deixou; a raia de uma folha selecionada pelo complemento abre sozinha; cada folha mostra título, local, tags e data; **Enter abre a folha** |
 | RF-06 | Listas longas | Cada raia (e cada caderno ou pasta na janela Cadernos e pastas) mostra 200 folhas por vez, com o item "Mostrar mais 200 folhas (N ainda não mostradas)"; uma folha a selecionar além da página faz a página dela aparecer |
 | RF-07 | Atualizar o status da tarefa | Botão **Atualizar o status da tarefa…** (menu com os outros status) e Alt+Shift+Seta para a direita/esquerda (status seguinte/anterior); a seleção acompanha a folha e o NVDA fala o novo status. Status ou local mudados **na janela da folha** (1.3.0): ao fechar, o foco vai para a próxima folha da mesma raia (a anterior, se era a última; a raia, se era a única) |
-| RF-08 | Mover para um caderno ou uma pasta | Botão **Mover para…** (na janela principal e em Cadernos e pastas) e campo Local da janela da folha: folha solta, direto numa pasta ou num caderno; a lista começa no lugar atual |
+| RF-08 | Mover para um caderno ou uma pasta | Botão **Mover para…** (na janela principal e em Cadernos e pastas) e campo Local da janela da folha: folha solta, direto numa pasta ou num caderno, escolhidos numa árvore de pastas e cadernos (1.5.0); a árvore começa no lugar atual |
 | RF-09 | Excluir folha | Botão Excluir ou tecla Delete, sempre com confirmação |
 | RF-10 | Filtrar | Caixa **Mostrar**: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), Caderno: <nome>, Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) |
 | RF-11 | Cadernos e pastas | Janela **Cadernos e pastas…**: árvore com cada pasta, os cadernos dela e as folhas guardadas nela, cada caderno com as suas folhas, o ramo "Sem pasta" e o ramo "Folhas soltas"; as folhas são carregadas só ao abrir o ramo; Enter abre a folha; Criar…, Renomear… (também o título da folha, F2), Mover para…, Excluir (com confirmação; as folhas nunca são apagadas ao excluir caderno ou pasta) |
@@ -224,7 +224,7 @@ A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo 
 
 ### 5.2 Nova folha (NVDA+Alt+F ou Criar… > Folha…)
 
-**Título** (obrigatório), **Local** (Folha solta, cada pasta e cada caderno com a pasta dele), **Status** (as 4 raias), **Criar** (padrão; indisponível sem título) e **Cancelar**. Enter cria; Esc cancela. Depois de criar, a janela da folha abre com o foco no conteúdo.
+**Título** (obrigatório), **Local** (árvore `locationTree.LocationTree`, desde a 1.5.0: Folha solta, cada pasta fechada com os cadernos dela dentro e os cadernos sem pasta; cada item é um local, a própria pasta guarda a folha direto nela; só a pasta do local escolhido vem aberta; a mesma árvore está na janela da folha e em Mover para, `prompts.PlaceDialog`, com Enter = OK), **Status** (as 4 raias), **Criar** (padrão; indisponível sem título) e **Cancelar**. Enter cria; Esc cancela; Enter na árvore Local também cria. Depois de criar, a janela da folha abre com o foco no conteúdo.
 
 ### 5.3 Janela da folha (editor)
 
@@ -257,7 +257,7 @@ Dentro das janelas: Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esq
 
 ## 7. Dados guardados
 
-A documentação de uso tem duas formas: o `readme` curto, que vai dentro do pacote (ajuda do complemento no NVDA), e o **manual detalhado em Word**, `docs/Manual-NotasWorkflowNVDA.docx`, gerado de `docs/manual/MANUAL.md` por `docs/manual/gerar_manual.py` (só biblioteca padrão). O manual usa os estilos de título do Word, sumário com links, tabelas com cabeçalho repetido e idioma pt-BR, para ser lido com o NVDA.
+A documentação de uso tem duas formas: o `readme` curto, que vai dentro do pacote (ajuda do complemento no NVDA), e o **manual detalhado**, `addon/doc/pt_BR/manual.html`, gerado de `docs/manual/MANUAL.md` por `docs/manual/gerar_manual.py` (só biblioteca padrão) e também dentro do pacote. Desde a 1.5.0 não há mais manual em Word: o botão **Manual de uso…** da janela principal (e o comando sem atalho "abre o manual de uso") mostra o `<main>` do `manual.html` com `ui.browseableMessage(..., isHtml=True)`, a janela de leitura do NVDA. O manual tem idioma pt-BR, um h1, capítulos em h2, seções em h3, sumário com links e tabelas com `th scope="col"`, sem script nem imagem; se o arquivo faltar, o NVDA fala que o manual não foi encontrado.
 
 | Dado | Onde | Proteção |
 |---|---|---|
@@ -278,14 +278,14 @@ O detalhamento de cada caso fica em [SDD-TESTES.md](SDD-TESTES.md). Resumo:
 | NVDA real | `tests/test_nvda_runtime.py` | Todo módulo importado existe no Python do NVDA instalado; manifesto aceito |
 | Pacote | `tests/run_all.py` | `build.py` gera um pacote válido |
 | Desempenho | `tests/test_performance.py` | 100 mil folhas: início, leitura, janela, status, edição, gravação, busca, Cadernos e pastas, saída (seção 4.6) |
-| Manual | `tests/test_manual.py` | Manual em Word atualizado, da versão atual, com todos os controles, raias, formatos e atalhos, e acessível |
+| Manual | `tests/test_manual.py` | Manual HTML do pacote atualizado, da versão atual, com todos os controles, raias, formatos e atalhos, e acessível |
 
 O que não é automatizável (fala real do NVDA, pasta sincronizada com OneDrive, troca de arquivos com o web) está no roteiro manual [TESTES-MANUAIS.md](TESTES-MANUAIS.md).
 
 ## 9. Processo de versão (obrigatório em toda nova versão)
 
 1. Atualizar `version` e `changelog` em `addon/manifest.ini` e `addon/locale/pt_BR/manifest.ini`, e o `CHANGELOG.md`.
-2. Atualizar o manual de uso em Word: editar `docs/manual/MANUAL.md` (fonte) e acrescentar a versão em "Histórico deste manual"; o `build.py` gera `docs/Manual-NotasWorkflowNVDA.docx`. Vale para toda alteração de comportamento ou de interface.
+2. Atualizar o manual de uso: editar `docs/manual/MANUAL.md` (fonte) e acrescentar a versão em "Histórico deste manual"; o `build.py` gera `addon/doc/pt_BR/manual.html`, aberto pelo botão Manual de uso…. Vale para toda alteração de comportamento ou de interface.
 3. Escrever ou atualizar os testes das funções novas ou alteradas e acrescentar os casos no `SDD-TESTES.md`.
 4. Rodar **todas** as suítes: `python tests/run_all.py --note "o que mudou"`.
 5. Se algo falhar: registrar em `reports/PROBLEMAS-<versão>.md` (ID, gravidade, causa, correção), corrigir e rodar de novo até **0 falhas**.

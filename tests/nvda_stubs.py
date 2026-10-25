@@ -18,7 +18,7 @@ import types
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
-RECORD = {"spoken": [], "messageBoxes": [], "settingsOpened": [], "log": [], "logErrors": []}
+RECORD = {"spoken": [], "messageBoxes": [], "settingsOpened": [], "log": [], "logErrors": [], "browseable": []}
 _lock = threading.Lock()
 #: Answer that gui.messageBox returns (tests change it).
 MESSAGEBOX_ANSWER = {"value": None}
@@ -104,6 +104,11 @@ def install(configPath=None, withGui=True, secure=False):
 			RECORD["spoken"].append(text)
 
 	ui.message = message
+
+	def browseableMessage(message, title=None, isHtml=False, **k):
+		RECORD["browseable"].append((message, title, isHtml))
+
+	ui.browseableMessage = browseableMessage
 	queueHandler = _module("queueHandler")
 	queueHandler.eventQueue = object()
 	queueHandler.queueFunction = lambda queue, func, *args, **kwargs: func(*args, **kwargs)

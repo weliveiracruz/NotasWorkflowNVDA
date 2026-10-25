@@ -127,7 +127,7 @@ def main():
 	else:
 		suites.append({"suite": "wxPython", "total": 1, "passed": 0, "failed": 1, "failures": ["wxPython not found: pip install wxPython"], "tests": ["wxPython"], "log": ""})
 	suites.append(buildSuite(wxPython or sys.executable))
-	# After the build, which regenerates the Word manual from docs/manual/MANUAL.md.
+	# After the build, which regenerates the HTML manual (addon/doc/pt_BR/manual.html) from docs/manual/MANUAL.md.
 	suites.append(runSuite([wxPython or sys.executable, "-X", "utf8", "-u", os.path.join("tests", "test_manual.py")]))
 
 	os.makedirs(REPORTS, exist_ok=True)

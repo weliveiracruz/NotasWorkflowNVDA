@@ -224,7 +224,7 @@ def run():
 
 	# -- main window, empty -----------------------------------------------------------------------
 	ctrls = checkWindow("main window, no notes", dlg)
-	R.check("ACE-04 without a note: Update the task status, Move to and Delete out of the tab order", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-04 without a note: Update the task status, Move to and Delete out of the tab order", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.manualButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-06 focus starts on the notes", lastFocus() is dlg.tree, lastFocus())
 	R.check("ACE-05 Esc closes the window", dlg.GetEscapeId() == wx.ID_CLOSE and dlg.closeButton.GetId() == wx.ID_CLOSE)
 	R.check("ACE-03 a single view (lanes): no View box and no table", not hasattr(dlg, "viewChoice") and not hasattr(dlg, "table"))
@@ -236,7 +236,7 @@ def run():
 	store.addNote("Revisar", "inprogress")
 	dlg.refresh(a["id"])
 	ctrls = checkWindow("main window, lanes", dlg)
-	R.check("ACE-03 tab order: show, notes, create, update the task status, move to, delete, search, notebooks and folders, export, close", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.statusButton, dlg.moveButton, dlg.deleteButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-03 tab order: show, notes, create, update the task status, move to, delete, search, notebooks and folders, export, user manual, close", ctrls == [dlg.filterChoice, dlg.tree, dlg.createButton, dlg.statusButton, dlg.moveButton, dlg.deleteButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.manualButton, dlg.closeButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-14 list label says what it shows and how many", plain(structuralName(dlg.tree)) == plain(T("Not&es: {filter} ({count})")).format(filter=T("All notes"), count=2), structuralName(dlg.tree))
 	dlg.setFilter(("notebook", nb["id"]))
 	label = structuralName(dlg.tree)
@@ -268,7 +268,7 @@ def run():
 	R.check("ACE-06 focus stays on the note", lastFocus() is dlg.tree and dlg.selectedNoteId() == a["id"])
 	FOCUS.clear()
 	n = mark()
-	with replaced(prompts, "chooseItem", lambda parent, message, caption, labels, current=0: 0):
+	with replaced(prompts, "choosePlace", lambda parent, caption, store, current=0: 0):
 		dlg.onMove(None)
 	R.check("ACE-07 Move to is announced with the new place", spokenSince(n) == [messages.movedToPlace(messages.looseNote())], spokenSince(n))
 	R.check("ACE-06 after Move to, the focus is back on the list", lastFocus() is dlg.tree)
@@ -296,7 +296,7 @@ def run():
 	nd = noteDialog.NewNoteDialog(dlg, store)
 	nd.Show()
 	ctrls = checkWindow("New note", nd)
-	R.check("ACE-03 New note: title, location, status, create (disabled until there is a title), cancel", ctrls == [nd.titleEdit, nd.locationChoice, nd.laneChoice, nd.cancelButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-03 New note: title, location, status, create (disabled until there is a title), cancel", ctrls == [nd.titleEdit, nd.locationTree, nd.laneChoice, nd.cancelButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-06 New note starts on the title", lastFocus() is nd.titleEdit)
 	nd.titleEdit.SetValue("x")
 	# Focusing a button (as the MSAA reading above does) makes it the temporary default:
@@ -306,6 +306,29 @@ def run():
 	default = nd.GetDefaultItem()
 	R.check("ACE-04 Create enters the tab order with a title and is the default button (Enter creates)", nd.createButton in focusables(nd) and default is not None and default.GetId() == nd.createButton.GetId(), default and default.GetLabel())
 	nd.Destroy()
+
+	# -- Location tree (New note, note window, Move to) ------------------------------------------------------
+	pasta = store.addFolder("Pasta A")
+	store.addNotebook("Caderno A", pasta["id"])
+	nd = noteDialog.NewNoteDialog(dlg, store)
+	nd.Show()
+	tree = nd.locationTree
+	R.check("ACE-14 the Location tree is named by its label", plain(structuralName(tree)) == plain(T("&Location:")), structuralName(tree))
+	folderItem = next(i for i in tree.items if tree.ItemHasChildren(i))
+	if msaaName(tree) is not None:
+		R.check("ACE-14 Location tree name read through MSAA", plain(msaaName(tree)) == plain(T("&Location:")), msaaName(tree))
+		tree.setIndex(tree.items.index(folderItem))
+		name, state = msaaTreeSelection(tree)
+		R.check("ACE-18 a folder of the Location tree read by MSAA with its notebooks and 'collapsed'", name == messages.folderLocation(pasta, 1) and state & 0x400, (name, hex(state)))
+	nd.Destroy()
+	pd = prompts.PlaceDialog(dlg, "Move x & y to", store, 0)
+	pd.Show()
+	ctrls = checkWindow("Move to", pd)
+	R.check("ACE-03 Move to: the Location tree, OK, Cancel; the tree starts with the focus", ctrls == [pd.tree, pd.okButton, pd.cancelButton] and lastFocus() is pd.tree, [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-08 Move to: the window title says the note; the tree is the Location", pd.GetTitle() == "Move x & y to" and plain(structuralName(pd.tree)) == plain(T("&Location:")), (pd.GetTitle(), structuralName(pd.tree)))
+	pd.Destroy()
+	store.deleteNotebook(store.notebooksIn(pasta["id"])[0]["id"])
+	store.deleteFolder(pasta["id"])
 
 	# -- note window --------------------------------------------------------------------------------------
 	note = store.addNote("Folha")
@@ -327,7 +350,7 @@ def run():
 	with fakeModal(noteDialog.NoteDialog, inspect):
 		plugin.editNote(dlg, note["id"])
 	d = seen["dlg"]
-	R.check("ACE-03 note window: title, location, status, tags, content, formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationChoice, d.laneChoice, d.tagsEdit, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
+	R.check("ACE-03 note window: title, location, status, tags, content, formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationTree, d.laneChoice, d.tagsEdit, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
 	R.check("ACE-06 opening a note starts on the title", seen["focus"] is d.titleEdit, seen["focus"])
 	R.check("ACE-13 save status is read-only and reachable with Tab", seen["status"] is False)
 	R.check("ACE-07 formatting is announced", seen["spoken"] == [T("Italic")], seen["spoken"])

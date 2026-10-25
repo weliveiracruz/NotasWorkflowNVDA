@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## 1.5.0
+
+* **O campo Local virou uma árvore de pastas e cadernos**, que se abre como as raias: Folha solta, cada pasta (fechada, com o número de cadernos) com os cadernos dela dentro, e os cadernos sem pasta. Seta para a direita abre a pasta; Seta para a esquerda fecha.
+* A folha pode ir para um caderno ou **direto para uma pasta**, sem caderno: basta escolher a própria pasta.
+* A árvore está na janela **Nova folha**, na **janela da folha** e em **Mover para…**, sempre começando no local atual, com só a pasta dele aberta.
+* Enter na árvore cria a folha (Nova folha) ou move a folha (Mover para). A janela Mover para diz no título qual folha está sendo movida.
+* **Manual de uso… (Alt+N)** na janela principal: o manual detalhado vem dentro do complemento e abre na janela de leitura do NVDA, com títulos, tabelas e sumário navegáveis. Também há um comando sem atalho em Definir comandos. O manual em Word deixou de ser gerado.
+
 ## 1.4.0
 
 * **Exportar… (Alt+E)** na janela principal: um menu com **Folha selecionada…**, **Caderno…** e **Pasta…**. O caderno ou a pasta mostrada (ou o da folha selecionada) já vem escolhido.

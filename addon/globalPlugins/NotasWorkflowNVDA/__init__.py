@@ -6,6 +6,7 @@
 # See the file COPYING for more details.
 
 import os
+import re
 import shutil
 import threading
 import time
@@ -41,6 +42,9 @@ INDEX_PAUSE = 0.02
 #: Name of the add-on up to 1.0.0: its settings and notes are copied once to the new name.
 LEGACY_NAME = "NotasWorkflow"
 LEGACY_DATA_FILE = "NotasWorkflow-data.json"
+#: The user manual shown by the User manual button (addon/doc/<lang>/manual.html).
+MANUAL_FILE = "manual.html"
+_MAIN_RE = re.compile(r"<main\b.*?</main>", re.S)
 # Translators: category of the add-on commands in the Input gestures dialog.
 SCRIPT_CATEGORY = _("Notas Workflow NVDA")
 
@@ -53,6 +57,18 @@ def documentLanguage():
 		return (languageHandler.getLanguage() or "en").replace("_", "-")
 	except Exception:
 		return "en"
+
+
+def manualPath():
+	"""manual.html of the add-on (made by build.py from docs/manual/MANUAL.md), in the language
+	of NVDA when there is one, otherwise the Brazilian Portuguese one; None when it is missing."""
+	docs = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "doc"))
+	lang = documentLanguage().replace("-", "_")
+	for name in (lang, lang.split("_")[0], "pt_BR"):
+		path = os.path.join(docs, name, MANUAL_FILE)
+		if os.path.isfile(path):
+			return path
+	return None
 
 
 def disableInSecureMode(cls):
@@ -380,13 +396,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""Move to: chooses a notebook, a folder or loose and moves the note. True when moved."""
 		labels, places = messages.locationChoices(self.store)
 		current = (note["notebookId"], None) if note["notebookId"] else (None, note["folderId"])
-		index = prompts.chooseItem(
+		index = prompts.choosePlace(
 			parent,
-			# Translators: question of the dialog that moves a note to a notebook or folder.
-			_("Move {title} to:").format(title=messages.noteTitle(note)),
 			# Translators: title of the dialog that moves a note to a notebook or folder.
-			_("Move to"),
-			labels,
+			_("Move {title} to").format(title=messages.noteTitle(note)),
+			self.store,
 			places.index(current) if current in places else 0,
 		)
 		if index is None or places[index] == current:
@@ -576,6 +590,24 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				dlg.timer.Stop()
 				dlg.Destroy()
 
+	def openManual(self):
+		"""Shows the user manual in NVDA's browseable window (headings, lists and tables
+		navigable in browse mode). Returns False when the manual is missing."""
+		path = manualPath()
+		try:
+			with open(path, encoding="utf-8") as f:
+				m = _MAIN_RE.search(f.read())
+		except (OSError, TypeError, UnicodeDecodeError):
+			m = None
+		if m is None:
+			log.error("NotasWorkflowNVDA: user manual not found")
+			# Translators: spoken when the file of the user manual is missing.
+			self.speak(_("The user manual was not found. Install the add-on again."))
+			return False
+		# Translators: title of the window with the user manual.
+		ui.browseableMessage(m.group(0), _("Notas Workflow NVDA user manual"), isHtml=True)
+		return True
+
 	def lanesSummary(self):
 		counts = {lane: len(notes) for lane, notes in model.byLane(self.store.notes).items()}
 		return messages.lanesSummary(counts)
@@ -613,3 +645,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_lanesSummary(self, gesture):
 		self.reloadIfChanged()
 		self.speak(self.lanesSummary())
+
+	@script(
+		# Translators: description of a command in the Input gestures dialog.
+		description=_("Notas Workflow NVDA: opens the user manual"),
+	)
+	def script_openManual(self, gesture):
+		wx.CallAfter(self.openManual)

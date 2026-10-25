@@ -67,6 +67,9 @@ def _blocked(name, answer=None):
 
 prompts.chooseFromMenu = _blocked("prompts.chooseFromMenu")
 prompts.chooseItem = _blocked("prompts.chooseItem")
+#: The real choosePlace, for the tests of its dialog (with fakeModal).
+realChoosePlace = prompts.choosePlace
+prompts.choosePlace = _blocked("prompts.choosePlace")
 prompts.askText = _blocked("prompts.askText")
 prompts.askSaveFile = _blocked("prompts.askSaveFile")
 prompts.askFolder = _blocked("prompts.askFolder")
@@ -147,7 +150,7 @@ def newNoteAction(title, laneIndex=None, locationIndex=None):
 		if laneIndex is not None:
 			dlg.laneChoice.SetSelection(laneIndex)
 		if locationIndex is not None:
-			dlg.locationChoice.SetSelection(locationIndex)
+			dlg.locationTree.setIndex(locationIndex)
 		return wx.ID_OK if dlg.createButton.IsEnabled() else wx.ID_CANCEL
 	return action
 
