@@ -312,7 +312,7 @@ class NotesDialog(wx.Dialog):
 		return bool(model.filterNotes([note], self.store.notebooks, self.activeFilter))
 
 	def noteChanged(self, noteId, fallback=None):
-		"""After one note changed (title, tags, status, place or deleted): updates only what
+		"""After one note changed (title, status, place or deleted): updates only what
 		is needed. fallback: the note to select if this one left the list."""
 		if self._closing:
 			return

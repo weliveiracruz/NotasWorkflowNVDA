@@ -126,15 +126,12 @@ def formatTime(when=None):
 
 
 def noteDescription(note, place, withLane=False):
-	"""What the trees say for a note: title, status, place, tags and date."""
+	"""What the trees say for a note: title, status, place and date."""
 	parts = [noteTitle(note)]
 	if withLane:
 		parts.append(laneName(note["laneId"]))
 	if place:
 		parts.append(place)
-	if note.get("tags"):
-		# Translators: part of the description of a note: its tags.
-		parts.append(_("tags {tags}").format(tags=", ".join(note["tags"])))
 	date = formatDate(note.get("updatedAt"))
 	if date:
 		# Translators: part of the description of a note: last change.
@@ -221,15 +218,12 @@ def exportModes():
 
 
 def noteDetails(note, place=""):
-	"""Lines written under the title of an exported note: status, place, tags and dates."""
+	"""Lines written under the title of an exported note: status, place and dates."""
 	# Translators: line of an exported note: its status (lane).
 	lines = [_("Status: {lane}").format(lane=laneName(note["laneId"]))]
 	if place:
 		# Translators: line of an exported note: its notebook or folder.
 		lines.append(_("Location: {place}").format(place=place))
-	if note.get("tags"):
-		# Translators: line of an exported note: its tags.
-		lines.append(_("Tags: {tags}").format(tags=", ".join(note["tags"])))
 	created = formatDate(note.get("createdAt"))
 	updated = formatDate(note.get("updatedAt"))
 	if created and updated:

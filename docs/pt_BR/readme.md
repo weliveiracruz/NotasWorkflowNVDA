@@ -1,6 +1,6 @@
 # Notas Workflow NVDA
 
-Complemento do NVDA para organizar folhas (anotações e tarefas) em raias de status (A fazer, Em andamento, Bloqueada, Concluída), agrupadas em cadernos e pastas, com tags, conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido com dezenas de milhares de folhas.
+Complemento do NVDA para organizar folhas (anotações e tarefas) em raias de status (A fazer, Em andamento, Bloqueada, Concluída), agrupadas em cadernos e pastas, com conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido com dezenas de milhares de folhas.
 
 ## A janela principal
 
@@ -18,7 +18,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 
 ## Folhas
 
-**Criar… > Folha…** (ou NVDA+Alt+F de qualquer lugar) pede o título, o local (solta, uma pasta ou um caderno) e o status e depois abre a janela da folha. A janela da folha tem título, local, status, tags (separadas por vírgula) e o conteúdo. Se você mudar o status ou o local ali, ao fechar a janela o foco vai para a próxima folha da mesma raia, para tratar a raia uma folha depois da outra. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.
+**Criar… > Folha…** (ou NVDA+Alt+F de qualquer lugar) pede o título, o local (solta, uma pasta ou um caderno) e o status e depois abre a janela da folha. A janela da folha tem título, local, status e o conteúdo. Se você mudar o status ou o local ali, ao fechar a janela o foco vai para a próxima folha da mesma raia, para tratar a raia uma folha depois da outra. Ela salva sozinha 2 segundos depois que você para de digitar; Ctrl+S salva na hora e fechar a janela (Esc ou Salvar e fechar) sempre salva. Nada se perde.
 
 O conteúdo é texto com uma marcação leve:
 
@@ -38,7 +38,7 @@ O botão **Formatação…** abre um menu com todos os formatos; ele vale para o
 
 ## Busca
 
-**NVDA+Alt+B** (ou Buscar… na janela) procura no título, no conteúdo e nas tags, sem diferenciar acentos e maiúsculas, enquanto você digita. Os resultados mostram título, trecho, relevância e data; Enter abre a folha. A busca leva uma fração de segundo mesmo com 100 mil folhas.
+**NVDA+Alt+B** (ou Buscar… na janela) procura no título e no conteúdo, sem diferenciar acentos e maiúsculas, enquanto você digita. Os resultados mostram título, trecho, relevância e data; Enter abre a folha. A busca leva uma fração de segundo mesmo com 100 mil folhas.
 
 ## Cadernos e pastas
 

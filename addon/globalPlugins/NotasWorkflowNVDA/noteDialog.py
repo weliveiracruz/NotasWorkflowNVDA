@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 # NotasWorkflowNVDA - noteDialog.py
 # "New note" and the note window: title, location (notebook or folder), status,
-# tags, content, formatting and automatic saving.
+# content, formatting and automatic saving. Tags are no longer shown (1.7.0): the
+# ones a note has stay in the file as they are.
 # Copyright (C) 2026 Wellington Cruz <weliveiracruz@gmail.com>
 # This file is covered by the GNU General Public License, version 2.
 
@@ -107,8 +108,6 @@ class NoteDialog(wx.Dialog):
 		self.locationTree = sHelper.addLabeledControl(_("&Location:"), LocationTree, store=self.store, size=(520, 150))
 		# Translators: label of the status (lane) box of a note.
 		self.laneChoice = sHelper.addLabeledControl(_("&Status:"), wx.Choice, choices=messages.laneNames())
-		# Translators: label of the tags field of a note.
-		self.tagsEdit = sHelper.addLabeledControl(_("Ta&gs (comma separated):"), wx.TextCtrl, size=(520, -1))
 		self.contentEdit = sHelper.addLabeledControl(
 			# Translators: label of the content field of a note.
 			_("&Content:"),
@@ -140,7 +139,6 @@ class NoteDialog(wx.Dialog):
 		self.titleEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("title"))
 		self.locationTree.Bind(wx.EVT_TREE_SEL_CHANGED, lambda evt: self.onChange("location"))
 		self.laneChoice.Bind(wx.EVT_CHOICE, lambda evt: self.onChange("laneId"))
-		self.tagsEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("tags"))
 		self.contentEdit.Bind(wx.EVT_TEXT, lambda evt: self.onChange("content"))
 		self.formatButton.Bind(wx.EVT_BUTTON, self.onFormatButton)
 		self.saveButton.Bind(wx.EVT_BUTTON, lambda evt: self.finish())
@@ -158,7 +156,6 @@ class NoteDialog(wx.Dialog):
 		self.titleEdit.ChangeValue(note["title"])
 		self.locationTree.setPlace((note["notebookId"], None) if note["notebookId"] else (None, note["folderId"]))
 		self.laneChoice.SetSelection(model.laneIndex(note["laneId"]))
-		self.tagsEdit.ChangeValue(", ".join(note["tags"]))
 		self.contentEdit.ChangeValue(markup.htmlToText(note["content"]))
 		self.contentEdit.SetInsertionPoint(0)
 		# Translators: save status of a note with nothing to save.
@@ -181,7 +178,6 @@ class NoteDialog(wx.Dialog):
 		values = {
 			"title": lambda: self.titleEdit.GetValue(),
 			"laneId": lambda: model.LANE_IDS[max(0, self.laneChoice.GetSelection())],
-			"tags": lambda: self.tagsEdit.GetValue(),
 			# Only an edited content is converted: imported HTML is kept as it is.
 			"content": lambda: markup.textToHtml(self.contentEdit.GetValue()),
 		}

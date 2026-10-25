@@ -354,10 +354,6 @@ msgstr "caderno {name}"
 msgid "folder {name}"
 msgstr "pasta {name}"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/messages.py:132
-msgid "tags {tags}"
-msgstr "tags {tags}"
-
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:136
 msgid "updated on {date}"
 msgstr "atualizada em {date}"
@@ -373,10 +369,6 @@ msgstr "L&ocal:"
 #: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py:55 addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py:105
 msgid "&Status:"
 msgstr "&Status:"
-
-#: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py:107
-msgid "Ta&gs (comma separated):"
-msgstr "Ta&gs (separadas por vírgula):"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py:110
 msgid "&Content:"
@@ -649,10 +641,6 @@ msgstr "Status: {lane}"
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py
 msgid "Location: {place}"
 msgstr "Local: {place}"
-
-#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
-msgid "Tags: {tags}"
-msgstr "Tags: {tags}"
 
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py
 msgid "Created on {created}, updated on {updated}"

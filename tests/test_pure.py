@@ -370,8 +370,9 @@ class FUN10_Search(unittest.TestCase):
 		found = search.search(self.s.notes, "reuniao")
 		self.assertEqual(found[0][0]["id"], self.a["id"])
 
-	def test_tags_are_searched(self):
-		self.assertEqual(len(search.search(self.s.notes, "trabalho")), 1)
+	def test_tags_are_not_searched(self):
+		# 1.7.0: tags are no longer shown, so a note is never found only by one of them.
+		self.assertEqual(search.search(self.s.notes, "trabalho"), [])
 
 	def test_markup_is_not_searched(self):
 		self.assertEqual(search.search(self.s.notes, "strong"), [])
@@ -655,7 +656,7 @@ class FUN22_Performance(unittest.TestCase):
 		self.assertIsNot(index.entry(n), first)
 		self.assertEqual([x["id"] for x, _s, _e in search.search(s.notes, "orcamento", index=index)], [n["id"]])
 		s.updateNote(n["id"], tags=["urgente"])
-		self.assertEqual(len(search.search(s.notes, "urgente", index=index)), 1)
+		self.assertEqual(search.search(s.notes, "urgente", index=index), [])
 		index.forget(set())
 		self.assertEqual(len(index), 0)
 

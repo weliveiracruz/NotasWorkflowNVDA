@@ -43,7 +43,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | ID | Requisito | Como é atendido |
 |---|---|---|
 | RF-01 | Criar folha, caderno e pasta | Botão **Criar…** (menu Folha…, Caderno…, Pasta…) na janela principal e em Cadernos e pastas; NVDA+Alt+F cria uma folha de qualquer lugar. Nova folha: título obrigatório (até 200 caracteres), **Local** (solta, uma pasta ou um caderno; padrão: o filtro em uso), status (padrão: a raia selecionada); ao criar, abre o editor. Caderno criado com uma pasta selecionada ou filtrada nasce nela |
-| RF-02 | Editar título, local, status, tags e conteúdo | Janela da folha; tags separadas por vírgula (sem repetição, até 30, cada uma até 50 caracteres); conteúdo com marcação leve convertida para HTML |
+| RF-02 | Editar título, local, status e conteúdo | Janela da folha; conteúdo com marcação leve convertida para HTML. **Sem campo Tags desde a 1.7.0** (decisão da pessoa responsável, para a navegação ficar mais fluida): as tags que vierem no arquivo ou numa importação continuam guardadas como estão (`model`/`store` as validam), mas não são mostradas, editadas, exportadas em documento nem buscadas |
 | RF-03 | Salvamento automático | 2 s (1 a 30, configurável) depois da última alteração; Ctrl+S salva na hora; fechar a janela (Esc ou Salvar e fechar) e encerrar o NVDA com a folha aberta sempre salvam o que estiver pendente — nada se perde |
 | RF-04 | Formatação do conteúdo | Menu Formatação… e atalhos: negrito (Ctrl+B), itálico (Ctrl+I), tachado, código, título 2, título 3, lista com marcadores, lista numerada, citação e divisor — as mesmas opções da barra do editor web |
 | RF-05 | Ver as folhas por raia | Árvore (a única visualização): cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); **as raias começam fechadas** (1.3.0) e ficam como a pessoa as deixou; a raia de uma folha selecionada pelo complemento abre sozinha; cada folha mostra título, local, tags e data; **Enter abre a folha** |
@@ -54,7 +54,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-09 | Excluir folha | Botão Excluir ou tecla Delete, sempre com confirmação |
 | RF-10 | Filtrar | Caixa **Mostrar**: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), Caderno: <nome>, Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) |
 | RF-11 | Cadernos e pastas | Janela **Cadernos e pastas…**: árvore com cada pasta, os cadernos dela e as folhas guardadas nela, cada caderno com as suas folhas, o ramo "Sem pasta" e o ramo "Folhas soltas"; as folhas são carregadas só ao abrir o ramo; Enter abre a folha; Criar…, Renomear… (também o título da folha, F2), Mover para…, Excluir (com confirmação; as folhas nunca são apagadas ao excluir caderno ou pasta) |
-| RF-12 | Buscar | Janela **Buscar** (NVDA+Alt+B): título, conteúdo e tags; sem diferenciar acentos e maiúsculas; resultados por relevância, com trecho e porcentagem; Enter abre a folha |
+| RF-12 | Buscar | Janela **Buscar** (NVDA+Alt+B): título e conteúdo (tags não, desde a 1.7.0); sem diferenciar acentos e maiúsculas; resultados por relevância, com trecho e porcentagem; Enter abre a folha |
 | RF-13 | Guardar as folhas | Arquivo JSON na pasta das folhas (padrão: pasta de configuração do NVDA, subpasta `NotasWorkflowNVDA`); gravação atômica; cópia de segurança do arquivo anterior; arquivo danificado é preservado e a cópia de segurança é usada |
 | RF-14 | Trocar a pasta das folhas | Configurações: se a pasta nova já tiver folhas, passam a ser usadas; senão as folhas atuais são gravadas nela |
 | RF-15 | Importar e exportar | Arquivo JSON no formato do web (`{"notes": [...], "notebooks": [...], "folders": [...]}`, ou só a lista de folhas); importar junta por ID e fica com a versão alterada por último; dados inválidos são corrigidos ou descartados |
@@ -181,7 +181,7 @@ O editor do web (TipTap StarterKit) grava HTML. Um editor rico não é bem lido 
 
 ### 4.4 Busca (equivalente a `textSearch` e `extractExcerpt`)
 
-1. A busca e o texto da folha (título, conteúdo sem marcação e tags) são normalizados: minúsculas (`casefold`) e sem acentos (NFKD sem marcas).
+1. A busca e o texto da folha (título e conteúdo sem marcação) são normalizados: minúsculas (`casefold`) e sem acentos (NFKD sem marcas).
 2. Pontuação = termos encontrados ÷ termos da busca (igual ao web). Desempate: termos encontrados no título, depois a folha alterada por último.
 3. Trecho: até 120 caracteres em volta do primeiro termo encontrado, com "…" nas pontas (igual ao web, mas achando o termo sem acento).
 4. Resultados com pontuação zero não aparecem; no máximo 100.
@@ -218,7 +218,7 @@ A seleção da árvore é feita junto com o "item com foco" do Windows (`SetFocu
 Ordem de tabulação:
 
 1. **Mostrar** (caixa): Todas as folhas, Folhas soltas, Folhas recentes, Caderno: <nome>…, Pasta: <nome>…
-2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… fechados no início (só a raia da folha selecionada abre); cada folha: "Título, caderno Trabalho, tags x, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
+2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… fechados no início (só a raia da folha selecionada abre); cada folha: "Título, caderno Trabalho, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
 3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Exportar…** (menu Folha selecionada…, Caderno…, Pasta…; RF-19), **Fechar** (Esc).
 
 A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo o arquivo de novo se outro computador o mudou.
@@ -229,7 +229,7 @@ A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo 
 
 ### 5.3 Janela da folha (editor)
 
-Título da janela = título da folha. Ordem: **Título**, **Local**, **Status**, **Tags (separadas por vírgula)**, **Conteúdo** (várias linhas), **Formatação…**, **Situação do salvamento** (somente leitura: "Salva às 14:32", "Alterações não salvas…"), **Salvar e fechar**. Esc também salva e fecha. Ctrl+S salva sem fechar; Ctrl+B e Ctrl+I formatam no conteúdo.
+Título da janela = título da folha. Ordem: **Título**, **Local**, **Status**, **Conteúdo** (várias linhas), **Formatação…**, **Situação do salvamento** (somente leitura: "Salva às 14:32", "Alterações não salvas…"), **Salvar e fechar**. Esc também salva e fecha. Ctrl+S salva sem fechar; Ctrl+B e Ctrl+I formatam no conteúdo.
 
 ### 5.4 Buscar folhas (NVDA+Alt+B)
 
@@ -237,7 +237,7 @@ Título da janela = título da folha. Ordem: **Título**, **Local**, **Status**,
 
 ### 5.5 Cadernos e pastas
 
-**Organização** (árvore: cada pasta com os seus cadernos e as folhas guardadas nela; cada caderno com as suas folhas; "Sem pasta"; "Folhas soltas"; folhas lidas com título, status, tags e data; Enter abre), **Criar…**, **Renomear…** (F2), **Mover para…**, **Excluir** (Delete), **Fechar**.
+**Organização** (árvore: cada pasta com os seus cadernos e as folhas guardadas nela; cada caderno com as suas folhas; "Sem pasta"; "Folhas soltas"; folhas lidas com título, status e data; Enter abre), **Criar…**, **Renomear…** (F2), **Mover para…**, **Excluir** (Delete), **Fechar**.
 
 ### 5.6 Configurações do NVDA > Notas Workflow NVDA
 

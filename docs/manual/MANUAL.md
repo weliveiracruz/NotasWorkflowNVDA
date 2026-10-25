@@ -6,7 +6,7 @@ Este manual descreve, em detalhe, todas as funcionalidades do complemento **Nota
 
 O manual vem dentro do complemento: o botão **Manual de uso… (Alt+N)** da janela principal o abre na janela de leitura do NVDA, onde dá para navegar como numa página: **H** passa pelos títulos, **2** pelos capítulos, **3** pelas seções, **T** pelas tabelas e **K** pelos links do sumário. **Esc** fecha o manual.
 
-O Notas Workflow NVDA organiza **folhas** (anotações e tarefas) em **raias** de status, agrupadas em **cadernos** e **pastas**, com tags, conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.
+O Notas Workflow NVDA organiza **folhas** (anotações e tarefas) em **raias** de status, agrupadas em **cadernos** e **pastas**, com conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.
 
 > **Dica:** os nomes de botões e campos deste manual são os da interface em português. Entre parênteses aparece a letra de atalho com Alt de cada um, por exemplo **Criar… (Alt+C)**.
 
@@ -14,7 +14,7 @@ O Notas Workflow NVDA organiza **folhas** (anotações e tarefas) em **raias** d
 
 ### Folha
 
-Uma folha é uma anotação ou tarefa. Ela tem título, conteúdo, tags, um status (a raia), um local (um caderno, uma pasta ou nenhum) e as datas de criação e da última alteração. A folha que não está em nenhum caderno nem em nenhuma pasta é chamada de **folha solta**.
+Uma folha é uma anotação ou tarefa. Ela tem título, conteúdo, um status (a raia), um local (um caderno, uma pasta ou nenhum) e as datas de criação e da última alteração. A folha que não está em nenhum caderno nem em nenhuma pasta é chamada de **folha solta**.
 
 ### Raias (status)
 
@@ -32,10 +32,6 @@ A raia é sempre dita pelo **nome**: a informação nunca depende de cor.
 ### Cadernos e pastas
 
 Um **caderno** agrupa folhas, por exemplo "Trabalho" ou "Faculdade". Uma **pasta** agrupa cadernos e também pode guardar folhas diretamente, por exemplo a pasta "Projetos" com os cadernos "Site" e "Aplicativo" e algumas folhas gerais. Uma folha fica em no máximo um lugar: num caderno, direto numa pasta ou solta. Um caderno fica em no máximo uma pasta.
-
-### Tags
-
-Tags são palavras livres que marcam a folha, como "urgente" ou "ideia". São digitadas separadas por vírgula, sem repetição (maiúsculas e minúsculas contam como a mesma tag), com no máximo 30 tags de até 50 caracteres cada.
 
 ## Instalação e requisitos
 
@@ -95,9 +91,9 @@ Os botões Atualizar o status da tarefa…, Mover para… e Excluir só ficam di
 
 As raias **começam fechadas**: cada uma é um ramo com o nome e o número de folhas, por exemplo "A fazer, 3 folhas", e você só ouve as folhas da raia que abrir. Dentro de uma raia aberta, cada folha é lida assim:
 
-`Título, caderno Trabalho, tags urgente, cliente, atualizada em 12/10/2026`
+`Título, caderno Trabalho, atualizada em 12/10/2026`
 
-O local (caderno ou pasta) e as tags só aparecem quando existem. Seta para cima e para baixo percorrem raias e folhas; **Seta para a direita abre** uma raia e **Seta para a esquerda fecha**. Quando uma folha é selecionada pelo complemento (ao criar uma folha, ao voltar da busca, ao mudar o status), a raia dela abre sozinha. Enquanto a janela estiver aberta, as raias ficam como você as deixou.
+O local (caderno ou pasta) só aparece quando existe. Seta para cima e para baixo percorrem raias e folhas; **Seta para a direita abre** uma raia e **Seta para a esquerda fecha**. Quando uma folha é selecionada pelo complemento (ao criar uma folha, ao voltar da busca, ao mudar o status), a raia dela abre sozinha. Enquanto a janela estiver aberta, as raias ficam como você as deixou.
 
 ### Listas longas
 
@@ -180,7 +176,6 @@ Abre com **Enter** sobre uma folha (na lista, na busca ou em Cadernos e pastas),
 | Título | Alt+T | O título da folha. Uma folha sem título aparece como "Sem título". |
 | Local | Alt+O | A árvore de pastas e cadernos (veja O campo Local): escolher outro item muda o caderno ou a pasta da folha, salvo como as outras mudanças. |
 | Status | Alt+S | Muda o status da folha. |
-| Tags (separadas por vírgula) | Alt+G | Por exemplo: urgente, cliente, ideia. |
 | Conteúdo | Alt+C | O texto da folha, com várias linhas e a marcação de formatação. |
 | Formatação… | Alt+F | Abre o menu de formatos (veja Formatação do conteúdo). |
 | Situação do salvamento | Alt+I | Campo somente leitura que diz se tudo está salvo. |
@@ -306,7 +301,7 @@ Use **NVDA+Alt+B** de qualquer lugar, ou **Buscar… (Alt+B)** na janela princip
 
 Como a busca funciona:
 
-- Procura no título, no conteúdo (sem a marcação) e nas tags.
+- Procura no título e no conteúdo (sem a marcação).
 - Não diferencia acentos nem maiúsculas: "acao" encontra "Ação".
 - A **relevância** é a porcentagem das palavras buscadas que a folha contém. Em caso de empate, vêm primeiro as folhas com as palavras no título e, depois, as alteradas por último.
 - O **trecho** mostra até 120 caracteres em volta da primeira palavra encontrada.
@@ -329,7 +324,7 @@ A árvore **Organização (Alt+O)** mostra tudo, com as folhas dentro de cada lu
 - o ramo "Sem pasta", com os cadernos que não estão em nenhuma pasta;
 - o ramo "Folhas soltas", com as folhas que não estão em nenhum caderno nem em nenhuma pasta.
 
-Cada folha é lida com o título, o status, as tags e a data. **Enter sobre uma folha abre a folha.** As folhas de um caderno ou pasta só são carregadas quando você abre o ramo, 200 por vez, com o item "Mostrar mais" no fim, como na janela principal.
+Cada folha é lida com o título, o status e a data. **Enter sobre uma folha abre a folha.** As folhas de um caderno ou pasta só são carregadas quando você abre o ramo, 200 por vez, com o item "Mostrar mais" no fim, como na janela principal.
 
 ### Botões
 
@@ -384,7 +379,7 @@ A gravação acontece em segundo plano, então o NVDA continua respondendo mesmo
 - Uma pasta começa com o título 1 "Pasta" e o nome. As folhas guardadas direto nela ficam sob o título 2 "Folhas direto na pasta", e as de cada caderno sob o título 2 "Caderno" e o nome; cada folha é um **título 3**.
 - Uma folha sozinha (ou cada arquivo de "um arquivo para cada folha") tem o título da folha como **título 1**.
 - As folhas aparecem na ordem das raias: A fazer, Em andamento, Bloqueada e Concluída.
-- Logo abaixo do título de cada folha vêm as linhas **Status:**, **Tags:** (quando há tags) e **Criada em … , atualizada em …**. Na exportação de uma folha só, vem também **Local:** com o caderno ou a pasta.
+- Logo abaixo do título de cada folha vêm as linhas **Status:** e **Criada em … , atualizada em …**. Na exportação de uma folha só, vem também **Local:** com o caderno ou a pasta.
 - O conteúdo mantém a formatação: negrito, itálico, tachado, código, listas com marcadores e numeradas, citações, blocos de código e divisores. Os títulos do conteúdo ficam um nível abaixo do título da folha, para a estrutura de títulos continuar em ordem.
 
 O documento é feito para leitores de telas: no Word, os títulos usam os estilos Título 1, Título 2… e aparecem no painel de navegação; na página HTML, são títulos de verdade, navegáveis com a tecla H do NVDA. O documento tem o idioma do NVDA e o título nas propriedades do arquivo.
@@ -512,7 +507,7 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 ## Privacidade e segurança
 
 - O complemento **não usa a internet**: nenhuma folha sai do computador, e não há conta nem senha.
-- O título, o conteúdo e as tags das folhas **nunca** vão para o log do NVDA.
+- O título e o conteúdo das folhas **nunca** vão para o log do NVDA.
 - Excluir sempre pede confirmação, com Não como padrão; excluir caderno ou pasta nunca apaga folhas.
 - Arquivos importados são conferidos: tamanhos, tipos e identificadores inválidos são corrigidos ou descartados, e o conteúdo nunca é exibido como página nem executado.
 - O complemento fica desligado nas telas seguras do Windows (tela de logon e controle de conta de usuário).
@@ -552,3 +547,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.4.0 | Novo botão Exportar… na janela principal e novo capítulo "Exportar como documento": folha selecionada, caderno ou pasta em Word, Markdown ou HTML, num arquivo só ou num arquivo para cada folha; novas mensagens faladas da exportação. |
 | 1.5.0 | O campo Local virou uma árvore de pastas e cadernos, que se abre como as raias (nova seção "O campo Local"), na janela Nova folha, na janela da folha e em Mover para; Enter na árvore cria a folha ou move a folha. O manual deixou de ser um documento do Word: vem dentro do complemento e abre pelo novo botão Manual de uso… e pelo comando Abrir o manual de uso. |
 | 1.6.0 | Ctrl+Shift+Seta para cima e para baixo mudam a ordem da folha dentro da raia (nova seção "Mudar a ordem das folhas na raia"), com as novas mensagens faladas e os atalhos nas tabelas. |
+| 1.7.0 | O campo Tags saiu da janela da folha: o Tab vai de Status direto para Conteúdo. As tags também deixaram de aparecer na lista de folhas, em Cadernos e pastas e nos documentos exportados, e a busca não procura mais nelas (seção "Tags" retirada). |

@@ -248,7 +248,7 @@ def run():
 		dlg.refresh(a["id"])
 		name, state = msaaTreeSelection(dlg.tree)
 		expected = messages.noteDescription(a, messages.placeOf(store, a))
-		R.check("ACE-18 selected note read by MSAA with title, place, tags and date", name == expected, (name, expected))
+		R.check("ACE-18 selected note read by MSAA with title, place and date, without the tags (1.7.0)", name == expected and "x, y" not in name, (name, expected))
 		lane = dlg.tree.GetItemParent(dlg.tree.GetSelection())
 		dlg.tree.SelectItem(lane)
 		name, state = msaaTreeSelection(dlg.tree)
@@ -350,7 +350,7 @@ def run():
 	with fakeModal(noteDialog.NoteDialog, inspect):
 		plugin.editNote(dlg, note["id"])
 	d = seen["dlg"]
-	R.check("ACE-03 note window: title, location, status, tags, content, formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationTree, d.laneChoice, d.tagsEdit, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
+	R.check("ACE-03 note window: title, location, status, content (no tags since 1.7.0), formatting, save status, save and close", seen["ctrls"] == [d.titleEdit, d.locationTree, d.laneChoice, d.contentEdit, d.formatButton, d.statusEdit, d.saveButton], [plain(structuralName(c)) for c in seen["ctrls"]])
 	R.check("ACE-06 opening a note starts on the title", seen["focus"] is d.titleEdit, seen["focus"])
 	R.check("ACE-13 save status is read-only and reachable with Tab", seen["status"] is False)
 	R.check("ACE-07 formatting is announced", seen["spoken"] == [T("Italic")], seen["spoken"])

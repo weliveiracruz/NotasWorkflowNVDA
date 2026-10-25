@@ -1,6 +1,6 @@
 # Notas Workflow NVDA
 
-NVDA add-on to organize notes and tasks in status lanes (To do, In progress, Blocked, Done), grouped in notebooks and folders, with tags, formatted content, automatic saving and search. Everything works from the keyboard, with spoken feedback, and stays fast with tens of thousands of notes.
+NVDA add-on to organize notes and tasks in status lanes (To do, In progress, Blocked, Done), grouped in notebooks and folders, with formatted content, automatic saving and search. Everything works from the keyboard, with spoken feedback, and stays fast with tens of thousands of notes.
 
 ## The main window
 
@@ -18,7 +18,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 
 ## Notes
 
-**Create… > Note…** (or NVDA+Alt+F from anywhere) asks for the title, the location (loose, a folder or a notebook) and the status, and then opens the note window. The note window has the title, location, status, tags (separated by commas) and the content. If you change the status or the location there, closing the window puts the focus on the next note of the same lane, so a lane can be handled one note after the other. It saves by itself 2 seconds after you stop typing; Ctrl+S saves at once and closing the window (Esc or Save and close) always saves. Nothing is lost.
+**Create… > Note…** (or NVDA+Alt+F from anywhere) asks for the title, the location (loose, a folder or a notebook) and the status, and then opens the note window. The note window has the title, location, status and the content. If you change the status or the location there, closing the window puts the focus on the next note of the same lane, so a lane can be handled one note after the other. It saves by itself 2 seconds after you stop typing; Ctrl+S saves at once and closing the window (Esc or Save and close) always saves. Nothing is lost.
 
 The content is plain text with a light markup:
 
@@ -38,7 +38,7 @@ The **Formatting…** button opens a menu with every format; it applies to the s
 
 ## Search
 
-**NVDA+Alt+B** (or Search… in the window) searches the title, the content and the tags, ignoring accents and case, while you type. Results show the title, an excerpt, the relevance and the date; Enter opens the note. The search takes a fraction of a second even with 100,000 notes.
+**NVDA+Alt+B** (or Search… in the window) searches the title and the content, ignoring accents and case, while you type. Results show the title, an excerpt, the relevance and the date; Enter opens the note. The search takes a fraction of a second even with 100,000 notes.
 
 ## Notebooks and folders
 

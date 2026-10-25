@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## 1.7.0
+
+* **Sem o campo Tags**: a janela da folha ficou com Título, Local, Status e Conteúdo; o Tab vai de **Status** direto para **Conteúdo**.
+* As tags também saíram da descrição das folhas (lista de folhas e Cadernos e pastas), das linhas abaixo do título nos documentos exportados e da busca.
+* Nada é apagado: as tags que uma folha já tinha continuam no arquivo de folhas, sem mudança, e vão junto na exportação e na importação de folhas.
+
 ## 1.6.0
 
 * **Ordem das folhas na raia**: na lista de folhas, **Ctrl+Shift+Seta para cima** sobe a folha selecionada uma posição dentro da raia e **Ctrl+Shift+Seta para baixo** a desce. A seleção acompanha a folha e o NVDA diz a nova posição ("Posição 2 de 5"); nas pontas, "Já está no topo da raia" ou "Já está no fim da raia".

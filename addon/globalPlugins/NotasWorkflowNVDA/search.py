@@ -81,7 +81,8 @@ def excerpt(plain, query, maxLen=EXCERPT_LENGTH):
 
 class SearchIndex:
 	"""Prepared text of each note (plain text, folded title and folded haystack).
-	An entry is rebuilt only when the title, the content or the tags of the note change."""
+	An entry is rebuilt only when the title or the content of the note change (tags are not
+	searched since 1.7.0: they are no longer shown)."""
 
 	def __init__(self):
 		self._entries = {}
@@ -90,15 +91,14 @@ class SearchIndex:
 	def entry(self, note):
 		content = note.get("content", "")
 		title = note.get("title", "")
-		tags = note.get("tags", ())
 		cached = self._entries.get(note["id"])
 		# Identity checks: an edited or imported note always gets new objects, so this is O(1).
-		if cached is not None and cached[0] is content and cached[1] is title and cached[2] is tags:
+		if cached is not None and cached[0] is content and cached[1] is title:
 			return cached
 		plain = plainText(content)
 		foldedTitle = fold(title)
-		haystack = " ".join((foldedTitle, fold(plain), fold(" ".join(tags))))
-		cached = (content, title, tags, plain, foldedTitle, haystack)
+		haystack = " ".join((foldedTitle, fold(plain)))
+		cached = (content, title, plain, foldedTitle, haystack)
 		self._entries[note["id"]] = cached
 		return cached
 
@@ -133,19 +133,19 @@ def search(notes, query, limit=MAX_RESULTS, index=None):
 	entryOf = index.entry
 	for note in notes:
 		entry = entryOf(note)
-		haystack = entry[5]
+		haystack = entry[4]
 		hits = 0
 		for t in wanted:
 			if t in haystack:
 				hits += 1
 		if not hits:
 			continue
-		title = entry[4]
+		title = entry[3]
 		titleHits = 0
 		for t in wanted:
 			if t in title:
 				titleHits += 1
-		ranked.append((hits / len(wanted), titleHits, index.updated(note), note, entry[3]))
+		ranked.append((hits / len(wanted), titleHits, index.updated(note), note, entry[2]))
 	# Only the best ones are ordered (a common word can match tens of thousands of notes).
 	best = heapq.nlargest(limit, ranked, key=lambda r: (r[0], r[1], r[2]))
 	return [(note, score, excerpt(plain, query)) for score, _t, _u, note, plain in best]

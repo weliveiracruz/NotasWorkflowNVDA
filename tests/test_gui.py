@@ -262,11 +262,12 @@ def run():
 	R.check("FUN-02 note window shows the note", nd.titleEdit.GetValue() == "Planejar sprint" and nd.contentEdit.GetValue() == "Pauta da **reunião**\n- item um" and nd.GetTitle() == "Planejar sprint")
 	R.check("FUN-02 status and location boxes show the note", nd.laneChoice.GetSelection() == 3 and nd.locationTree.place() == (None, None))
 	before = note["updatedAt"]
-	nd.tagsEdit.SetValue("trabalho, Ideia, trabalho")
+	R.check("FUN-31 the note window has no Tags field (1.7.0)", not hasattr(nd, "tagsEdit") and "Ta&gs (comma separated):" not in [c.GetLabel() for c in nd.GetChildren()])
+	nd.titleEdit.SetValue("Planejar sprint v2")
 	R.check("FUN-03 change shown as unsaved", nd.statusEdit.GetValue() == "Unsaved changes…")
-	R.check("FUN-03 saved by itself after the delay", pump(lambda: note["tags"] == ["trabalho", "Ideia"], 4), note["tags"])
+	R.check("FUN-03 saved by itself after the delay", pump(lambda: note["title"] == "Planejar sprint v2", 4), note["title"])
 	R.check("FUN-03 save status says the time", nd.statusEdit.GetValue().startswith("Saved at "), nd.statusEdit.GetValue())
-	R.check("FUN-03 content not rewritten when only the tags changed", note["content"] == "<p>Pauta da <strong>reunião</strong></p><ul><li><p>item um</p></li></ul>" and note["updatedAt"] >= before)
+	R.check("FUN-03 content not rewritten when only the title changed", note["content"] == "<p>Pauta da <strong>reunião</strong></p><ul><li><p>item um</p></li></ul>" and note["updatedAt"] >= before)
 	config.conf["NotasWorkflowNVDA"]["announceAutoSave"] = True
 	n = mark()
 	nd.titleEdit.SetValue("Planejar sprint 42")
@@ -827,7 +828,7 @@ def runExport():
 	R.check("FUN-27 the file dialog suggests the title of the note", seen["save"][2] == "Planejar sprint.docx" and seen["save"][3].endswith("*.docx"), seen.get("save"))
 	R.check("FUN-27 the export is announced with the number of notes and the file", "Exported: 1 note, in folha.docx" in spokenSince(n), spokenSince(n))
 	document = zipfile.ZipFile(target).read("word/document.xml").decode("utf-8") if os.path.isfile(target) else ""
-	R.check("FUN-27 the Word file has the note, its status, tags and place, without the script", "Planejar sprint" in document and "Status: To do" in document and "Tags: sprint" in document and "Location: notebook Trabalho" in document and "alert" not in document, document[:300])
+	R.check("FUN-27 the Word file has the note, its status and place, without the tags (1.7.0) and the script", "Planejar sprint" in document and "Status: To do" in document and "sprint" not in document.replace("Planejar sprint", "") and "Location: notebook Trabalho" in document and "alert" not in document, document[:300])
 
 	# A notebook, one Markdown file for each note.
 	dlg.setFilter(("notebook", nb["id"]))
