@@ -123,7 +123,7 @@ class NotesDialog(wx.Dialog):
 		self.tree.Bind(wx.EVT_TREE_ITEM_EXPANDED, lambda evt: self.onLaneOpened(evt, True))
 		self.tree.Bind(wx.EVT_TREE_ITEM_COLLAPSED, lambda evt: self.onLaneOpened(evt, False))
 		self.tree.Bind(wx.EVT_TREE_KEY_DOWN, lambda evt: self.onKey(evt.GetKeyEvent()))
-		# Enter, Delete and Alt+Shift+Arrows are caught before the dialog uses them
+		# Enter, Delete, Alt+Shift+Arrows and Ctrl+Shift+Arrows are caught before the dialog uses them
 		# (in a dialog, Enter does not always reach the tree).
 		self.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
 		# The character of Enter must not reach the tree: its type-ahead search would move the selection.
@@ -400,7 +400,8 @@ class NotesDialog(wx.Dialog):
 			evt.Skip()
 
 	def handleTreeKey(self, evt):
-		"""Enter opens, Delete deletes, Alt+Shift+Arrows change the status. True when handled."""
+		"""Enter opens, Delete deletes, Alt+Shift+Left/Right change the status, Ctrl+Shift+Up/Down
+		move the note in its lane. True when handled."""
 		key = evt.GetKeyCode()
 		if key in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) and not evt.HasAnyModifiers():
 			self.activate()
@@ -410,6 +411,9 @@ class NotesDialog(wx.Dialog):
 			return True
 		if evt.AltDown() and evt.ShiftDown() and not evt.ControlDown() and key in (wx.WXK_LEFT, wx.WXK_RIGHT):
 			self.moveBy(1 if key == wx.WXK_RIGHT else -1)
+			return True
+		if evt.ControlDown() and evt.ShiftDown() and not evt.AltDown() and key in (wx.WXK_UP, wx.WXK_DOWN):
+			self.reorder(1 if key == wx.WXK_DOWN else -1)
 			return True
 		return False
 
@@ -493,6 +497,45 @@ class NotesDialog(wx.Dialog):
 			self.plugin.speak(messages.alreadyLast() if step > 0 else messages.alreadyFirst())
 			return
 		self.setStatus(noteId, target)
+
+	def reorder(self, step):
+		"""Ctrl+Shift+Up (step -1) or Down (+1): the note goes up or down in its lane, past the
+		note shown next to it. Only the two items of the tree change places."""
+		noteId = self.selectedNoteId()
+		if not noteId:
+			return
+		if self.activeFilter == model.FILTER_RECENT:
+			self.plugin.speak(messages.noOrderInRecent())
+			return
+		note = self.store.getNote(noteId)
+		ids = [n["id"] for n in model.byLane(self.store.filtered(self.activeFilter))[note["laneId"]]]
+		i = ids.index(noteId)
+		j = i + step
+		if not 0 <= j < len(ids):
+			self.plugin.speak(messages.alreadyBottom() if step > 0 else messages.alreadyTop())
+			return
+		otherId = ids[j]
+		ok, changed = self.plugin.safe(self.store.placeNoteBeside, noteId, otherId, step > 0)
+		if not ok or not changed:
+			return
+		item, otherItem = self.items.get(noteId), self.items.get(otherId)
+		if item is not None and otherItem is not None and item.IsOk() and otherItem.IsOk():
+			tree = self.tree
+			text, otherText = tree.GetItemText(item), tree.GetItemText(otherItem)
+			tree.SetItemText(item, otherText)
+			tree.SetItemData(item, {"note": otherId})
+			tree.SetItemText(otherItem, text)
+			tree.SetItemData(otherItem, {"note": noteId})
+			self.items[noteId], self.items[otherId] = otherItem, item
+			a, b = self.visibleIds.index(noteId), self.visibleIds.index(otherId)
+			self.visibleIds[a], self.visibleIds[b] = otherId, noteId
+			selectItem(tree, otherItem)
+		else:
+			# The other note is in a page not shown yet.
+			self.refreshLanes({note["laneId"]}, noteId)
+		self.updateButtons()
+		self.plugin.speak(messages.positionInLane(j + 1, len(ids)))
+		self.focusNotes()
 
 	def onStatus(self, evt):
 		noteId = self.selectedNoteId()

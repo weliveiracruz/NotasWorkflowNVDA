@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 1.6.0
+
+* **Ordem das folhas na raia**: na lista de folhas, **Ctrl+Shift+Seta para cima** sobe a folha selecionada uma posição dentro da raia e **Ctrl+Shift+Seta para baixo** a desce. A seleção acompanha a folha e o NVDA diz a nova posição ("Posição 2 de 5"); nas pontas, "Já está no topo da raia" ou "Já está no fim da raia".
+* A ordem é a da lista de folhas, a mesma em todos os filtros; a data de alteração da folha não muda. Com um caderno ou uma pasta mostrada, a folha passa a vizinha que aparece. Em Folhas recentes, que seguem a última alteração, o NVDA avisa que a ordem não pode ser mudada.
+
 ## 1.5.0
 
 * **O campo Local virou uma árvore de pastas e cadernos**, que se abre como as raias: Folha solta, cada pasta (fechada, com o número de cadernos) com os cadernos dela dentro, e os cadernos sem pasta. Seta para a direita abre a pasta; Seta para a esquerda fecha.

@@ -13,7 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from _guiapp import (  # noqa: E402
-	NotasWorkflowNVDA, closeWindow, config, fakeModal, gui, noteDialog, organizeDialog, prompts, pump, replaced, searchDialog, store,
+	NotasWorkflowNVDA, closeWindow, config, fakeModal, gui, model, noteDialog, organizeDialog, prompts, pump, replaced, searchDialog, store,
 )
 import _helpers  # noqa: E402
 import gerar_massa  # noqa: E402
@@ -62,6 +62,11 @@ def run():
 	R.check("PERF-05 the lanes start closed and the chosen note opens its lane", dlg.selectedNoteId() == noteId and dlg.tree.IsExpanded(dlg.laneNodes["todo"]) and not dlg.tree.IsExpanded(dlg.laneNodes["done"]))
 	check("PERF-06 Alt+Shift+Arrow updates the task status", lambda: dlg.moveBy(1), 2, plugin)
 	R.check("PERF-06 the status changed and the note stays selected", plugin.store.getNote(noteId)["laneId"] == "inprogress" and dlg.selectedNoteId() == noteId)
+	lane = [n["id"] for n in model.byLane(plugin.store.notes)["inprogress"]]
+	step = -1 if lane.index(noteId) > 0 else 1
+	check("PERF-15 Ctrl+Shift+Arrow moves the note in its lane", lambda: dlg.reorder(step), 1, plugin)
+	after = [n["id"] for n in model.byLane(plugin.store.notes)["inprogress"]]
+	R.check("PERF-15 the note moved one place and stays selected", after.index(noteId) == lane.index(noteId) + step and dlg.selectedNoteId() == noteId, (lane.index(noteId), after.index(noteId)))
 	check("PERF-07 a notebook filter is shown", lambda: dlg.setFilter(("notebook", plugin.store.notebooks[0]["id"])), 2, plugin)
 	check("PERF-07 back to all notes", lambda: dlg.setFilter(("all", None)), 2, plugin)
 

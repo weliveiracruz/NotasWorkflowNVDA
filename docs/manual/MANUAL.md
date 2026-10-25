@@ -111,6 +111,8 @@ Para a janela continuar rápida com muitas folhas, cada raia mostra **200 folhas
 | Delete | Exclui a folha selecionada, depois de confirmar. |
 | Alt+Shift+Seta para a direita | Muda o status da folha para o seguinte. |
 | Alt+Shift+Seta para a esquerda | Muda o status da folha para o anterior. |
+| Ctrl+Shift+Seta para cima | Sobe a folha uma posição dentro da raia. |
+| Ctrl+Shift+Seta para baixo | Desce a folha uma posição dentro da raia. |
 
 No primeiro status, ir para o anterior faz o NVDA dizer "Já está na primeira raia"; no último, "Já está na última raia". Depois da mudança, a seleção acompanha a folha.
 
@@ -261,6 +263,20 @@ Também é possível mudar o status (ou o local) pelos campos **Status** e **Loc
 - Se a folha movida era a última da raia, o foco vai para a anterior.
 - Se era a única, o foco vai para a própria raia.
 - Se você só editou a folha, sem mudar o status nem a tirar do que está sendo mostrado, o foco volta para ela.
+
+### Mudar a ordem das folhas na raia
+
+Cada raia mostra as folhas numa ordem, que é a mesma em todos os filtros. Para mudar essa ordem, selecione a folha na lista e pressione:
+
+- **Ctrl+Shift+Seta para cima**: a folha sobe uma posição, passando a folha que estava logo acima dela.
+- **Ctrl+Shift+Seta para baixo**: a folha desce uma posição, passando a folha que estava logo abaixo dela.
+
+A seleção acompanha a folha, o NVDA lê a folha e diz a nova posição, por exemplo "Posição 2 de 5". A ordem é salva na hora, como qualquer outra mudança, e a data de alteração da folha não muda.
+
+- Na primeira folha da raia, Ctrl+Shift+Seta para cima faz o NVDA dizer "Já está no topo da raia"; na última, Ctrl+Shift+Seta para baixo diz "Já está no fim da raia".
+- Com um caderno ou uma pasta na caixa **Mostrar**, a folha passa a vizinha que aparece na lista; as folhas de outros lugares ficam onde estão.
+- Em **Folhas recentes** a ordem é sempre a da última alteração, e o NVDA avisa que ali a ordem não pode ser mudada.
+- Numa raia longa, a última folha de uma página pode descer: ela passa a primeira das folhas ainda não mostradas, e a página seguinte aparece.
 
 ### Mover para um caderno ou uma pasta
 
@@ -453,6 +469,8 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 | Delete | Lista de folhas, Organização | Excluir |
 | Alt+Shift+Seta para a direita | Lista de folhas | Status seguinte |
 | Alt+Shift+Seta para a esquerda | Lista de folhas | Status anterior |
+| Ctrl+Shift+Seta para cima | Lista de folhas | Subir a folha na raia |
+| Ctrl+Shift+Seta para baixo | Lista de folhas | Descer a folha na raia |
 | F2 | Organização | Renomear (ou mudar o título de uma folha) |
 | Ctrl+S | Janela da folha | Salvar agora |
 | Ctrl+B | Conteúdo | Negrito |
@@ -466,6 +484,9 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 | Folha criada em A fazer | Uma folha foi criada (com o nome do status escolhido). |
 | Status atualizado para Em andamento | O status da folha mudou. |
 | Já está na primeira raia / Já está na última raia | Não há status anterior ou seguinte. |
+| Posição 2 de 5 | Ctrl+Shift+Seta para cima ou para baixo mudou a folha de lugar na raia. |
+| Já está no topo da raia / Já está no fim da raia | A folha já é a primeira ou a última da raia. |
+| Folhas recentes ficam na ordem da última alteração; aqui a ordem não pode ser mudada | Ctrl+Shift+Seta para cima ou para baixo em Folhas recentes. |
 | Agora em: Caderno Trabalho | A folha (ou o caderno) foi movida para outro lugar. |
 | Folha excluída: título | A folha foi excluída. |
 | Folha salva | Ctrl+S, ou o salvamento automático com o anúncio ligado. |
@@ -530,3 +551,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.2.0 | Botão Criar (folha, caderno e pasta); Atualizar o status da tarefa; Mover para (caderno ou pasta, e folhas guardadas direto em pastas); Enter abre a folha; sem a visualização em tabela e sem o botão Abrir; folhas listadas e abertas na janela Cadernos e pastas; campo Local; listas de 200 em 200; desempenho com 100 mil folhas; sem menções a outras plataformas. |
 | 1.4.0 | Novo botão Exportar… na janela principal e novo capítulo "Exportar como documento": folha selecionada, caderno ou pasta em Word, Markdown ou HTML, num arquivo só ou num arquivo para cada folha; novas mensagens faladas da exportação. |
 | 1.5.0 | O campo Local virou uma árvore de pastas e cadernos, que se abre como as raias (nova seção "O campo Local"), na janela Nova folha, na janela da folha e em Mover para; Enter na árvore cria a folha ou move a folha. O manual deixou de ser um documento do Word: vem dentro do complemento e abre pelo novo botão Manual de uso… e pelo comando Abrir o manual de uso. |
+| 1.6.0 | Ctrl+Shift+Seta para cima e para baixo mudam a ordem da folha dentro da raia (nova seção "Mudar a ordem das folhas na raia"), com as novas mensagens faladas e os atalhos nas tabelas. |

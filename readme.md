@@ -7,7 +7,7 @@ NVDA add-on to organize notes and tasks in status lanes (To do, In progress, Blo
 Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The window has:
 
 * **Show**: all notes, loose notes (neither in a notebook nor in a folder), recent notes (the 10 changed last), one notebook or one folder.
-* **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Lanes start closed: Right Arrow opens one, Left Arrow closes it. Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
+* **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Lanes start closed: Right Arrow opens one, Left Arrow closes it. Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status, **Ctrl+Shift+Up Arrow** and **Ctrl+Shift+Down Arrow** move it up or down inside its lane. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
 * **Create…**: a menu to create a note, a notebook or a folder.
 * **Update the task status…**: a menu with the other statuses.
 * **Move to…**: moves the note to a notebook, directly to a folder, or makes it loose.
@@ -56,6 +56,7 @@ The **Notebooks and folders…** window shows each folder with its notebooks and
 | NVDA+Alt+F | New note |
 | NVDA+Alt+B | Search the notes |
 | Alt+Shift+Right and Left Arrow | Next or previous status of the note |
+| Ctrl+Shift+Up and Down Arrow | Move the note up or down inside its lane |
 | Ctrl+S, Ctrl+B, Ctrl+I | Save, bold and italic in the note window |
 
 They can be changed in NVDA, Preferences, Input gestures, Notas Workflow NVDA category, where there is also a command, without shortcut, that says how many notes each lane has.

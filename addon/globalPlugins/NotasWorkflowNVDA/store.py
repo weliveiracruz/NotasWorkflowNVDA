@@ -477,6 +477,30 @@ class NotesStore:
 	def moveNote(self, noteId, laneId):
 		return self.updateNote(noteId, laneId=laneId)
 
+	def placeNoteBeside(self, noteId, otherId, after):
+		"""Puts the note just before (after=False) or just after (after=True) another one: the
+		order of a lane is the order of the list, as in the web app. Nothing else of the note
+		changes, not even updatedAt. True when the order changed."""
+		note = self._need(self.getNote(noteId))
+		other = self._need(self.getNote(otherId))
+		if note is other:
+			return False
+		notes = self.notes
+		# By identity: comparing whole notes would be slow with many notes.
+		i = next(k for k, n in enumerate(notes) if n is note)
+		j = next(k for k, n in enumerate(notes) if n is other)
+		if i == (j + 1 if after else j - 1):
+			return False
+		if (j > i) == after and abs(j - i) == 1:
+			# Side by side: a swap is enough.
+			notes[i], notes[j] = other, note
+		else:
+			del notes[i]
+			j = j - 1 if j > i else j
+			notes.insert(j + 1 if after else j, note)
+		self.save()
+		return True
+
 	def location(self, notebookId=None, folderId=None):
 		"""Valid (notebookId, folderId) of a note: a notebook (its folder comes from the
 		notebook), a folder directly, or neither (loose note)."""

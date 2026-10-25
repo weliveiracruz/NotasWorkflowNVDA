@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="manual" content="versao=1.5.0; fonte-sha256=ba399eeb78db158b967f0f5e2cfac515ff6b6b2f0372bb481097c21268147e3c">
+<meta name="manual" content="versao=1.6.0; fonte-sha256=9f276fe98676fbf32d289ef1c400af299a513bd77365b2c89b3d45a0df1f5938">
 <title>Notas Workflow NVDA — Manual de uso</title>
 <style>
 body{font-family:Segoe UI,Calibri,sans-serif;line-height:1.5;max-width:60em;margin:1em auto;padding:0 1em}
@@ -15,7 +15,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <body>
 <main lang="pt-BR">
 <h1 id="secao1">Notas Workflow NVDA</h1>
-<p>Manual de uso — versão 1.5.0</p>
+<p>Manual de uso — versão 1.6.0</p>
 <nav aria-label="Sumário">
 <h2>Sumário</h2>
 <ul>
@@ -28,21 +28,21 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li><a href="#secao19">Janela da folha</a></li>
 <li><a href="#secao22">Formatação do conteúdo</a></li>
 <li><a href="#secao26">Status, local e exclusão</a></li>
-<li><a href="#secao31">Buscar folhas</a></li>
-<li><a href="#secao32">Cadernos e pastas</a></li>
-<li><a href="#secao35">Exportar como documento</a></li>
-<li><a href="#secao39">Configurações</a></li>
-<li><a href="#secao40">Onde ficam as folhas</a></li>
-<li><a href="#secao44">Importar e exportar</a></li>
-<li><a href="#secao47">Atalhos</a></li>
-<li><a href="#secao50">Mensagens faladas</a></li>
-<li><a href="#secao51">Privacidade e segurança</a></li>
-<li><a href="#secao52">Perguntas frequentes</a></li>
-<li><a href="#secao58">Histórico deste manual</a></li>
+<li><a href="#secao32">Buscar folhas</a></li>
+<li><a href="#secao33">Cadernos e pastas</a></li>
+<li><a href="#secao36">Exportar como documento</a></li>
+<li><a href="#secao40">Configurações</a></li>
+<li><a href="#secao41">Onde ficam as folhas</a></li>
+<li><a href="#secao45">Importar e exportar</a></li>
+<li><a href="#secao48">Atalhos</a></li>
+<li><a href="#secao51">Mensagens faladas</a></li>
+<li><a href="#secao52">Privacidade e segurança</a></li>
+<li><a href="#secao53">Perguntas frequentes</a></li>
+<li><a href="#secao59">Histórico deste manual</a></li>
 </ul>
 </nav>
 <h2 id="secao2">Sobre este manual</h2>
-<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.5.0. Ele é atualizado a cada nova versão do complemento.</p>
+<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.6.0. Ele é atualizado a cada nova versão do complemento.</p>
 <p>O manual vem dentro do complemento: o botão <strong>Manual de uso… (Alt+N)</strong> da janela principal o abre na janela de leitura do NVDA, onde dá para navegar como numa página: <strong>H</strong> passa pelos títulos, <strong>2</strong> pelos capítulos, <strong>3</strong> pelas seções, <strong>T</strong> pelas tabelas e <strong>K</strong> pelos links do sumário. <strong>Esc</strong> fecha o manual.</p>
 <p>O Notas Workflow NVDA organiza <strong>folhas</strong> (anotações e tarefas) em <strong>raias</strong> de status, agrupadas em <strong>cadernos</strong> e <strong>pastas</strong>, com tags, conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.</p>
 <aside class="destaque"><p><strong>Dica:</strong> os nomes de botões e campos deste manual são os da interface em português. Entre parênteses aparece a letra de atalho com Alt de cada um, por exemplo <strong>Criar… (Alt+C)</strong>.</p></aside>
@@ -71,12 +71,12 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>Windows 10 ou 11.</li>
 <li>Não precisa de internet, de conta nem de navegador.</li>
 </ul>
-<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.5.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
+<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.6.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
 <p>Para desinstalar, use o menu do NVDA, Ferramentas, Loja de complementos, aba Complementos instalados. <strong>Desinstalar não apaga as suas folhas</strong>: elas continuam na pasta das folhas (veja Onde ficam as folhas).</p>
 <h3 id="secao9">Quem usava o NotasWorkflow 1.0.0</h3>
 <p>Até a versão 1.0.0, o complemento se chamava <strong>NotasWorkflow</strong>. A partir da 1.1.0 ele se chama <strong>Notas Workflow NVDA</strong>, e o NVDA o trata como um complemento novo, que fica instalado ao lado do antigo. Para trocar sem perder nada:</p>
 <ol>
-<li>Instale o <code>NotasWorkflowNVDA-1.5.0.nvda-addon</code> e reinicie o NVDA.</li>
+<li>Instale o <code>NotasWorkflowNVDA-1.6.0.nvda-addon</code> e reinicie o NVDA.</li>
 <li>No primeiro início, o complemento copia as folhas da pasta antiga (<code>%APPDATA%\nvda\NotasWorkflow</code>) e as configurações (pasta das folhas, salvamento automático e anúncio). O NVDA fala "Folhas da versão anterior trazidas para o Notas Workflow NVDA" e o número de folhas.</li>
 <li>Pressione <strong>NVDA+Alt+N</strong> e confira as suas folhas.</li>
 <li>Desinstale o <strong>NotasWorkflow</strong> antigo na Loja de complementos e reinicie o NVDA. Enquanto os dois estiverem instalados, os atalhos NVDA+Alt+N, NVDA+Alt+F e NVDA+Alt+B ficam repetidos.</li>
@@ -126,6 +126,8 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Delete</td><td>Exclui a folha selecionada, depois de confirmar.</td></tr>
 <tr><td>Alt+Shift+Seta para a direita</td><td>Muda o status da folha para o seguinte.</td></tr>
 <tr><td>Alt+Shift+Seta para a esquerda</td><td>Muda o status da folha para o anterior.</td></tr>
+<tr><td>Ctrl+Shift+Seta para cima</td><td>Sobe a folha uma posição dentro da raia.</td></tr>
+<tr><td>Ctrl+Shift+Seta para baixo</td><td>Desce a folha uma posição dentro da raia.</td></tr>
 </tbody>
 </table>
 <p>No primeiro status, ir para o anterior faz o NVDA dizer "Já está na primeira raia"; no último, "Já está na última raia". Depois da mudança, a seleção acompanha a folha.</p>
@@ -261,7 +263,20 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>Se era a única, o foco vai para a própria raia.</li>
 <li>Se você só editou a folha, sem mudar o status nem a tirar do que está sendo mostrado, o foco volta para ela.</li>
 </ul>
-<h3 id="secao29">Mover para um caderno ou uma pasta</h3>
+<h3 id="secao29">Mudar a ordem das folhas na raia</h3>
+<p>Cada raia mostra as folhas numa ordem, que é a mesma em todos os filtros. Para mudar essa ordem, selecione a folha na lista e pressione:</p>
+<ul>
+<li><strong>Ctrl+Shift+Seta para cima</strong>: a folha sobe uma posição, passando a folha que estava logo acima dela.</li>
+<li><strong>Ctrl+Shift+Seta para baixo</strong>: a folha desce uma posição, passando a folha que estava logo abaixo dela.</li>
+</ul>
+<p>A seleção acompanha a folha, o NVDA lê a folha e diz a nova posição, por exemplo "Posição 2 de 5". A ordem é salva na hora, como qualquer outra mudança, e a data de alteração da folha não muda.</p>
+<ul>
+<li>Na primeira folha da raia, Ctrl+Shift+Seta para cima faz o NVDA dizer "Já está no topo da raia"; na última, Ctrl+Shift+Seta para baixo diz "Já está no fim da raia".</li>
+<li>Com um caderno ou uma pasta na caixa <strong>Mostrar</strong>, a folha passa a vizinha que aparece na lista; as folhas de outros lugares ficam onde estão.</li>
+<li>Em <strong>Folhas recentes</strong> a ordem é sempre a da última alteração, e o NVDA avisa que ali a ordem não pode ser mudada.</li>
+<li>Numa raia longa, a última folha de uma página pode descer: ela passa a primeira das folhas ainda não mostradas, e a página seguinte aparece.</li>
+</ul>
+<h3 id="secao30">Mover para um caderno ou uma pasta</h3>
 <p><strong>Mover para… (Alt+M)</strong> abre a janela "Mover … para" (com o título da folha) e a árvore <strong>Local</strong>, a mesma da janela da folha (veja O campo Local), começando no lugar atual da folha:</p>
 <ul>
 <li>Folha solta (sem caderno nem pasta);</li>
@@ -270,9 +285,9 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>no fim, os cadernos sem pasta.</li>
 </ul>
 <p><strong>Enter</strong> ou <strong>OK</strong> move a folha; <strong>Cancelar</strong> ou <strong>Esc</strong> deixa a folha onde estava. O NVDA confirma com "Agora em:" e o lugar escolhido, com a pasta do caderno ("Caderno Site (pasta Projetos)"). Se o filtro em uso deixar de mostrar a folha, a seleção vai para a folha vizinha. O mesmo botão existe na janela Cadernos e pastas, e o campo Local da janela da folha faz o mesmo.</p>
-<h3 id="secao30">Excluir</h3>
+<h3 id="secao31">Excluir</h3>
 <p><strong>Excluir (Alt+X)</strong> ou a tecla <strong>Delete</strong> perguntam "Excluir a folha …? Isso não pode ser desfeito.", com <strong>Não</strong> como resposta padrão. Ao confirmar, o NVDA fala "Folha excluída:" e o título, e a seleção vai para a folha vizinha.</p>
-<h2 id="secao31">Buscar folhas</h2>
+<h2 id="secao32">Buscar folhas</h2>
 <p>Use <strong>NVDA+Alt+B</strong> de qualquer lugar, ou <strong>Buscar… (Alt+B)</strong> na janela principal.</p>
 <table>
 <thead><tr><th scope="col">Controle</th><th scope="col">Atalho</th><th scope="col">Descrição</th></tr></thead>
@@ -294,9 +309,9 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>É rápida mesmo com 100 mil folhas: o texto de cada folha é preparado uma vez, logo depois que o NVDA inicia, e só é preparado de novo quando a folha muda.</li>
 </ul>
 <p>Ao voltar de uma folha aberta pela busca, os resultados são atualizados e a folha continua selecionada.</p>
-<h2 id="secao32">Cadernos e pastas</h2>
+<h2 id="secao33">Cadernos e pastas</h2>
 <p>Abra pelo botão <strong>Cadernos e pastas… (Alt+T)</strong> da janela principal.</p>
-<h3 id="secao33">A árvore Organização</h3>
+<h3 id="secao34">A árvore Organização</h3>
 <p>A árvore <strong>Organização (Alt+O)</strong> mostra tudo, com as folhas dentro de cada lugar:</p>
 <ul>
 <li>cada pasta, por exemplo "Pasta Projetos, 2 cadernos, 3 folhas", com os cadernos dela e depois as folhas guardadas direto nela;</li>
@@ -305,7 +320,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>o ramo "Folhas soltas", com as folhas que não estão em nenhum caderno nem em nenhuma pasta.</li>
 </ul>
 <p>Cada folha é lida com o título, o status, as tags e a data. <strong>Enter sobre uma folha abre a folha.</strong> As folhas de um caderno ou pasta só são carregadas quando você abre o ramo, 200 por vez, com o item "Mostrar mais" no fim, como na janela principal.</p>
-<h3 id="secao34">Botões</h3>
+<h3 id="secao35">Botões</h3>
 <table>
 <thead><tr><th scope="col">Botão</th><th scope="col">Atalho</th><th scope="col">O que faz</th></tr></thead>
 <tbody>
@@ -317,9 +332,9 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </tbody>
 </table>
 <p>Excluir uma pasta ou um caderno <strong>nunca apaga folhas</strong>: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções da caixa Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.</p>
-<h2 id="secao35">Exportar como documento</h2>
+<h2 id="secao36">Exportar como documento</h2>
 <p>O botão <strong>Exportar… (Alt+E)</strong> da janela principal grava folhas como documentos para ler, imprimir ou enviar a outras pessoas: um documento do <strong>Word</strong>, um arquivo <strong>Markdown</strong> ou uma <strong>página HTML</strong>, que abre em qualquer navegador. É diferente de Exportar folhas… das configurações, que grava a cópia de segurança <code>.json</code> (veja Importar e exportar).</p>
-<h3 id="secao36">O que exportar</h3>
+<h3 id="secao37">O que exportar</h3>
 <p>O botão abre um menu com:</p>
 <table>
 <thead><tr><th scope="col">Opção</th><th scope="col">O que exporta</th></tr></thead>
@@ -330,7 +345,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </tbody>
 </table>
 <p>Se não houver nenhum caderno (ou nenhuma pasta), o NVDA fala "Não há cadernos." (ou "Não há pastas."). Um caderno ou uma pasta sem folhas não é exportado: o NVDA fala "Nada para exportar:" e o nome.</p>
-<h3 id="secao37">Formato e arquivos</h3>
+<h3 id="secao38">Formato e arquivos</h3>
 <p>Depois, uma lista pergunta o formato:</p>
 <table>
 <thead><tr><th scope="col">Formato</th><th scope="col">Arquivo</th><th scope="col">Bom para</th></tr></thead>
@@ -347,7 +362,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </ul>
 <p>Para uma folha só, o complemento pergunta apenas o formato e o arquivo.</p>
 <p>A gravação acontece em segundo plano, então o NVDA continua respondendo mesmo com milhares de folhas. Ao terminar, o NVDA fala, por exemplo, "Exportado: 3 folhas, em Trabalho.docx" ou "Exportado: 12 folhas, um arquivo por folha, na pasta" e o caminho. Se não for possível gravar (pasta sem permissão, disco cheio), o NVDA fala "Não foi possível exportar para" e o caminho.</p>
-<h3 id="secao38">Como fica o documento</h3>
+<h3 id="secao39">Como fica o documento</h3>
 <ul>
 <li>Um caderno exportado num arquivo só começa com o título 1 "Caderno" e o nome, seguido da frase "Exportado do Notas Workflow NVDA em" com a data e o número de folhas. Cada folha é um <strong>título 2</strong>.</li>
 <li>Uma pasta começa com o título 1 "Pasta" e o nome. As folhas guardadas direto nela ficam sob o título 2 "Folhas direto na pasta", e as de cada caderno sob o título 2 "Caderno" e o nome; cada folha é um <strong>título 3</strong>.</li>
@@ -357,7 +372,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>O conteúdo mantém a formatação: negrito, itálico, tachado, código, listas com marcadores e numeradas, citações, blocos de código e divisores. Os títulos do conteúdo ficam um nível abaixo do título da folha, para a estrutura de títulos continuar em ordem.</li>
 </ul>
 <p>O documento é feito para leitores de telas: no Word, os títulos usam os estilos Título 1, Título 2… e aparecem no painel de navegação; na página HTML, são títulos de verdade, navegáveis com a tecla H do NVDA. O documento tem o idioma do NVDA e o título nas propriedades do arquivo.</p>
-<h2 id="secao39">Configurações</h2>
+<h2 id="secao40">Configurações</h2>
 <p>Abra o menu do NVDA, Preferências, Configurações, categoria <strong>Notas Workflow NVDA</strong>.</p>
 <table>
 <thead><tr><th scope="col">Opção</th><th scope="col">Atalho</th><th scope="col">Descrição</th></tr></thead>
@@ -377,24 +392,24 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>se a pasta nova <strong>está vazia</strong>, as folhas atuais são gravadas nela ("Folhas salvas na nova pasta").</li>
 </ul>
 <p>A pasta precisa existir e poder ser gravada; senão, as configurações avisam e não fecham.</p>
-<h2 id="secao40">Onde ficam as folhas</h2>
+<h2 id="secao41">Onde ficam as folhas</h2>
 <p>As folhas ficam no arquivo <code>NotasWorkflowNVDA-data.json</code>, na pasta das folhas. A pasta padrão é a subpasta <code>NotasWorkflowNVDA</code> da pasta de configurações do NVDA, normalmente <code>%APPDATA%\nvda\NotasWorkflowNVDA</code>. Na versão portátil do NVDA, fica dentro da pasta do NVDA portátil.</p>
-<h3 id="secao41">Segurança dos dados</h3>
+<h3 id="secao42">Segurança dos dados</h3>
 <ul>
 <li>Toda mudança é gravada de forma segura: o complemento escreve um arquivo temporário e só então troca pelo arquivo antigo, que fica guardado como cópia de segurança <code>NotasWorkflowNVDA-data.json.bak</code>.</li>
 <li>A gravação acontece em segundo plano, meio segundo depois da última mudança, para o NVDA nunca parar de responder; várias mudanças seguidas viram uma gravação só. Ao encerrar o NVDA, tudo o que estiver pendente é gravado antes.</li>
 <li>Se o arquivo estiver danificado, ele é guardado com outro nome (<code>NotasWorkflowNVDA-data.corrupt-</code> seguido da data) e a cópia de segurança é usada. O NVDA avisa. Nenhum arquivo é apagado.</li>
 <li>Se não for possível gravar (disco cheio, pasta sem permissão), as folhas continuam abertas, o NVDA avisa e a próxima mudança tenta de novo.</li>
 </ul>
-<h3 id="secao42">Muitas folhas</h3>
+<h3 id="secao43">Muitas folhas</h3>
 <p>O complemento foi medido com 100 mil folhas. O NVDA inicia na hora: as folhas são lidas em segundo plano em poucos segundos, e se você usar um comando antes disso o NVDA fala "Carregando as folhas…" e espera terminar. Mudar o status, abrir uma folha, salvar e buscar levam frações de segundo. O arquivo pode ter até 200 MB (cerca de 300 mil folhas como as de um uso comum).</p>
-<h3 id="secao43">Usar em mais de um computador</h3>
+<h3 id="secao44">Usar em mais de um computador</h3>
 <p>Escolha como pasta das folhas uma pasta do <strong>OneDrive</strong> ou do <strong>Google Drive para computador</strong>. Esses programas sincronizam o arquivo sozinhos. Ao abrir a janela Notas Workflow NVDA, o complemento percebe se o arquivo foi mudado em outro computador e lê as folhas de novo.</p>
 <aside class="destaque"><p><strong>Atenção:</strong> se dois computadores mudarem as folhas ao mesmo tempo, vale a última gravação. A cópia de segurança <code>.bak</code> guarda a versão anterior.</p></aside>
-<h2 id="secao44">Importar e exportar</h2>
-<h3 id="secao45">Exportar</h3>
+<h2 id="secao45">Importar e exportar</h2>
+<h3 id="secao46">Exportar</h3>
 <p><strong>Exportar folhas… (Alt+E)</strong> nas configurações grava todas as folhas, cadernos e pastas num arquivo <code>.json</code>. O NVDA fala "Exportado:" e o número de folhas. O arquivo serve como cópia de segurança e para levar as folhas para outro computador. Para ter as folhas num documento para ler ou enviar, use o botão <strong>Exportar…</strong> da janela principal (veja Exportar como documento); esses documentos não podem ser importados de volta.</p>
-<h3 id="secao46">Importar</h3>
+<h3 id="secao47">Importar</h3>
 <p><strong>Importar folhas… (Alt+I)</strong> junta as folhas de um arquivo exportado às suas:</p>
 <ul>
 <li>folhas, cadernos e pastas novos são acrescentados;</li>
@@ -402,8 +417,8 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>dados inválidos são corrigidos ou descartados, e arquivos acima de 200 MB não são abertos.</li>
 </ul>
 <p>O NVDA fala "Importado:" com o número de folhas, cadernos e pastas trazidos.</p>
-<h2 id="secao47">Atalhos</h2>
-<h3 id="secao48">Comandos globais</h3>
+<h2 id="secao48">Atalhos</h2>
+<h3 id="secao49">Comandos globais</h3>
 <table>
 <thead><tr><th scope="col">Atalho</th><th scope="col">Ação</th></tr></thead>
 <tbody>
@@ -415,7 +430,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </tbody>
 </table>
 <p>Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria <strong>Notas Workflow NVDA</strong>, onde também dá para dar um atalho ao resumo das raias e ao manual de uso.</p>
-<h3 id="secao49">Dentro das janelas</h3>
+<h3 id="secao50">Dentro das janelas</h3>
 <table>
 <thead><tr><th scope="col">Atalho</th><th scope="col">Onde</th><th scope="col">Ação</th></tr></thead>
 <tbody>
@@ -423,6 +438,8 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Delete</td><td>Lista de folhas, Organização</td><td>Excluir</td></tr>
 <tr><td>Alt+Shift+Seta para a direita</td><td>Lista de folhas</td><td>Status seguinte</td></tr>
 <tr><td>Alt+Shift+Seta para a esquerda</td><td>Lista de folhas</td><td>Status anterior</td></tr>
+<tr><td>Ctrl+Shift+Seta para cima</td><td>Lista de folhas</td><td>Subir a folha na raia</td></tr>
+<tr><td>Ctrl+Shift+Seta para baixo</td><td>Lista de folhas</td><td>Descer a folha na raia</td></tr>
 <tr><td>F2</td><td>Organização</td><td>Renomear (ou mudar o título de uma folha)</td></tr>
 <tr><td>Ctrl+S</td><td>Janela da folha</td><td>Salvar agora</td></tr>
 <tr><td>Ctrl+B</td><td>Conteúdo</td><td>Negrito</td></tr>
@@ -430,13 +447,16 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Esc</td><td>Qualquer janela</td><td>Fechar (na janela da folha, salva antes)</td></tr>
 </tbody>
 </table>
-<h2 id="secao50">Mensagens faladas</h2>
+<h2 id="secao51">Mensagens faladas</h2>
 <table>
 <thead><tr><th scope="col">O NVDA fala</th><th scope="col">Quando</th></tr></thead>
 <tbody>
 <tr><td>Folha criada em A fazer</td><td>Uma folha foi criada (com o nome do status escolhido).</td></tr>
 <tr><td>Status atualizado para Em andamento</td><td>O status da folha mudou.</td></tr>
 <tr><td>Já está na primeira raia / Já está na última raia</td><td>Não há status anterior ou seguinte.</td></tr>
+<tr><td>Posição 2 de 5</td><td>Ctrl+Shift+Seta para cima ou para baixo mudou a folha de lugar na raia.</td></tr>
+<tr><td>Já está no topo da raia / Já está no fim da raia</td><td>A folha já é a primeira ou a última da raia.</td></tr>
+<tr><td>Folhas recentes ficam na ordem da última alteração; aqui a ordem não pode ser mudada</td><td>Ctrl+Shift+Seta para cima ou para baixo em Folhas recentes.</td></tr>
 <tr><td>Agora em: Caderno Trabalho</td><td>A folha (ou o caderno) foi movida para outro lugar.</td></tr>
 <tr><td>Folha excluída: título</td><td>A folha foi excluída.</td></tr>
 <tr><td>Folha salva</td><td>Ctrl+S, ou o salvamento automático com o anúncio ligado.</td></tr>
@@ -460,7 +480,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>O nome não pode ficar vazio.</td><td>Caderno ou pasta sem nome.</td></tr>
 </tbody>
 </table>
-<h2 id="secao51">Privacidade e segurança</h2>
+<h2 id="secao52">Privacidade e segurança</h2>
 <ul>
 <li>O complemento <strong>não usa a internet</strong>: nenhuma folha sai do computador, e não há conta nem senha.</li>
 <li>O título, o conteúdo e as tags das folhas <strong>nunca</strong> vão para o log do NVDA.</li>
@@ -470,18 +490,18 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>As folhas ficam num arquivo de texto legível na pasta do seu perfil do Windows.</li>
 <li>Os documentos exportados levam só o que está nas folhas e na formatação do editor: scripts, estilos, links e imagens que viessem de um arquivo importado são descartados, e a página HTML não carrega nada da internet.</li>
 </ul>
-<h2 id="secao52">Perguntas frequentes</h2>
-<h3 id="secao53">O NVDA diz que não foi possível salvar as folhas</h3>
+<h2 id="secao53">Perguntas frequentes</h2>
+<h3 id="secao54">O NVDA diz que não foi possível salvar as folhas</h3>
 <p>A pasta das folhas não existe mais ou não pode ser gravada (por exemplo, um pen drive removido). Escolha outra pasta nas configurações ou use <strong>Usar a pasta padrão</strong>. As folhas abertas continuam na memória até lá.</p>
-<h3 id="secao54">Minhas folhas sumiram depois de trocar a pasta</h3>
+<h3 id="secao55">Minhas folhas sumiram depois de trocar a pasta</h3>
 <p>A pasta nova já tinha folhas do Notas Workflow NVDA, e elas passaram a ser usadas. Volte à pasta anterior nas configurações: as folhas antigas continuam lá.</p>
-<h3 id="secao55">O arquivo estava danificado</h3>
+<h3 id="secao56">O arquivo estava danificado</h3>
 <p>O complemento guardou o arquivo danificado com o nome <code>NotasWorkflowNVDA-data.corrupt-</code> seguido da data e usou a cópia de segurança. Se quiser, envie o arquivo guardado para análise; ele nunca é apagado.</p>
-<h3 id="secao56">Não encontro uma folha numa raia com muitas folhas</h3>
+<h3 id="secao57">Não encontro uma folha numa raia com muitas folhas</h3>
 <p>Cada raia mostra 200 folhas por vez. Use "Mostrar mais" no fim da raia, a caixa Mostrar para ver só um caderno ou uma pasta, ou a busca (NVDA+Alt+B), que encontra a folha na hora e a mostra selecionada ao voltar.</p>
-<h3 id="secao57">Escrevi um asterisco e ele sumiu</h3>
+<h3 id="secao58">Escrevi um asterisco e ele sumiu</h3>
 <p>Pares de asteriscos em volta de uma palavra viram itálico (<code>*palavra*</code>). Para mostrar asteriscos, use-os no meio de palavras ou números, como <code>2*3</code>.</p>
-<h2 id="secao58">Histórico deste manual</h2>
+<h2 id="secao59">Histórico deste manual</h2>
 <table>
 <thead><tr><th scope="col">Versão</th><th scope="col">Mudanças</th></tr></thead>
 <tbody>
@@ -491,6 +511,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>1.2.0</td><td>Botão Criar (folha, caderno e pasta); Atualizar o status da tarefa; Mover para (caderno ou pasta, e folhas guardadas direto em pastas); Enter abre a folha; sem a visualização em tabela e sem o botão Abrir; folhas listadas e abertas na janela Cadernos e pastas; campo Local; listas de 200 em 200; desempenho com 100 mil folhas; sem menções a outras plataformas.</td></tr>
 <tr><td>1.4.0</td><td>Novo botão Exportar… na janela principal e novo capítulo "Exportar como documento": folha selecionada, caderno ou pasta em Word, Markdown ou HTML, num arquivo só ou num arquivo para cada folha; novas mensagens faladas da exportação.</td></tr>
 <tr><td>1.5.0</td><td>O campo Local virou uma árvore de pastas e cadernos, que se abre como as raias (nova seção "O campo Local"), na janela Nova folha, na janela da folha e em Mover para; Enter na árvore cria a folha ou move a folha. O manual deixou de ser um documento do Word: vem dentro do complemento e abre pelo novo botão Manual de uso… e pelo comando Abrir o manual de uso.</td></tr>
+<tr><td>1.6.0</td><td>Ctrl+Shift+Seta para cima e para baixo mudam a ordem da folha dentro da raia (nova seção "Mudar a ordem das folhas na raia"), com as novas mensagens faladas e os atalhos nas tabelas.</td></tr>
 </tbody>
 </table>
 </main>

@@ -225,6 +225,44 @@ class FUN06_Lanes(unittest.TestCase):
 		self.assertFalse(s.moveNote(n["id"], "nope"))
 
 
+class FUN30_OrderInLane(unittest.TestCase):
+	def test_place_beside_moves_only_the_order(self):
+		s = newStore()
+		a, b, c, d = s.addNote("a"), s.addNote("b", "done"), s.addNote("c"), s.addNote("d")
+		stamp = c["updatedAt"]
+		self.assertTrue(s.placeNoteBeside(c["id"], a["id"], after=False))
+		self.assertEqual([n["title"] for n in s.notes], ["c", "a", "b", "d"])
+		self.assertEqual([n["title"] for n in model.byLane(s.notes)["todo"]], ["c", "a", "d"])
+		self.assertEqual(c["updatedAt"], stamp)
+		self.assertTrue(s.placeNoteBeside(c["id"], d["id"], after=True))
+		self.assertEqual([n["title"] for n in s.notes], ["a", "b", "d", "c"])
+		self.assertTrue(s.placeNoteBeside(c["id"], d["id"], after=False))
+		self.assertEqual([n["title"] for n in s.notes], ["a", "b", "c", "d"])
+
+	def test_already_there_or_itself_changes_nothing(self):
+		s = newStore()
+		a, b = s.addNote("a"), s.addNote("b")
+		self.assertFalse(s.placeNoteBeside(a["id"], b["id"], after=False))
+		self.assertFalse(s.placeNoteBeside(b["id"], a["id"], after=True))
+		self.assertFalse(s.placeNoteBeside(a["id"], a["id"], after=True))
+		self.assertEqual([n["title"] for n in s.notes], ["a", "b"])
+		self.assertEqual(s.getNote(b["id"]), b)
+
+	def test_unknown_note(self):
+		s = newStore()
+		a = s.addNote("a")
+		with self.assertRaises(store.StoreError):
+			s.placeNoteBeside(a["id"], "nope", after=True)
+
+	def test_order_is_saved(self):
+		folder = _helpers.tempFolder()
+		s = newStore(folder)
+		a, b = s.addNote("a"), s.addNote("b")
+		s.placeNoteBeside(b["id"], a["id"], after=False)
+		again = newStore(folder)
+		self.assertEqual([n["title"] for n in again.notes], ["b", "a"])
+
+
 class FUN07_Filters(unittest.TestCase):
 	def setUp(self):
 		s = self.s = newStore()

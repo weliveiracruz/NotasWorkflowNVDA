@@ -522,6 +522,7 @@ def run():
 	R.check("FUN-16 no real menu or dialog was opened without an answer (it would wait forever)", not RECORD["blocked"], RECORD["blocked"])
 	closeWindow()
 	collapsedLanesAndPile()
+	orderInLane()
 	legacyMigration()
 	locationTree()
 
@@ -671,6 +672,68 @@ def collapsedLanesAndPile():
 	with fakeModal(noteDialog.NoteDialog, moveAway):
 		dlg.openNote(a2["id"])
 	R.check("FUN-26 a note moved out of what is shown (Location): the focus goes to the next note of the pile", a2["notebookId"] == nb["id"] and dlg.selectedNoteId() == following, (dlg.selectedNoteId(), following))
+	plugin.terminate()
+
+
+def orderInLane():
+	"""FUN-30: Ctrl+Shift+Up and Down Arrow move the note up or down in its lane (1.6.0)."""
+	plugin = newPlugin()
+	s = plugin.store
+	nb = s.addNotebook("Caderno")
+	a, b = s.addNote("A"), s.addNote("B", notebookId=nb["id"])
+	other = s.addNote("Outra raia", "done")
+	c, d = s.addNote("C"), s.addNote("D", notebookId=nb["id"])
+	dlg = openWindow(plugin)
+
+	def todo():
+		return [x["title"] for x in model.byLane(s.notes)["todo"]]
+
+	def treeTodo():
+		return dict(treeTexts(dlg.tree)).get("To do, 4 notes", [])
+
+	def press(code):
+		dlg.onKey(Key(code, ctrl=True, shift=True))
+
+	dlg.refresh(c["id"])
+	n = mark()
+	press(wx.WXK_UP)
+	R.check("FUN-30 Ctrl+Shift+Up moves the note up in its lane and says where it is", todo() == ["A", "C", "B", "D"] and "Position 2 of 4" in spokenSince(n), (todo(), spokenSince(n)))
+	R.check("FUN-30 the selection follows the note and the tree shows the new order", dlg.selectedNoteId() == c["id"] and [t.split(",")[0] for t in treeTodo()] == ["A", "C", "B", "D"], (dlg.selectedNoteId(), treeTodo()))
+	R.check("FUN-30 the other lanes and the date of the note do not change", other["laneId"] == "done" and c["updatedAt"] == c["createdAt"], c)
+	press(wx.WXK_UP)
+	n = mark()
+	press(wx.WXK_UP)
+	R.check("FUN-30 at the top: nothing changes and it is said", todo() == ["C", "A", "B", "D"] and spokenSince(n) == ["Already at the top of the lane"], (todo(), spokenSince(n)))
+	for _i in range(3):
+		press(wx.WXK_DOWN)
+	n = mark()
+	press(wx.WXK_DOWN)
+	R.check("FUN-30 Ctrl+Shift+Down to the bottom; at the bottom it is said", todo() == ["A", "B", "D", "C"] and spokenSince(n) == ["Already at the bottom of the lane"] and dlg.selectedNoteId() == c["id"], (todo(), spokenSince(n)))
+	dlg.refresh(c["id"])
+	R.check("FUN-30 the new order stays after the tree is built again", [t.split(",")[0] for t in treeTodo()] == ["A", "B", "D", "C"], treeTodo())
+	dlg.setFilter(("notebook", nb["id"]))
+	dlg.refresh(d["id"])
+	n = mark()
+	press(wx.WXK_UP)
+	R.check("FUN-30 in a notebook, the note passes the note shown above it", todo() == ["A", "D", "B", "C"] and "Position 1 of 2" in spokenSince(n), (todo(), spokenSince(n)))
+	dlg.setFilter(model.FILTER_RECENT)
+	dlg.refresh(d["id"])
+	n = mark()
+	press(wx.WXK_DOWN)
+	R.check("FUN-30 in Recent notes the order cannot change, and it is said", todo() == ["A", "D", "B", "C"] and spokenSince(n) == ["Recent notes are ordered by the last change; the order cannot be changed here"], spokenSince(n))
+	dlg.setFilter(model.FILTER_ALL)
+	dlg.refresh()
+	key = Key(wx.WXK_UP, ctrl=True, shift=True)
+	dlg.onKey(key)
+	R.check("FUN-30 on a lane (no note), nothing changes", todo() == ["A", "D", "B", "C"])
+	# A note at the end of a page passes the first note of the next page.
+	extra = bulk(plugin, mainDialog.PAGE_SIZE + 5)
+	lane = [x["id"] for x in model.byLane(s.notes)["todo"]]
+	last = lane[mainDialog.PAGE_SIZE - 1]
+	dlg.refresh(last)
+	press(wx.WXK_DOWN)
+	lane = [x["id"] for x in model.byLane(s.notes)["todo"]]
+	R.check("FUN-30 at the end of a page the note passes the first one not shown yet", lane.index(last) == mainDialog.PAGE_SIZE and dlg.selectedNoteId() == last, (lane.index(last), len(extra)))
 	plugin.terminate()
 
 

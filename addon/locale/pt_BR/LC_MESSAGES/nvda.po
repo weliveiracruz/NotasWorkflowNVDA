@@ -170,6 +170,18 @@ msgstr "Já está na primeira raia"
 msgid "Already in the last lane"
 msgstr "Já está na última raia"
 
+msgid "Already at the top of the lane"
+msgstr "Já está no topo da raia"
+
+msgid "Already at the bottom of the lane"
+msgstr "Já está no fim da raia"
+
+msgid "Position {position} of {total}"
+msgstr "Posição {position} de {total}"
+
+msgid "Recent notes are ordered by the last change; the order cannot be changed here"
+msgstr "Folhas recentes ficam na ordem da última alteração; aqui a ordem não pode ser mudada"
+
 #: addon/globalPlugins/NotasWorkflowNVDA/messages.py:19
 msgid "To do"
 msgstr "A fazer"

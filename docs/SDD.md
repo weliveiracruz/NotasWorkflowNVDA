@@ -49,6 +49,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-05 | Ver as folhas por raia | Árvore (a única visualização): cada raia é um ramo com o número de folhas ("A fazer, 3 folhas"); **as raias começam fechadas** (1.3.0) e ficam como a pessoa as deixou; a raia de uma folha selecionada pelo complemento abre sozinha; cada folha mostra título, local, tags e data; **Enter abre a folha** |
 | RF-06 | Listas longas | Cada raia (e cada caderno ou pasta na janela Cadernos e pastas) mostra 200 folhas por vez, com o item "Mostrar mais 200 folhas (N ainda não mostradas)"; uma folha a selecionar além da página faz a página dela aparecer |
 | RF-07 | Atualizar o status da tarefa | Botão **Atualizar o status da tarefa…** (menu com os outros status) e Alt+Shift+Seta para a direita/esquerda (status seguinte/anterior); a seleção acompanha a folha e o NVDA fala o novo status. Status ou local mudados **na janela da folha** (1.3.0): ao fechar, o foco vai para a próxima folha da mesma raia (a anterior, se era a última; a raia, se era a única) |
+| RF-30 | Ordem das folhas na raia (1.6.0) | Ctrl+Shift+Seta para cima/baixo na lista de folhas sobe ou desce a folha uma posição na raia, passando a vizinha mostrada (o filtro de caderno ou pasta vale); a ordem é a da lista `notes`, como no web (sem campo novo, `updatedAt` não muda); só os dois itens da árvore trocam de texto (rápido com 100 mil folhas); nas pontas e em Folhas recentes o NVDA avisa e nada muda; a seleção acompanha a folha e o NVDA fala "Posição n de total" |
 | RF-08 | Mover para um caderno ou uma pasta | Botão **Mover para…** (na janela principal e em Cadernos e pastas) e campo Local da janela da folha: folha solta, direto numa pasta ou num caderno, escolhidos numa árvore de pastas e cadernos (1.5.0); a árvore começa no lugar atual |
 | RF-09 | Excluir folha | Botão Excluir ou tecla Delete, sempre com confirmação |
 | RF-10 | Filtrar | Caixa **Mostrar**: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), Caderno: <nome>, Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) |
@@ -253,7 +254,7 @@ Verificados contra o NVDA 2026.1.1 instalado (NVDA+Alt+C, M, R, S, T, Home, End 
 | Buscar folhas | NVDA+Alt+B |
 | Falar o resumo das raias | sem atalho (pode ser definido em Definir comandos) |
 
-Dentro das janelas: Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda a raia, Ctrl+S salva, Ctrl+B negrito, Ctrl+I itálico, Esc fecha.
+Dentro das janelas: Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda a raia, Ctrl+Shift+Seta para cima/baixo muda a ordem na raia, Ctrl+S salva, Ctrl+B negrito, Ctrl+I itálico, Esc fecha.
 
 ## 7. Dados guardados
 

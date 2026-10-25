@@ -296,6 +296,26 @@ def alreadyLast():
 	return _("Already in the last lane")
 
 
+def alreadyTop():
+	# Translators: spoken by Ctrl+Shift+Up Arrow when the note is already the first one of its lane.
+	return _("Already at the top of the lane")
+
+
+def alreadyBottom():
+	# Translators: spoken by Ctrl+Shift+Down Arrow when the note is already the last one of its lane.
+	return _("Already at the bottom of the lane")
+
+
+def positionInLane(position, total):
+	# Translators: spoken after Ctrl+Shift+Up or Down Arrow moves a note in its lane, for example "Position 2 of 5".
+	return _("Position {position} of {total}").format(position=position, total=total)
+
+
+def noOrderInRecent():
+	# Translators: spoken by Ctrl+Shift+Up or Down Arrow in Recent notes (always ordered by the last change).
+	return _("Recent notes are ordered by the last change; the order cannot be changed here")
+
+
 def lanesSummary(counts):
 	return ", ".join("%s %d" % (laneName(lane), counts.get(lane, 0)) for lane in model.LANE_IDS)
 

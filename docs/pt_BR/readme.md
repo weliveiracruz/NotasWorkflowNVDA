@@ -7,7 +7,7 @@ Complemento do NVDA para organizar folhas (anotações e tarefas) em raias de st
 Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…**). A janela tem:
 
 * **Mostrar**: todas as folhas, folhas soltas (sem caderno nem pasta), folhas recentes (as 10 alteradas por último), um caderno ou uma pasta.
-* **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). As raias começam fechadas: Seta para a direita abre, Seta para a esquerda fecha. Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
+* **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). As raias começam fechadas: Seta para a direita abre, Seta para a esquerda fecha. Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status, **Ctrl+Shift+Seta para cima** e **Ctrl+Shift+Seta para baixo** sobem ou descem a folha dentro da raia. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
 * **Criar…**: um menu para criar uma folha, um caderno ou uma pasta.
 * **Atualizar o status da tarefa…**: um menu com os outros status.
 * **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
@@ -56,6 +56,7 @@ A janela **Cadernos e pastas…** mostra cada pasta com os seus cadernos e as su
 | NVDA+Alt+F | Nova folha |
 | NVDA+Alt+B | Buscar nas folhas |
 | Alt+Shift+Seta para a direita e para a esquerda | Status seguinte ou anterior da folha |
+| Ctrl+Shift+Seta para cima e para baixo | Sobe ou desce a folha dentro da raia |
 | Ctrl+S, Ctrl+B, Ctrl+I | Salvar, negrito e itálico na janela da folha |
 
 Eles podem ser mudados em NVDA, Preferências, Definir comandos, categoria Notas Workflow NVDA, onde também há um comando, sem atalho, que diz quantas folhas cada raia tem.
