@@ -11,7 +11,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 * **Create…**: a menu to create a note, a notebook (New notebook asks the name and the folder), a folder or a **note from a document**.
 * **Update the task status…**: a menu with the other statuses.
 * **Move to…**: moves the note to a notebook, directly to a folder, or makes it loose.
-* **Location** (in New note, in the note window and in Move to) is a tree that opens like the lanes: each folder starts closed, with its notebooks inside; choosing the folder itself puts the note directly in it.
+* **Location** (in New note, in the note window and in Move to) is a tree that opens like the lanes: each folder starts closed, with its notebooks inside; choosing the folder itself puts the note directly in it. New note also has **New notebook…** and **New folder…**: what is created there appears in Location, already chosen.
 * **Delete**, **Search…**, **Notebooks and folders…** and **Close** (Esc).
 * **Export…**: exports the selected note, a notebook or a folder as a document (see below).
 * **User manual…** (Alt+N): opens the detailed user manual (in Brazilian Portuguese) in NVDA's browseable window, with headings, tables and a table of contents. A command without a default shortcut in Input gestures opens it too.

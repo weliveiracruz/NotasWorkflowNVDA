@@ -157,9 +157,13 @@ Também é possível criar uma folha de qualquer lugar com **NVDA+Alt+F**. A jan
 |---|---|---|
 | Título | Alt+T | Obrigatório, até 200 caracteres. |
 | Local | Alt+O | Uma árvore com Folha solta (sem caderno nem pasta), cada pasta com os cadernos dela dentro e os cadernos sem pasta (veja O campo Local). |
+| Novo caderno… | Alt+C | Abre a janela Novo caderno, já com a pasta do item escolhido em Local (a própria pasta, ou a pasta do caderno). Depois de criar, o NVDA fala "Caderno … criado", o caderno aparece em Local já escolhido, dentro da pasta dele, e o foco vai para Local. |
+| Nova pasta… | Alt+P | Pede o nome da pasta. Depois de criar, o NVDA fala "Pasta … criada", a pasta aparece em Local já escolhida e o foco vai para Local. |
 | Status | Alt+S | A Fazer, Em andamento, Bloqueada ou Concluída. |
 | Criar | Alt+R ou Enter | Cria a folha. Fica indisponível enquanto o título estiver vazio. Enter na árvore Local também cria. |
 | Cancelar | Esc | Fecha sem criar nada. |
+
+Com **Novo caderno…** e **Nova pasta…** você cria o lugar da folha sem sair da janela Nova folha: o título digitado continua lá, e o caderno ou a pasta criada já fica escolhida em Local. Para criar um caderno dentro de uma pasta nova, crie primeiro a pasta e depois o caderno. Se você cancelar a Nova folha, o caderno e a pasta criados continuam existindo e aparecem no campo Mostrar e em Cadernos e pastas. Cancelar o nome não cria nada e o foco volta para o botão.
 
 Depois de criar, o NVDA fala "Folha criada em" e o nome do status, e a janela da folha abre com o foco no conteúdo. Nomes de cadernos e pastas têm até 100 caracteres e não podem ficar vazios.
 
@@ -180,7 +184,7 @@ O campo **Local (Alt+O)** é uma árvore, que funciona como as raias da janela p
 - A árvore já começa no local atual (ou no caderno ou na pasta do filtro em uso, numa folha nova), e só a pasta desse local vem aberta.
 - O NVDA lê cada pasta com o número de cadernos e diz se está aberta ou fechada.
 
-A mesma árvore aparece na janela Nova folha, na janela da folha e em **Mover para…**.
+A mesma árvore aparece na janela Nova folha, na janela da folha e em **Mover para…**. Na janela Nova folha, os botões **Novo caderno…** e **Nova pasta…** acrescentam o lugar criado à árvore, já escolhido.
 
 ### Folha a partir de documento
 
@@ -612,3 +616,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.7.0 | O campo Tags saiu da janela da folha: o Tab vai de Status direto para Conteúdo. As tags também deixaram de aparecer na lista de folhas, em Cadernos e pastas e nos documentos exportados, e a busca não procura mais nelas (seção "Tags" retirada). |
 | 1.8.0 | Nova opção Criar > Folha a partir de documento… e novo botão Inserir documento… na janela da folha, com as novas seções "Folha a partir de documento" e "Inserir documento" (Word .docx, PowerPoint .pptx, texto, HTML e e-mail .eml), o comando sem atalho e as novas mensagens faladas; a criação de caderno virou a janela Novo caderno, com a escolha da pasta. |
 | 1.9.0 | O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas). |
+| 1.10.0 | A janela Nova folha ganhou os botões Novo caderno… (Alt+C) e Nova pasta… (Alt+P): o caderno ou a pasta criada aparece no campo Local já escolhida (seção "Criar folhas, cadernos e pastas"). |

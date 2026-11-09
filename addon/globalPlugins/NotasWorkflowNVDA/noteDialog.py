@@ -42,10 +42,15 @@ def chooseFormat(window):
 
 
 class NewNoteDialog(wx.Dialog):
-	def __init__(self, parent, store, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None, title=""):
+	"""New note: title, location, status. With the plugin, it also has New notebook… and New
+	folder… (1.10.0): what is created there goes into the Location tree, chosen."""
+
+	def __init__(self, parent, store, laneId=model.DEFAULT_LANE, notebookId=None, folderId=None, title="", plugin=None):
 		# Translators: title of the window that creates a note.
 		super().__init__(parent, title=_("New note"))
 		self.store = store
+		self.plugin = plugin
+		self.newNotebookButton = self.newFolderButton = None
 		sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
 		# Translators: label of the title field of a note.
 		self.titleEdit = sHelper.addLabeledControl(_("&Title:"), wx.TextCtrl, size=(380, -1))
@@ -54,6 +59,15 @@ class NewNoteDialog(wx.Dialog):
 		# Translators: label of the tree with the place of a note: loose, a folder or a notebook (inside its folder).
 		self.locationTree = sHelper.addLabeledControl(_("&Location:"), LocationTree, store=store)
 		self.locationTree.setPlace(store.location(notebookId, folderId))
+		if plugin is not None:
+			placeButtons = guiHelper.ButtonHelper(wx.HORIZONTAL)
+			# Translators: button of New note that creates a notebook; it is then chosen in Location.
+			self.newNotebookButton = placeButtons.addButton(self, label=_("New &notebook…"))
+			# Translators: button of New note that creates a folder; it is then chosen in Location.
+			self.newFolderButton = placeButtons.addButton(self, label=_("New &folder…"))
+			sHelper.addItem(placeButtons)
+			self.newNotebookButton.Bind(wx.EVT_BUTTON, self.onNewNotebook)
+			self.newFolderButton.Bind(wx.EVT_BUTTON, self.onNewFolder)
 		# Translators: label of the status (lane) box of a note.
 		self.laneChoice = sHelper.addLabeledControl(_("&Status:"), wx.Choice, choices=messages.laneNames())
 		self.laneChoice.SetSelection(model.laneIndex(laneId))
@@ -81,6 +95,34 @@ class NewNoteDialog(wx.Dialog):
 	def create(self):
 		if self.createButton.IsEnabled():
 			self.EndModal(wx.ID_OK)
+
+	def chosenFolder(self):
+		"""The folder of the place chosen in Location (the folder itself, or the folder of the
+		notebook), or None: a notebook created here goes into it."""
+		notebookId, folderId = self.locationTree.place()
+		if folderId is not None:
+			return folderId
+		nb = self.store.getNotebook(notebookId) if notebookId else None
+		return nb["folderId"] if nb else None
+
+	def placeCreated(self, place):
+		"""Location is built again with the new notebook or folder chosen, and gets the focus."""
+		self.locationTree.rebuild(self.store, place)
+		self.locationTree.SetFocus()
+
+	def onNewNotebook(self, evt):
+		notebook = self.plugin.createNotebook(self, self.chosenFolder())
+		if notebook:
+			self.placeCreated((notebook["id"], None))
+		else:
+			self.newNotebookButton.SetFocus()
+
+	def onNewFolder(self, evt):
+		folder = self.plugin.createFolder(self)
+		if folder:
+			self.placeCreated((None, folder["id"]))
+		else:
+			self.newFolderButton.SetFocus()
 
 	def values(self):
 		notebookId, folderId = self.locationTree.place()

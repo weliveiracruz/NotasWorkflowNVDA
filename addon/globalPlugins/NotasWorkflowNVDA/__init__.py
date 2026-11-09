@@ -350,7 +350,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		from .noteDialog import NewNoteDialog
 
 		self.ensureLoaded()
-		dlg = NewNoteDialog(parent or gui.mainFrame, self.store, laneId, notebookId, folderId)
+		dlg = NewNoteDialog(parent or gui.mainFrame, self.store, laneId, notebookId, folderId, plugin=self)
 		try:
 			if dlg.ShowModal() != wx.ID_OK:
 				return None
@@ -426,7 +426,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		from . import markup
 		from .noteDialog import NewNoteDialog
 
-		dlg = NewNoteDialog(parent or gui.mainFrame, self.store, laneId, notebookId, folderId, title=title)
+		dlg = NewNoteDialog(parent or gui.mainFrame, self.store, laneId, notebookId, folderId, title=title, plugin=self)
 		try:
 			if dlg.ShowModal() != wx.ID_OK:
 				return None

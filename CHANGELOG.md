@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 1.10.0
+
+* **Criar caderno e pasta na Nova folha**: a janela Nova folha ganhou os botões **Novo caderno… (Alt+C)** e **Nova pasta… (Alt+P)**, logo depois do campo Local. O caderno ou a pasta criada aparece na hora na árvore **Local**, já escolhida, com o foco nela, e o título digitado continua lá. O Novo caderno já vem com a pasta escolhida em Local.
+* Mesmo cancelando a Nova folha, o caderno e a pasta criados nela aparecem no campo Mostrar e em Cadernos e pastas.
+
 ## 1.9.0
 
 * **Mostrar em árvore**: o campo **Mostrar (Alt+O)** da janela principal virou uma árvore, organizada como o campo Local: Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos sem pasta. As pastas começam fechadas (só abre a do caderno mostrado); Seta para a direita abre uma pasta, Seta para a esquerda fecha. Selecionar um item mostra as folhas dele, como antes, e **Enter** vai para a lista de folhas.

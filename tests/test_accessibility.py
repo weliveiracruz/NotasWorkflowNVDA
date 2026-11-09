@@ -293,10 +293,10 @@ def run():
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.OK
 
 	# -- new note -------------------------------------------------------------------------------------
-	nd = noteDialog.NewNoteDialog(dlg, store)
+	nd = noteDialog.NewNoteDialog(dlg, store, plugin=plugin)
 	nd.Show()
 	ctrls = checkWindow("New note", nd)
-	R.check("ACE-03 New note: title, location, status, create (disabled until there is a title), cancel", ctrls == [nd.titleEdit, nd.locationTree, nd.laneChoice, nd.cancelButton], [plain(structuralName(c)) for c in ctrls])
+	R.check("ACE-03 New note: title, location, new notebook, new folder (1.10.0), status, create (disabled until there is a title), cancel", ctrls == [nd.titleEdit, nd.locationTree, nd.newNotebookButton, nd.newFolderButton, nd.laneChoice, nd.cancelButton], [plain(structuralName(c)) for c in ctrls])
 	R.check("ACE-06 New note starts on the title", lastFocus() is nd.titleEdit)
 	nd.titleEdit.SetValue("x")
 	# Focusing a button (as the MSAA reading above does) makes it the temporary default:

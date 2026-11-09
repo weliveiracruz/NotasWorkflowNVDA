@@ -358,6 +358,16 @@ msgstr "&Título:"
 msgid "&Location:"
 msgstr "L&ocal:"
 
+#. Translators: button of New note that creates a notebook; it is then chosen in Location.
+#: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py
+msgid "New &notebook…"
+msgstr "Novo &caderno…"
+
+#. Translators: button of New note that creates a folder; it is then chosen in Location.
+#: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py
+msgid "New &folder…"
+msgstr "Nova &pasta…"
+
 #: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py:55 addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py:105
 msgid "&Status:"
 msgstr "&Status:"

@@ -3,6 +3,7 @@
 # The Location field of New note, of the note window and of Move to: a tree with
 # loose, each folder (closed, its notebooks inside) and the notebooks without folder.
 # Every item is a place: a folder itself means the note goes directly into it.
+# New note rebuilds it after New notebook or New folder (1.10.0).
 # Copyright (C) 2026 Wellington Cruz <weliveiracruz@gmail.com>
 # This file is covered by the GNU General Public License, version 2.
 
@@ -18,8 +19,17 @@ class LocationTree(wx.TreeCtrl):
 
 	def __init__(self, parent, store, size=(380, 150)):
 		super().__init__(parent, size=size, style=wx.TR_HIDE_ROOT | wx.TR_HAS_BUTTONS | wx.TR_LINES_AT_ROOT | wx.TR_SINGLE)
+		self.fill(store)
+		# The character of Enter must not reach the tree: its type-ahead search would move the selection.
+		self.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
+		self.setIndex(0)
+
+	def fill(self, store):
+		"""(Re)builds the places from the store (also after a notebook or a folder is created
+		in New note). The selection is left for setIndex or setPlace."""
 		self.labels, self.places = messages.locationChoices(store)
 		self.items = []
+		self.DeleteAllItems()
 		root = self.AddRoot("")
 		folderItems = {}
 		for index, (notebookId, folderId) in enumerate(self.places):
@@ -37,9 +47,15 @@ class LocationTree(wx.TreeCtrl):
 			if folderId is not None:
 				folderItems[folderId] = item
 			self.items.append(item)
-		# The character of Enter must not reach the tree: its type-ahead search would move the selection.
-		self.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
-		self.setIndex(0)
+
+	def rebuild(self, store, place):
+		"""Builds the tree again from the store and selects place ((notebookId, folderId))."""
+		self.Freeze()
+		try:
+			self.fill(store)
+		finally:
+			self.Thaw()
+		self.setPlace(place)
 
 	def index(self):
 		item = self.GetSelection()

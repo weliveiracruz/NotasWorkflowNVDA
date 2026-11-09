@@ -540,6 +540,10 @@ class NotesDialog(wx.Dialog):
 			if noteId not in [n["id"] for n in self.store.filtered(self.activeFilter)]:
 				self.activeFilter = model.FILTER_ALL
 			self.refresh(noteId)
+		else:
+			# New note may have created a notebook or a folder before being cancelled: Show
+			# gets it (the tree of notes did not change).
+			self.rebuildFilters()
 		self.focusNotes()
 
 	def setStatus(self, noteId, laneId):

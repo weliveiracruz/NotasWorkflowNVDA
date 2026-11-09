@@ -579,6 +579,7 @@ def run():
 	orderInLane()
 	legacyMigration()
 	locationTree()
+	newNotePlaces()
 
 
 def locationTree():
@@ -659,6 +660,86 @@ def locationTree():
 		plugin.moveNote(gui.mainFrame, note)
 	R.check("FUN-28 Move to cancelled keeps the place", note["folderId"] == proj["id"])
 	R.check("FUN-28 no real menu or dialog opened without an answer", not RECORD["blocked"], RECORD["blocked"])
+	plugin.terminate()
+
+
+def newNotePlaces():
+	"""FUN-36 (1.10.0): New note has New notebook… and New folder…; what is created there
+	goes into the Location tree, chosen, and into Show and Notebooks and folders."""
+	plugin = newPlugin()
+	s = plugin.store
+	proj = s.addFolder("Projetos")
+	site = s.addNotebook("Site", proj["id"])
+	dlg = openWindow(plugin)
+	nd = noteDialog.NewNoteDialog(gui.mainFrame, s)
+	R.check("FUN-36 without the plugin (tests of the tree), New note has no create buttons", nd.newNotebookButton is None and nd.newFolderButton is None)
+	nd.Destroy()
+	seen = {}
+
+	def createBoth(d):
+		seen["labels"] = (d.newNotebookButton.GetLabel(), d.newFolderButton.GetLabel())
+		d.titleEdit.SetValue("Com lugar novo")
+		with replaced(prompts, "askText", lambda *a, **k: "Pasta Nova"):
+			click(d.newFolderButton)
+		seen["afterFolder"] = d.locationTree.place()
+		seen["folderText"] = d.locationTree.GetItemText(d.locationTree.GetSelection())
+		seen["focusTree"] = d.FindFocus() is d.locationTree
+
+		def askNotebook(parent, store, folderId):
+			seen["nbFolder"] = folderId
+			return ("Caderno Novo", folderId)
+
+		with replaced(prompts, "askNotebook", askNotebook):
+			click(d.newNotebookButton)
+		seen["afterNotebook"] = d.locationTree.place()
+		item = d.locationTree.GetSelection()
+		seen["insideFolder"] = d.locationTree.GetItemText(d.locationTree.GetItemParent(item))
+		seen["title"] = d.titleEdit.GetValue()
+		return wx.ID_OK
+
+	n = mark()
+	with menu(0), fakeModal(noteDialog.NewNoteDialog, createBoth), fakeModal(noteDialog.NoteDialog, lambda d: d.finish()):
+		click(dlg.createButton)
+	folder = next((f for f in s.folders if f["name"] == "Pasta Nova"), None)
+	nb = next((x for x in s.notebooks if x["name"] == "Caderno Novo"), None)
+	made = s.notes[-1] if s.notes else None
+	R.check("FUN-36 New note has the buttons New notebook… and New folder…", seen.get("labels") == ("New &notebook…", "New &folder…"), seen.get("labels"))
+	R.check("FUN-36 New folder… creates the folder, said, and Location shows it chosen, with the focus", folder is not None and seen.get("afterFolder") == (None, folder["id"]) and seen.get("folderText", "").startswith("Folder Pasta Nova") and seen.get("focusTree") and "Folder Pasta Nova created" in spokenSince(n), (seen, spokenSince(n)))
+	R.check("FUN-36 New notebook… starts in the folder chosen in Location and the notebook is chosen inside it", nb is not None and seen.get("nbFolder") == folder["id"] and nb["folderId"] == folder["id"] and seen.get("afterNotebook") == (nb["id"], None) and seen.get("insideFolder", "").startswith("Folder Pasta Nova"), seen)
+	R.check("FUN-36 the title typed is kept and the note is created in the new notebook", seen.get("title") == "Com lugar novo" and made is not None and made["title"] == "Com lugar novo" and made["notebookId"] == nb["id"], made)
+	R.check("FUN-36 Show has the new folder and notebook", ("folder", folder["id"]) in dlg.filterItems and ("notebook", nb["id"]) in dlg.filterItems)
+
+	def notebookOfNotebook(d):
+		d.locationTree.setPlace((site["id"], None))
+
+		def askNotebook(parent, store, folderId):
+			seen["nbFolder2"] = folderId
+			return None
+
+		with replaced(prompts, "askNotebook", askNotebook), replaced(prompts, "askText", lambda *a, **k: None):
+			click(d.newNotebookButton)
+			click(d.newFolderButton)
+		seen["kept"] = d.locationTree.place()
+		seen["focusButton"] = d.FindFocus() is d.newFolderButton
+		return wx.ID_CANCEL
+
+	counts = (len(s.folders), len(s.notebooks), len(s.notes))
+	with menu(0), fakeModal(noteDialog.NewNoteDialog, notebookOfNotebook):
+		click(dlg.createButton)
+	R.check("FUN-36 with a notebook chosen, New notebook… starts in its folder", seen.get("nbFolder2") == proj["id"], seen)
+	R.check("FUN-36 cancelled names create nothing; Location keeps the place and the focus goes back to the button", (len(s.folders), len(s.notebooks), len(s.notes)) == counts and seen.get("kept") == (site["id"], None) and seen.get("focusButton"), seen)
+
+	def folderThenCancel(d):
+		with replaced(prompts, "askText", lambda *a, **k: "So a pasta"):
+			click(d.newFolderButton)
+		return wx.ID_CANCEL
+
+	with menu(0), fakeModal(noteDialog.NewNoteDialog, folderThenCancel):
+		click(dlg.createButton)
+	kept = next((f for f in s.folders if f["name"] == "So a pasta"), None)
+	R.check("FUN-36 cancelling New note keeps the folder created there, and Show has it", kept is not None and ("folder", kept["id"]) in dlg.filterItems and len(s.notes) == counts[2])
+	R.check("FUN-36 no real menu or dialog opened without an answer", not RECORD["blocked"], RECORD["blocked"])
+	closeWindow()
 	plugin.terminate()
 
 
