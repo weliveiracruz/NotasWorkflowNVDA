@@ -94,8 +94,6 @@ class NotesDialog(wx.Dialog):
 		#: filter -> item of the Show tree, and what the tree was built from (rebuilt only when it changes).
 		self.filterItems = {}
 		self._filterShape = None
-		#: The folder of Show whose text says "selected" (only the folder shown says it, 1.11.0).
-		self._markedFolder = None
 		#: True while the Show tree is being filled or selected by the window itself.
 		self._fillingFilters = False
 		self.treeLabel = wx.StaticText(self, label="")
@@ -226,28 +224,11 @@ class NotesDialog(wx.Dialog):
 				finally:
 					tree.Thaw()
 				self._filterShape = (shape, labels)
-				self._markedFolder = None
-			self.markActiveFolder()
 			item = self.filterItems[self.activeFilter]
 			if tree.GetSelection() != item:
 				selectItem(tree, item)
 		finally:
 			self._fillingFilters = False
-
-	def markActiveFolder(self):
-		"""Only the folder shown says "selected" in Show; the folder marked before goes back to
-		its name. Notebooks and the other items keep their text."""
-		tree = self.filterTree
-		if self._markedFolder is not None and self._markedFolder != self.activeFilter:
-			item = self.filterItems.get(self._markedFolder)
-			if item is not None and item.IsOk():
-				tree.SetItemText(item, self.filterLabel(self._markedFolder))
-			self._markedFolder = None
-		if self.activeFilter[0] == "folder" and self._markedFolder != self.activeFilter:
-			item = self.filterItems.get(self.activeFilter)
-			if item is not None and item.IsOk():
-				tree.SetItemText(item, messages.selectedFolder(self.filterLabel(self.activeFilter)))
-				self._markedFolder = self.activeFilter
 
 	def setFilter(self, flt):
 		self.activeFilter = flt
@@ -261,9 +242,6 @@ class NotesDialog(wx.Dialog):
 		item = self.filterTree.GetSelection()
 		flt = self.filterTree.GetItemData(item) if item.IsOk() else None
 		if flt in self.filters and flt != self.activeFilter:
-			# The text of the folder changes before the notes are shown, so NVDA reads "selected".
-			self.activeFilter = flt
-			self.markActiveFolder()
 			self.setFilter(flt)
 
 	# -- content ------------------------------------------------------------------------------

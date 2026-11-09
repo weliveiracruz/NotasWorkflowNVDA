@@ -3,7 +3,6 @@
 ## 1.11.0
 
 * **Nova pasta no Novo caderno**: a janela Novo caderno ganhou o botão **Nova pasta… (Alt+V)**. A pasta criada entra na hora na lista **Pasta**, já escolhida, com o foco nela, e o nome digitado do caderno continua lá.
-* **Pasta selecionada em Mostrar**: ao passar pelas pastas do campo Mostrar, a pasta que está sendo mostrada é lida com "selecionada" ("Pasta: Projetos, selecionada"); as outras pastas e os cadernos continuam lidos só com o nome.
 
 ## 1.10.0
 

@@ -291,24 +291,6 @@ def run():
 	with replaced(dlg, "focusNotes", lambda: focused.append(True)):
 		ft.GetEventHandler().ProcessEvent(wx.TreeEvent(wx.wxEVT_TREE_ITEM_ACTIVATED, ft, nbItem))
 	R.check("FUN-35 Enter in Show goes to the notes", focused == [True])
-	# -- FUN-37 only the folder shown says "selected" in Show (1.11.0) -------------------------------
-	plugin.store.addFolder("Outra")
-	dlg.refresh()
-	other = plugin.store.folders[-1]
-	otherItem = dlg.filterItems[("folder", other["id"])]
-	nbItem, folderItem = dlg.filterItems[("notebook", nb["id"])], dlg.filterItems[("folder", f["id"])]
-	R.check("FUN-37 a notebook shown: no folder says selected", ft.GetItemText(folderItem) == "Folder: Projetos" and ft.GetItemText(nbItem) == "Notebook: Trabalho")
-	mainDialog.selectItem(ft, folderItem)
-	R.check("FUN-37 the folder shown says selected; the other folder and the notebook do not", ft.GetItemText(folderItem) == "Folder: Projetos, selected" and ft.GetItemText(otherItem) == "Folder: Outra" and ft.GetItemText(nbItem) == "Notebook: Trabalho" and dlg.activeFilter == ("folder", f["id"]), [ft.GetItemText(i) for i in (folderItem, otherItem, nbItem)])
-	R.check("FUN-37 the label of the notes keeps the name of the folder only", dlg.treeLabel.GetLabel().startswith("Not&es: Folder: Projetos ("), dlg.treeLabel.GetLabel())
-	mainDialog.selectItem(ft, otherItem)
-	R.check("FUN-37 going to another folder: it says selected and the first goes back to its name", ft.GetItemText(otherItem) == "Folder: Outra, selected" and ft.GetItemText(folderItem) == "Folder: Projetos", [ft.GetItemText(i) for i in (folderItem, otherItem)])
-	mainDialog.selectItem(ft, dlg.filterItems[("all", None)])
-	R.check("FUN-37 leaving the folders: none says selected", ft.GetItemText(otherItem) == "Folder: Outra" and ft.GetItemText(folderItem) == "Folder: Projetos")
-	dlg.setFilter(("folder", other["id"]))
-	R.check("FUN-37 a folder chosen by the window (not by the arrows) also says selected", ft.GetItemText(dlg.filterItems[("folder", other["id"])]) == "Folder: Outra, selected")
-	plugin.store.deleteFolder(other["id"])
-	dlg.setFilter(("all", None))
 	plugin.store.moveNotebookToFolder(nb["id"], None)
 	dlg.setFilter(("all", None))
 	dlg.setFilter(("notebook", nb["id"]))

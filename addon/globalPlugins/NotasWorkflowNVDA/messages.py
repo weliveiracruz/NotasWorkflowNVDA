@@ -56,11 +56,6 @@ def notebooksCount(count):
 	return _("{count} notebooks").format(count=count)
 
 
-def selectedFolder(label):
-	# Translators: the folder shown, in the Show tree of the main window ({folder} is "Folder: name"); only this folder says it.
-	return _("{folder}, selected").format(folder=label)
-
-
 def looseNote():
 	# Translators: place of a note that is neither in a notebook nor in a folder.
 	return _("Loose note (no notebook or folder)")
