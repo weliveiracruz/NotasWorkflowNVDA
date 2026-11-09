@@ -450,7 +450,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def createNotebook(self, parent, folderId=None):
 		"""Asks the name and the folder (folderId comes chosen) and creates a notebook.
 		Returns it or None."""
-		answer = prompts.askNotebook(parent, self.store, folderId if self.store.getFolder(folderId) else None)
+		answer = prompts.askNotebook(parent, self.store, folderId if self.store.getFolder(folderId) else None, createFolder=self.createFolder)
 		if answer is None or not answer[0].strip():
 			return None
 		name, folderId = answer

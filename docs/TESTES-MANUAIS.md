@@ -55,3 +55,6 @@ Anote o resultado (OK ou o problema) em `reports/RELATORIO-TESTES-<versão>.md`.
 | MAN-47 | NVDA+Alt+F, digitar um título, Tab até Nova pasta (ou Alt+P), digitar um nome e OK | "Pasta … criada"; o foco vai para Local, que lê a pasta nova selecionada; o título continua preenchido |
 | MAN-48 | Na mesma janela, Alt+C (Novo caderno), digitar um nome e Criar; depois Criar a folha | A janela Novo caderno vem com a pasta nova escolhida; "Caderno … criado"; Local lê o caderno dentro da pasta; a folha é criada no caderno novo |
 | MAN-49 | Nova folha, Nova pasta, digitar um nome, OK, e Esc na Nova folha; Shift+Tab até Mostrar | A pasta continua existindo e aparece em Mostrar; nenhuma folha foi criada |
+| MAN-50 | Criar… > Caderno…, digitar um nome, Alt+V (Nova pasta), digitar um nome de pasta e OK; Criar | "Pasta … criada"; o foco vai para a lista Pasta, que lê a pasta nova; o caderno é criado dentro dela |
+| MAN-51 | Em Mostrar, Seta para baixo até uma pasta e depois até outra pasta | A pasta é lida "Pasta: …, selecionada"; ao chegar na outra, só ela diz selecionada |
+| MAN-52 | Em Mostrar, Seta para a direita numa pasta e Seta para baixo até um caderno dela | O caderno é lido só com o nome, sem "selecionada" |

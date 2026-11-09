@@ -358,6 +358,16 @@ msgstr "&Título:"
 msgid "&Location:"
 msgstr "L&ocal:"
 
+#. Translators: button of New notebook that creates a folder; it then comes chosen in the Folder box.
+#: addon/globalPlugins/NotasWorkflowNVDA/prompts.py
+msgid "Ne&w folder…"
+msgstr "No&va pasta…"
+
+#. Translators: the folder shown, in the Show tree of the main window ({folder} is "Folder: name"); only this folder says it.
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "{folder}, selected"
+msgstr "{folder}, selecionada"
+
 #. Translators: button of New note that creates a notebook; it is then chosen in Location.
 #: addon/globalPlugins/NotasWorkflowNVDA/noteDialog.py
 msgid "New &notebook…"

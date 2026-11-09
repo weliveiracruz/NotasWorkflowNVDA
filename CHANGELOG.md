@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 1.11.0
+
+* **Nova pasta no Novo caderno**: a janela Novo caderno ganhou o botão **Nova pasta… (Alt+V)**. A pasta criada entra na hora na lista **Pasta**, já escolhida, com o foco nela, e o nome digitado do caderno continua lá.
+* **Pasta selecionada em Mostrar**: ao passar pelas pastas do campo Mostrar, a pasta que está sendo mostrada é lida com "selecionada" ("Pasta: Projetos, selecionada"); as outras pastas e os cadernos continuam lidos só com o nome.
+
 ## 1.10.0
 
 * **Criar caderno e pasta na Nova folha**: a janela Nova folha ganhou os botões **Novo caderno… (Alt+C)** e **Nova pasta… (Alt+P)**, logo depois do campo Local. O caderno ou a pasta criada aparece na hora na árvore **Local**, já escolhida, com o foco nela, e o título digitado continua lá. O Novo caderno já vem com a pasta escolhida em Local.

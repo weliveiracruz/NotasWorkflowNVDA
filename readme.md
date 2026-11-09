@@ -8,7 +8,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 
 * **Show**: a tree with all notes, loose notes (neither in a notebook nor in a folder), recent notes (the 10 changed last), each folder with its notebooks inside, and the notebooks without folder. Choosing an item shows its notes; Enter goes to the notes.
 * **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Lanes start closed: Right Arrow opens one, Left Arrow closes it. Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status, **Ctrl+Shift+Up Arrow** and **Ctrl+Shift+Down Arrow** move it up or down inside its lane. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
-* **Create…**: a menu to create a note, a notebook (New notebook asks the name and the folder), a folder or a **note from a document**.
+* **Create…**: a menu to create a note, a notebook (New notebook asks the name and the folder, and has New folder…), a folder or a **note from a document**.
 * **Update the task status…**: a menu with the other statuses.
 * **Move to…**: moves the note to a notebook, directly to a folder, or makes it loose.
 * **Location** (in New note, in the note window and in Move to) is a tree that opens like the lanes: each folder starts closed, with its notebooks inside; choosing the folder itself puts the note directly in it. New note also has **New notebook…** and **New folder…**: what is created there appears in Location, already chosen.

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="manual" content="versao=1.10.0; fonte-sha256=f8ee1197bde5d42c57a04b55bcc41b6f74d10638a16f71f84bb69f98e496ee24">
+<meta name="manual" content="versao=1.11.0; fonte-sha256=05bf3ed30f58c810e2011cb4f941ac7cc0b3ca41adcee5b66a22a438a63dc18f">
 <title>Notas Workflow NVDA — Manual de uso</title>
 <style>
 body{font-family:Segoe UI,Calibri,sans-serif;line-height:1.5;max-width:60em;margin:1em auto;padding:0 1em}
@@ -15,7 +15,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <body>
 <main lang="pt-BR">
 <h1 id="secao1">Notas Workflow NVDA</h1>
-<p>Manual de uso — versão 1.10.0</p>
+<p>Manual de uso — versão 1.11.0</p>
 <nav aria-label="Sumário">
 <h2>Sumário</h2>
 <ul>
@@ -42,7 +42,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </ul>
 </nav>
 <h2 id="secao2">Sobre este manual</h2>
-<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.10.0. Ele é atualizado a cada nova versão do complemento.</p>
+<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.11.0. Ele é atualizado a cada nova versão do complemento.</p>
 <p>O manual vem dentro do complemento: o botão <strong>Manual de uso… (Alt+N)</strong> da janela principal o abre na janela de leitura do NVDA, onde dá para navegar como numa página: <strong>H</strong> passa pelos títulos, <strong>2</strong> pelos capítulos, <strong>3</strong> pelas seções, <strong>T</strong> pelas tabelas e <strong>K</strong> pelos links do sumário. <strong>Esc</strong> fecha o manual.</p>
 <p>O Notas Workflow NVDA organiza <strong>folhas</strong> (anotações e tarefas) em <strong>raias</strong> de status, agrupadas em <strong>cadernos</strong> e <strong>pastas</strong>, com conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.</p>
 <aside class="destaque"><p><strong>Dica:</strong> os nomes de botões e campos deste manual são os da interface em português. Entre parênteses aparece a letra de atalho com Alt de cada um, por exemplo <strong>Criar… (Alt+C)</strong>.</p></aside>
@@ -69,12 +69,12 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>Windows 10 ou 11.</li>
 <li>Não precisa de internet, de conta nem de navegador.</li>
 </ul>
-<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.10.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
+<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.11.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
 <p>Para desinstalar, use o menu do NVDA, Ferramentas, Loja de complementos, aba Complementos instalados. <strong>Desinstalar não apaga as suas folhas</strong>: elas continuam na pasta das folhas (veja Onde ficam as folhas).</p>
 <h3 id="secao8">Quem usava o NotasWorkflow 1.0.0</h3>
 <p>Até a versão 1.0.0, o complemento se chamava <strong>NotasWorkflow</strong>. A partir da 1.1.0 ele se chama <strong>Notas Workflow NVDA</strong>, e o NVDA o trata como um complemento novo, que fica instalado ao lado do antigo. Para trocar sem perder nada:</p>
 <ol>
-<li>Instale o <code>NotasWorkflowNVDA-1.10.0.nvda-addon</code> e reinicie o NVDA.</li>
+<li>Instale o <code>NotasWorkflowNVDA-1.11.0.nvda-addon</code> e reinicie o NVDA.</li>
 <li>No primeiro início, o complemento copia as folhas da pasta antiga (<code>%APPDATA%\nvda\NotasWorkflow</code>) e as configurações (pasta das folhas, salvamento automático e anúncio). O NVDA fala "Folhas da versão anterior trazidas para o Notas Workflow NVDA" e o número de folhas.</li>
 <li>Pressione <strong>NVDA+Alt+N</strong> e confira as suas folhas.</li>
 <li>Desinstale o <strong>NotasWorkflow</strong> antigo na Loja de complementos e reinicie o NVDA. Enquanto os dois estiverem instalados, os atalhos NVDA+Alt+N, NVDA+Alt+F e NVDA+Alt+B ficam repetidos.</li>
@@ -130,7 +130,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </table>
 <p>No primeiro status, ir para o anterior faz o NVDA dizer "Já está na primeira raia"; no último, "Já está na última raia". Depois da mudança, a seleção acompanha a folha.</p>
 <h3 id="secao15">Filtros</h3>
-<p>O campo <strong>Mostrar (Alt+O)</strong> é uma árvore, organizada como o campo Local: primeiro Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos que não estão em nenhuma pasta. As pastas começam fechadas, e só abre a pasta do caderno que está sendo mostrado.</p>
+<p>O campo <strong>Mostrar (Alt+O)</strong> é uma árvore, organizada como o campo Local: primeiro Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos que não estão em nenhuma pasta. As pastas começam fechadas, e só abre a pasta do caderno que está sendo mostrado. Ao passar pelas pastas, a pasta que está sendo mostrada é lida com <strong>selecionada</strong> no fim, por exemplo "Pasta: Projetos, selecionada"; as outras pastas e os cadernos são lidos só com o nome.</p>
 <table>
 <thead><tr><th scope="col">Opção</th><th scope="col">Mostra</th></tr></thead>
 <tbody>
@@ -167,6 +167,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tbody>
 <tr><td>Nome</td><td>Alt+N</td><td>Obrigatório, até 100 caracteres.</td></tr>
 <tr><td>Pasta</td><td>Alt+P</td><td>Uma lista com <strong>Nenhuma pasta</strong> e cada pasta. Vem escolhida a pasta do filtro em uso (ou a pasta selecionada em Cadernos e pastas); sem pasta em uso, vem Nenhuma pasta.</td></tr>
+<tr><td>Nova pasta…</td><td>Alt+V</td><td>Pede o nome de uma pasta nova. Depois de criar, o NVDA fala "Pasta … criada", a pasta entra na lista Pasta já escolhida e o foco vai para a lista; o nome digitado do caderno continua lá. Cancelar o nome não cria nada e o foco volta para o botão.</td></tr>
 <tr><td>Criar</td><td>Alt+R ou Enter</td><td>Cria o caderno na pasta escolhida. Fica indisponível enquanto o nome estiver vazio.</td></tr>
 <tr><td>Cancelar</td><td>Esc</td><td>Fecha sem criar nada.</td></tr>
 </tbody>
@@ -580,6 +581,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>1.8.0</td><td>Nova opção Criar &gt; Folha a partir de documento… e novo botão Inserir documento… na janela da folha, com as novas seções "Folha a partir de documento" e "Inserir documento" (Word .docx, PowerPoint .pptx, texto, HTML e e-mail .eml), o comando sem atalho e as novas mensagens faladas; a criação de caderno virou a janela Novo caderno, com a escolha da pasta.</td></tr>
 <tr><td>1.9.0</td><td>O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas).</td></tr>
 <tr><td>1.10.0</td><td>A janela Nova folha ganhou os botões Novo caderno… (Alt+C) e Nova pasta… (Alt+P): o caderno ou a pasta criada aparece no campo Local já escolhida (seção "Criar folhas, cadernos e pastas").</td></tr>
+<tr><td>1.11.0</td><td>A janela Novo caderno ganhou o botão Nova pasta… (Alt+V): a pasta criada entra na lista Pasta já escolhida. No campo Mostrar, a pasta que está sendo mostrada é lida com "selecionada" (seção "Filtros").</td></tr>
 </tbody>
 </table>
 </main>

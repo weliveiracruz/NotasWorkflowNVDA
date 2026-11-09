@@ -94,7 +94,7 @@ def run():
 		click(dlg.createButton)
 	R.check("FUN-01 Create menu closed: nothing created", len(plugin.store.notes) == 1 and not plugin.store.notebooks)
 	n = mark()
-	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId: ("Trabalho", folderId)):
+	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId, **k: ("Trabalho", folderId)):
 		click(dlg.createButton)
 	nb = plugin.store.notebooks[0] if plugin.store.notebooks else None
 	R.check("FUN-01 Create > Notebook creates a notebook", nb is not None and nb["name"] == "Trabalho" and "Notebook Trabalho created" in spokenSince(n), spokenSince(n))
@@ -107,7 +107,7 @@ def run():
 		click(dlg.createButton)
 	R.check("FUN-01 cancelled name creates nothing", len(plugin.store.notebooks) == 1)
 	dlg.setFilter(("folder", f["id"]))
-	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId: ("Dentro da pasta", folderId)):
+	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId, **k: ("Dentro da pasta", folderId)):
 		click(dlg.createButton)
 	R.check("FUN-01 notebook created while a folder is shown goes into it", plugin.store.notebooks[-1]["folderId"] == f["id"])
 	plugin.store.deleteNotebook(plugin.store.notebooks[-1]["id"])
@@ -142,6 +142,36 @@ def run():
 	with menu(1), replaced(prompts, "askNotebook", realAskNotebook), fakeModal(prompts.NotebookDialog, lambda d: wx.ID_CANCEL):
 		click(dlg.createButton)
 	R.check("FUN-32 Cancel in New notebook creates nothing", len(plugin.store.notebooks) == 1)
+	# -- FUN-38 New folder… in New notebook (1.11.0) ------------------------------------------------
+	seen = {}
+
+	def newFolderThenNotebook(d):
+		seen["button"] = d.newFolderButton is not None and d.newFolderButton.GetLabel() == "Ne&w folder…"
+		d.nameEdit.SetValue("Caderno na pasta nova")
+		with replaced(prompts, "askText", lambda *a, **k: None):
+			click(d.newFolderButton)
+		seen["cancelled"] = (d.folderChoice.GetItems(), d.FindFocus() is d.newFolderButton)
+		with replaced(prompts, "askText", lambda *a, **k: "Recem criada"):
+			click(d.newFolderButton)
+		seen["items"] = d.folderChoice.GetItems()
+		seen["chosen"] = d.folderChoice.GetStringSelection()
+		seen["focus"] = d.FindFocus() is d.folderChoice
+		seen["name"] = d.nameEdit.GetValue()
+		return wx.ID_OK
+
+	n = mark()
+	with menu(1), replaced(prompts, "askNotebook", realAskNotebook), fakeModal(prompts.NotebookDialog, newFolderThenNotebook):
+		click(dlg.createButton)
+	fresh = next((x for x in plugin.store.folders if x["name"] == "Recem criada"), None)
+	chosen = plugin.store.notebooks[-1]
+	R.check("FUN-38 New notebook has the button New folder…", seen.get("button"), seen)
+	R.check("FUN-38 a cancelled folder name creates nothing; the focus goes back to the button", seen.get("cancelled") == (["No folder", "Projetos"], True), seen.get("cancelled"))
+	R.check("FUN-38 New folder… creates the folder, said, and the Folder box has it chosen, with the focus", fresh is not None and seen.get("items") == ["No folder", "Projetos", "Recem criada"] and seen.get("chosen") == "Recem criada" and seen.get("focus") and "Folder Recem criada created" in spokenSince(n), (seen, spokenSince(n)))
+	R.check("FUN-38 the name typed is kept and the notebook goes into the new folder", seen.get("name") == "Caderno na pasta nova" and chosen["name"] == "Caderno na pasta nova" and fresh and chosen["folderId"] == fresh["id"], chosen)
+	R.check("FUN-38 Show has the new folder with the notebook inside", ("folder", fresh["id"]) in dlg.filterItems and dlg.filterTree.GetItemParent(dlg.filterItems[("notebook", chosen["id"])]) == dlg.filterItems[("folder", fresh["id"])])
+	plugin.store.deleteNotebook(chosen["id"])
+	plugin.store.deleteFolder(fresh["id"])
+	dlg.refresh()
 	dlg.setFilter(("all", None))
 	dlg.setFilter(("all", None))
 	dlg.refresh(note["id"])
@@ -261,6 +291,24 @@ def run():
 	with replaced(dlg, "focusNotes", lambda: focused.append(True)):
 		ft.GetEventHandler().ProcessEvent(wx.TreeEvent(wx.wxEVT_TREE_ITEM_ACTIVATED, ft, nbItem))
 	R.check("FUN-35 Enter in Show goes to the notes", focused == [True])
+	# -- FUN-37 only the folder shown says "selected" in Show (1.11.0) -------------------------------
+	plugin.store.addFolder("Outra")
+	dlg.refresh()
+	other = plugin.store.folders[-1]
+	otherItem = dlg.filterItems[("folder", other["id"])]
+	nbItem, folderItem = dlg.filterItems[("notebook", nb["id"])], dlg.filterItems[("folder", f["id"])]
+	R.check("FUN-37 a notebook shown: no folder says selected", ft.GetItemText(folderItem) == "Folder: Projetos" and ft.GetItemText(nbItem) == "Notebook: Trabalho")
+	mainDialog.selectItem(ft, folderItem)
+	R.check("FUN-37 the folder shown says selected; the other folder and the notebook do not", ft.GetItemText(folderItem) == "Folder: Projetos, selected" and ft.GetItemText(otherItem) == "Folder: Outra" and ft.GetItemText(nbItem) == "Notebook: Trabalho" and dlg.activeFilter == ("folder", f["id"]), [ft.GetItemText(i) for i in (folderItem, otherItem, nbItem)])
+	R.check("FUN-37 the label of the notes keeps the name of the folder only", dlg.treeLabel.GetLabel().startswith("Not&es: Folder: Projetos ("), dlg.treeLabel.GetLabel())
+	mainDialog.selectItem(ft, otherItem)
+	R.check("FUN-37 going to another folder: it says selected and the first goes back to its name", ft.GetItemText(otherItem) == "Folder: Outra, selected" and ft.GetItemText(folderItem) == "Folder: Projetos", [ft.GetItemText(i) for i in (folderItem, otherItem)])
+	mainDialog.selectItem(ft, dlg.filterItems[("all", None)])
+	R.check("FUN-37 leaving the folders: none says selected", ft.GetItemText(otherItem) == "Folder: Outra" and ft.GetItemText(folderItem) == "Folder: Projetos")
+	dlg.setFilter(("folder", other["id"]))
+	R.check("FUN-37 a folder chosen by the window (not by the arrows) also says selected", ft.GetItemText(dlg.filterItems[("folder", other["id"])]) == "Folder: Outra, selected")
+	plugin.store.deleteFolder(other["id"])
+	dlg.setFilter(("all", None))
 	plugin.store.moveNotebookToFolder(nb["id"], None)
 	dlg.setFilter(("all", None))
 	dlg.setFilter(("notebook", nb["id"]))
@@ -420,7 +468,7 @@ def run():
 	R.check("FUN-12 Rename, Move to and Delete available on a note", od.renameButton.IsEnabled() and od.moveButton.IsEnabled() and od.deleteButton.IsEnabled())
 	od.refresh(("folder", f["id"]))
 	n = mark()
-	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId: ("Pessoal", folderId)):
+	with menu(1), replaced(prompts, "askNotebook", lambda parent, store, folderId, **k: ("Pessoal", folderId)):
 		click(od.createButton)
 	pessoal = next(x for x in plugin.store.notebooks if x["name"] == "Pessoal")
 	R.check("FUN-12 Create > Notebook inside the selected folder", pessoal["folderId"] == f["id"] and "Notebook Pessoal created" in spokenSince(n) and od.selected() == ("notebook", pessoal["id"]))
@@ -685,7 +733,7 @@ def newNotePlaces():
 		seen["folderText"] = d.locationTree.GetItemText(d.locationTree.GetSelection())
 		seen["focusTree"] = d.FindFocus() is d.locationTree
 
-		def askNotebook(parent, store, folderId):
+		def askNotebook(parent, store, folderId, **k):
 			seen["nbFolder"] = folderId
 			return ("Caderno Novo", folderId)
 
@@ -712,7 +760,7 @@ def newNotePlaces():
 	def notebookOfNotebook(d):
 		d.locationTree.setPlace((site["id"], None))
 
-		def askNotebook(parent, store, folderId):
+		def askNotebook(parent, store, folderId, **k):
 			seen["nbFolder2"] = folderId
 			return None
 

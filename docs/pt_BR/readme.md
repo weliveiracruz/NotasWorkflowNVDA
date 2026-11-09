@@ -8,7 +8,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 
 * **Mostrar**: uma árvore com todas as folhas, folhas soltas (sem caderno nem pasta), folhas recentes (as 10 alteradas por último), cada pasta com os cadernos dela dentro e os cadernos sem pasta. Escolher um item mostra as folhas dele; Enter vai para a lista de folhas.
 * **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). As raias começam fechadas: Seta para a direita abre, Seta para a esquerda fecha. Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status, **Ctrl+Shift+Seta para cima** e **Ctrl+Shift+Seta para baixo** sobem ou descem a folha dentro da raia. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
-* **Criar…**: um menu para criar uma folha, um caderno (Novo caderno pede o nome e a pasta), uma pasta ou uma **folha a partir de documento**.
+* **Criar…**: um menu para criar uma folha, um caderno (Novo caderno pede o nome e a pasta, e tem Nova pasta…), uma pasta ou uma **folha a partir de documento**.
 * **Atualizar o status da tarefa…**: um menu com os outros status.
 * **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
 * **Local** (na Nova folha, na janela da folha e em Mover para) é uma árvore que se abre como as raias: cada pasta começa fechada, com os cadernos dela dentro; escolher a própria pasta guarda a folha direto nela. A Nova folha também tem **Novo caderno…** e **Nova pasta…**: o que é criado ali aparece em Local, já escolhido.

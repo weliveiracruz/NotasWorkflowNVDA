@@ -77,11 +77,15 @@ def choosePlace(parent, caption, store, current=0):
 
 
 class NotebookDialog(wx.Dialog):
-	"""New notebook: its name and the folder it goes into (or no folder)."""
+	"""New notebook: its name and the folder it goes into (or no folder). With createFolder
+	(1.11.0) it also has New folder…: the folder created comes chosen in the Folder box."""
 
-	def __init__(self, parent, store, folderId=None):
+	def __init__(self, parent, store, folderId=None, createFolder=None):
 		# Translators: title of the dialog that creates a notebook.
 		super().__init__(parent, title=_("New notebook"))
+		self.store = store
+		self.createFolder = createFolder
+		self.newFolderButton = None
 		self.folderIds = [None] + [f["id"] for f in store.folders]
 		sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
 		# Translators: label of the name field of the dialog that creates a notebook.
@@ -95,6 +99,12 @@ class NotebookDialog(wx.Dialog):
 			choices=[_("No folder")] + [f["name"] for f in store.folders],
 		)
 		self.folderChoice.SetSelection(self.folderIds.index(folderId) if folderId in self.folderIds else 0)
+		if createFolder is not None:
+			folderButtons = guiHelper.ButtonHelper(wx.HORIZONTAL)
+			# Translators: button of New notebook that creates a folder; it then comes chosen in the Folder box.
+			self.newFolderButton = folderButtons.addButton(self, label=_("Ne&w folder…"))
+			sHelper.addItem(folderButtons)
+			self.newFolderButton.Bind(wx.EVT_BUTTON, self.onNewFolder)
 		buttons = guiHelper.ButtonHelper(wx.HORIZONTAL)
 		# Translators: button that creates the notebook.
 		self.createButton = buttons.addButton(self, id=wx.ID_OK, label=_("C&reate"))
@@ -114,11 +124,23 @@ class NotebookDialog(wx.Dialog):
 	def values(self):
 		return self.nameEdit.GetValue().strip(), self.folderIds[max(0, self.folderChoice.GetSelection())]
 
+	def onNewFolder(self, evt):
+		"""New folder…: the Folder box is filled again with the new folder chosen, and gets the focus."""
+		folder = self.createFolder(self)
+		if not folder:
+			self.newFolderButton.SetFocus()
+			return
+		self.folderIds = [None] + [f["id"] for f in self.store.folders]
+		# Translators: item of the Folder box of a new notebook: the notebook is not in a folder.
+		self.folderChoice.SetItems([_("No folder")] + [f["name"] for f in self.store.folders])
+		self.folderChoice.SetSelection(self.folderIds.index(folder["id"]) if folder["id"] in self.folderIds else 0)
+		self.folderChoice.SetFocus()
 
-def askNotebook(parent, store, folderId=None):
+
+def askNotebook(parent, store, folderId=None, createFolder=None):
 	"""(name, folderId) of the notebook to create, or None when cancelled. The folder the
-	person is in comes chosen."""
-	dlg = NotebookDialog(parent, store, folderId)
+	person is in comes chosen. createFolder(parent) -> folder or None adds New folder…."""
+	dlg = NotebookDialog(parent, store, folderId, createFolder)
 	try:
 		if dlg.ShowModal() != wx.ID_OK:
 			return None

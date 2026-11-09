@@ -114,7 +114,7 @@ No primeiro status, ir para o anterior faz o NVDA dizer "Já está na primeira r
 
 ### Filtros
 
-O campo **Mostrar (Alt+O)** é uma árvore, organizada como o campo Local: primeiro Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos que não estão em nenhuma pasta. As pastas começam fechadas, e só abre a pasta do caderno que está sendo mostrado.
+O campo **Mostrar (Alt+O)** é uma árvore, organizada como o campo Local: primeiro Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos que não estão em nenhuma pasta. As pastas começam fechadas, e só abre a pasta do caderno que está sendo mostrado. Ao passar pelas pastas, a pasta que está sendo mostrada é lida com **selecionada** no fim, por exemplo "Pasta: Projetos, selecionada"; as outras pastas e os cadernos são lidos só com o nome.
 
 | Opção | Mostra |
 |---|---|
@@ -148,6 +148,7 @@ A janela **Novo caderno** tem:
 |---|---|---|
 | Nome | Alt+N | Obrigatório, até 100 caracteres. |
 | Pasta | Alt+P | Uma lista com **Nenhuma pasta** e cada pasta. Vem escolhida a pasta do filtro em uso (ou a pasta selecionada em Cadernos e pastas); sem pasta em uso, vem Nenhuma pasta. |
+| Nova pasta… | Alt+V | Pede o nome de uma pasta nova. Depois de criar, o NVDA fala "Pasta … criada", a pasta entra na lista Pasta já escolhida e o foco vai para a lista; o nome digitado do caderno continua lá. Cancelar o nome não cria nada e o foco volta para o botão. |
 | Criar | Alt+R ou Enter | Cria o caderno na pasta escolhida. Fica indisponível enquanto o nome estiver vazio. |
 | Cancelar | Esc | Fecha sem criar nada. |
 
@@ -617,3 +618,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.8.0 | Nova opção Criar > Folha a partir de documento… e novo botão Inserir documento… na janela da folha, com as novas seções "Folha a partir de documento" e "Inserir documento" (Word .docx, PowerPoint .pptx, texto, HTML e e-mail .eml), o comando sem atalho e as novas mensagens faladas; a criação de caderno virou a janela Novo caderno, com a escolha da pasta. |
 | 1.9.0 | O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas). |
 | 1.10.0 | A janela Nova folha ganhou os botões Novo caderno… (Alt+C) e Nova pasta… (Alt+P): o caderno ou a pasta criada aparece no campo Local já escolhida (seção "Criar folhas, cadernos e pastas"). |
+| 1.11.0 | A janela Novo caderno ganhou o botão Nova pasta… (Alt+V): a pasta criada entra na lista Pasta já escolhida. No campo Mostrar, a pasta que está sendo mostrada é lida com "selecionada" (seção "Filtros"). |
