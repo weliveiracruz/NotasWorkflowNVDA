@@ -1,5 +1,9 @@
 # Histórico de versões
 
+## 1.9.0
+
+* **Mostrar em árvore**: o campo **Mostrar (Alt+O)** da janela principal virou uma árvore, organizada como o campo Local: Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos sem pasta. As pastas começam fechadas (só abre a do caderno mostrado); Seta para a direita abre uma pasta, Seta para a esquerda fecha. Selecionar um item mostra as folhas dele, como antes, e **Enter** vai para a lista de folhas.
+
 ## 1.8.0
 
 * **Folha a partir de documento**: novo item **Criar… > Folha a partir de documento…** (e um comando sem atalho em Definir comandos). Escolha um documento do **Word (.docx)**, do **PowerPoint (.pptx)**, de **texto (.txt)**, uma **página HTML** ou um **e-mail (.eml)**: ele é lido em segundo plano, a janela Nova folha vem com o título do documento (ou o assunto do e-mail) e a folha nasce com o texto no Conteúdo.

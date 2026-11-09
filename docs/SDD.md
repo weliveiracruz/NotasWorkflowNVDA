@@ -30,8 +30,8 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | `components/board/Board.tsx`, `Lane.tsx`, `NoteCard.tsx` | Quadro kanban e layout de tabela, arrastar e soltar, "Mover para", Shift+Alt+Setas | `mainDialog.py`: **árvore de raias** ou **tabela**; botão **Mover para…**; Alt+Shift+Seta para a direita/esquerda muda a raia |
 | `components/layout/NewSheetModal.tsx` | Nova folha: título, caderno, status | `noteDialog.NewNoteDialog`: mesmos campos; depois de criar, abre o editor |
 | `app/app/note/[id]/page.tsx` + `components/editor/*` (TipTap) | Editor com título, caderno, tags, conteúdo rico, barra de formatação, salvamento automático a cada 2 s | `noteDialog.NoteDialog`: título, caderno, status, tags, conteúdo, menu **Formatação…**, salvamento automático (2 s, configurável) |
-| `components/layout/Header.tsx` (menus Novo, Folhas, Cadernos, Pastas) | Criar folha/caderno/pasta e filtrar | Caixa **Mostrar** (todas, soltas, recentes, cada caderno, cada pasta) e janela **Cadernos e pastas…** |
-| `components/layout/Sidebar.tsx` (Folhas recentes) | As 10 folhas alteradas por último | Opção **Folhas recentes** da caixa Mostrar |
+| `components/layout/Header.tsx` (menus Novo, Folhas, Cadernos, Pastas) | Criar folha/caderno/pasta e filtrar | Árvore **Mostrar** (todas, soltas, recentes, cada pasta com seus cadernos, cadernos sem pasta) e janela **Cadernos e pastas…** |
+| `components/layout/Sidebar.tsx` (Folhas recentes) | As 10 folhas alteradas por último | Opção **Folhas recentes** da árvore Mostrar |
 | `app/app/search/page.tsx` + `SearchBar.tsx` | Página de busca com trecho e relevância | `searchDialog.py`: busca enquanto digita (300 ms), resultados com trecho e relevância |
 | `app/app/settings/page.tsx` | Conta, local de armazenamento, acessibilidade | `settingsPanel.py`: pasta das folhas, salvamento automático, importar e exportar |
 | `app/login`, `lib/auth.ts` (NextAuth Google/Microsoft) | Login para Drive/OneDrive (ainda simulado no web) | Não há login: as folhas ficam no computador. Para sincronizar, a pasta das folhas pode ficar dentro da pasta do OneDrive ou do Google Drive para computador (ver seção 10) |
@@ -52,7 +52,7 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-30 | Ordem das folhas na raia (1.6.0) | Ctrl+Shift+Seta para cima/baixo na lista de folhas sobe ou desce a folha uma posição na raia, passando a vizinha mostrada (o filtro de caderno ou pasta vale); a ordem é a da lista `notes`, como no web (sem campo novo, `updatedAt` não muda); só os dois itens da árvore trocam de texto (rápido com 100 mil folhas); nas pontas e em Folhas recentes o NVDA avisa e nada muda; a seleção acompanha a folha e o NVDA fala "Posição n de total" |
 | RF-08 | Mover para um caderno ou uma pasta | Botão **Mover para…** (na janela principal e em Cadernos e pastas) e campo Local da janela da folha: folha solta, direto numa pasta ou num caderno, escolhidos numa árvore de pastas e cadernos (1.5.0); a árvore começa no lugar atual |
 | RF-09 | Excluir folha | Botão Excluir ou tecla Delete, sempre com confirmação |
-| RF-10 | Filtrar | Caixa **Mostrar**: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), Caderno: <nome>, Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) |
+| RF-10 | Filtrar | Árvore **Mostrar** (1.9.0; antes uma caixa), organizada como o campo Local: Todas as folhas, Folhas soltas, Folhas recentes (10 alteradas por último), cada Pasta: <nome> (folhas da pasta e dos cadernos dentro dela) com os Caderno: <nome> dela dentro, e os cadernos sem pasta. Pastas fechadas no início (abre a do caderno mostrado); selecionar um item troca o filtro; Enter vai para a lista de folhas; a árvore só é refeita quando pastas, cadernos ou nomes mudam |
 | RF-11 | Cadernos e pastas | Janela **Cadernos e pastas…**: árvore com cada pasta, os cadernos dela e as folhas guardadas nela, cada caderno com as suas folhas, o ramo "Sem pasta" e o ramo "Folhas soltas"; as folhas são carregadas só ao abrir o ramo; Enter abre a folha; Criar…, Renomear… (também o título da folha, F2), Mover para…, Excluir (com confirmação; as folhas nunca são apagadas ao excluir caderno ou pasta) |
 | RF-12 | Buscar | Janela **Buscar** (NVDA+Alt+B): título e conteúdo (tags não, desde a 1.7.0); sem diferenciar acentos e maiúsculas; resultados por relevância, com trecho e porcentagem; Enter abre a folha |
 | RF-13 | Guardar as folhas | Arquivo JSON na pasta das folhas (padrão: pasta de configuração do NVDA, subpasta `NotasWorkflowNVDA`); gravação atômica; cópia de segurança do arquivo anterior; arquivo danificado é preservado e a cópia de segurança é usada |
@@ -219,7 +219,7 @@ A seleção da árvore é feita junto com o "item com foco" do Windows (`SetFocu
 
 Ordem de tabulação:
 
-1. **Mostrar** (caixa): Todas as folhas, Folhas soltas, Folhas recentes, Caderno: <nome>…, Pasta: <nome>…
+1. **Mostrar** (árvore): Todas as folhas, Folhas soltas, Folhas recentes, Pasta: <nome>… (com os Caderno: <nome> dela dentro), Caderno: <nome>… sem pasta. Enter vai para Folhas.
 2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… fechados no início (só a raia da folha selecionada abre); cada folha: "Título, caderno Trabalho, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
 3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Exportar…** (menu Folha selecionada…, Caderno…, Pasta…; RF-19), **Fechar** (Esc).
 

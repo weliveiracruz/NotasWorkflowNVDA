@@ -240,8 +240,29 @@ def run():
 	R.check("FUN-08 Move to loose", note["folderId"] is None and note["notebookId"] is None)
 
 	# -- FUN-10 filters -----------------------------------------------------------------------------
-	choices = dlg.filterChoice.GetItems()
-	R.check("FUN-10 Show offers all, loose, recent, each notebook and each folder", choices == ["All notes", "Loose notes", "Recent notes", "Notebook: Trabalho", "Folder: Projetos"], choices)
+	choices = dlg.filterLabels()
+	R.check("FUN-10 Show offers all, loose, recent, each folder and each notebook", choices == ["All notes", "Loose notes", "Recent notes", "Folder: Projetos", "Notebook: Trabalho"], choices)
+	# -- FUN-35 Show is a tree, as the Location tree (1.9.0) -----------------------------------------
+	ft = dlg.filterTree
+	R.check("FUN-35 Show is a tree with the filter shown selected", isinstance(ft, wx.TreeCtrl) and ft.GetItemData(ft.GetSelection()) == ("all", None))
+	mainDialog.selectItem(ft, dlg.filterItems[("loose", None)])
+	R.check("FUN-35 selecting an item of Show shows its notes", dlg.activeFilter == ("loose", None) and dlg.treeLabel.GetLabel().startswith("Not&es: Loose notes"), (dlg.activeFilter, dlg.treeLabel.GetLabel()))
+	plugin.store.moveNotebookToFolder(nb["id"], f["id"])
+	dlg.refresh()
+	nbItem, folderItem = dlg.filterItems[("notebook", nb["id"])], dlg.filterItems[("folder", f["id"])]
+	R.check("FUN-35 a notebook of a folder is inside the folder in Show", ft.GetItemParent(nbItem) == folderItem and ft.GetItemParent(folderItem) == dlg.filterRoot)
+	ft.Collapse(folderItem)
+	mainDialog.selectItem(ft, nbItem)
+	R.check("FUN-35 choosing a notebook inside a folder shows it and opens its folder", dlg.activeFilter == ("notebook", nb["id"]) and ft.IsExpanded(folderItem), dlg.activeFilter)
+	before = dict(dlg.filterItems)
+	dlg.refresh()
+	R.check("FUN-35 Show is not built again when nothing in it changed", dlg.filterItems == before and ft.GetSelection() == nbItem)
+	focused = []
+	with replaced(dlg, "focusNotes", lambda: focused.append(True)):
+		ft.GetEventHandler().ProcessEvent(wx.TreeEvent(wx.wxEVT_TREE_ITEM_ACTIVATED, ft, nbItem))
+	R.check("FUN-35 Enter in Show goes to the notes", focused == [True])
+	plugin.store.moveNotebookToFolder(nb["id"], None)
+	dlg.setFilter(("all", None))
 	dlg.setFilter(("notebook", nb["id"]))
 	R.check("FUN-10 notebook filter shows only its notes", dlg.visibleIds == [bug["id"]] and dlg.treeLabel.GetLabel() == "Not&es: Notebook: Trabalho (1)", (dlg.visibleIds, dlg.treeLabel.GetLabel()))
 	dlg.setFilter(("loose", None))
@@ -451,7 +472,7 @@ def run():
 	plugin.store.save()
 	od.close()
 	dlg.refresh()
-	R.check("FUN-10 filters follow the notebooks and folders", "Notebook: Casa" in dlg.filterChoice.GetItems() and "Notebook: Trabalho" not in dlg.filterChoice.GetItems())
+	R.check("FUN-10 filters follow the notebooks and folders", "Notebook: Casa" in dlg.filterLabels() and "Notebook: Trabalho" not in dlg.filterLabels())
 
 	# -- FUN-15 settings ------------------------------------------------------------------------------
 	frame = wx.Frame(None, title="NVDA settings")

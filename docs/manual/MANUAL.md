@@ -73,7 +73,7 @@ Os controles aparecem nesta ordem de tabulação:
 
 | Controle | Atalho | O que faz |
 |---|---|---|
-| Mostrar | Alt+O | Escolhe quais folhas aparecem (veja Filtros). |
+| Mostrar | Alt+O | Uma árvore que escolhe quais folhas aparecem, com as pastas e os cadernos dentro delas (veja Filtros). |
 | Folhas | Alt+F | A lista de folhas em raias. O rótulo diz o filtro e a quantidade, por exemplo "Folhas: Caderno: Trabalho (4)". Enter abre a folha selecionada. |
 | Criar… | Alt+C | Abre um menu para criar uma **Folha…**, um **Caderno…** ou uma **Pasta…** (veja Criar folhas, cadernos e pastas). |
 | Atualizar o status da tarefa… | Alt+A | Abre um menu com os outros status e muda o status da folha selecionada. |
@@ -114,15 +114,22 @@ No primeiro status, ir para o anterior faz o NVDA dizer "Já está na primeira r
 
 ### Filtros
 
-A caixa **Mostrar** oferece:
+O campo **Mostrar (Alt+O)** é uma árvore, organizada como o campo Local: primeiro Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos que não estão em nenhuma pasta. As pastas começam fechadas, e só abre a pasta do caderno que está sendo mostrado.
 
 | Opção | Mostra |
 |---|---|
 | Todas as folhas | Todas as folhas. |
 | Folhas soltas | As folhas que não estão em nenhum caderno nem em nenhuma pasta. |
 | Folhas recentes | As 10 folhas alteradas por último. |
-| Caderno: nome | As folhas daquele caderno. Há uma opção para cada caderno. |
 | Pasta: nome | As folhas guardadas direto na pasta e as dos cadernos dela. Há uma opção para cada pasta. |
+| Caderno: nome | As folhas daquele caderno. Há uma opção para cada caderno, dentro da pasta dele quando ele está numa pasta. |
+
+| Tecla | Ação |
+|---|---|
+| Seta para cima e Seta para baixo | Passam pelas opções; as folhas da opção selecionada aparecem na hora na lista de folhas. |
+| Seta para a direita | Abre a pasta selecionada, mostrando os cadernos dela. |
+| Seta para a esquerda | Fecha a pasta, ou volta de um caderno para a pasta dele. |
+| Enter | Vai para a lista de folhas. |
 
 ## Criar folhas, cadernos e pastas
 
@@ -316,7 +323,7 @@ Cada raia mostra as folhas numa ordem, que é a mesma em todos os filtros. Para 
 A seleção acompanha a folha, o NVDA lê a folha e diz a nova posição, por exemplo "Posição 2 de 5". A ordem é salva na hora, como qualquer outra mudança, e a data de alteração da folha não muda.
 
 - Na primeira folha da raia, Ctrl+Shift+Seta para cima faz o NVDA dizer "Já está no topo da raia"; na última, Ctrl+Shift+Seta para baixo diz "Já está no fim da raia".
-- Com um caderno ou uma pasta na caixa **Mostrar**, a folha passa a vizinha que aparece na lista; as folhas de outros lugares ficam onde estão.
+- Com um caderno ou uma pasta no campo **Mostrar**, a folha passa a vizinha que aparece na lista; as folhas de outros lugares ficam onde estão.
 - Em **Folhas recentes** a ordem é sempre a da última alteração, e o NVDA avisa que ali a ordem não pode ser mudada.
 - Numa raia longa, a última folha de uma página pode descer: ela passa a primeira das folhas ainda não mostradas, e a página seguinte aparece.
 
@@ -383,7 +390,7 @@ Cada folha é lida com o título, o status e a data. **Enter sobre uma folha abr
 | Excluir | Alt+X ou Delete | Exclui a pasta, o caderno ou a folha selecionada, depois de confirmar. |
 | Fechar | Alt+H ou Esc | Fecha a janela. |
 
-Excluir uma pasta ou um caderno **nunca apaga folhas**: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções da caixa Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.
+Excluir uma pasta ou um caderno **nunca apaga folhas**: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções do campo Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.
 
 ## Exportar como documento
 
@@ -396,7 +403,7 @@ O botão abre um menu com:
 | Opção | O que exporta |
 |---|---|
 | Folha selecionada… | A folha selecionada na lista. Só aparece quando uma folha está selecionada. |
-| Caderno… | Todas as folhas de um caderno. Uma lista pergunta qual caderno, começando no caderno mostrado na caixa Mostrar ou no caderno da folha selecionada. |
+| Caderno… | Todas as folhas de um caderno. Uma lista pergunta qual caderno, começando no caderno mostrado no campo Mostrar ou no caderno da folha selecionada. |
 | Pasta… | Todas as folhas de uma pasta: as guardadas direto nela e as dos cadernos dela. Uma lista pergunta qual pasta, começando na pasta mostrada ou na pasta da folha selecionada. |
 
 Se não houver nenhum caderno (ou nenhuma pasta), o NVDA fala "Não há cadernos." (ou "Não há pastas."). Um caderno ou uma pasta sem folhas não é exportado: o NVDA fala "Nada para exportar:" e o nome.
@@ -585,7 +592,7 @@ O complemento guardou o arquivo danificado com o nome `NotasWorkflowNVDA-data.co
 
 ### Não encontro uma folha numa raia com muitas folhas
 
-Cada raia mostra 200 folhas por vez. Use "Mostrar mais" no fim da raia, a caixa Mostrar para ver só um caderno ou uma pasta, ou a busca (NVDA+Alt+B), que encontra a folha na hora e a mostra selecionada ao voltar.
+Cada raia mostra 200 folhas por vez. Use "Mostrar mais" no fim da raia, o campo Mostrar para ver só um caderno ou uma pasta, ou a busca (NVDA+Alt+B), que encontra a folha na hora e a mostra selecionada ao voltar.
 
 ### Escrevi um asterisco e ele sumiu
 
@@ -604,3 +611,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.6.0 | Ctrl+Shift+Seta para cima e para baixo mudam a ordem da folha dentro da raia (nova seção "Mudar a ordem das folhas na raia"), com as novas mensagens faladas e os atalhos nas tabelas. |
 | 1.7.0 | O campo Tags saiu da janela da folha: o Tab vai de Status direto para Conteúdo. As tags também deixaram de aparecer na lista de folhas, em Cadernos e pastas e nos documentos exportados, e a busca não procura mais nelas (seção "Tags" retirada). |
 | 1.8.0 | Nova opção Criar > Folha a partir de documento… e novo botão Inserir documento… na janela da folha, com as novas seções "Folha a partir de documento" e "Inserir documento" (Word .docx, PowerPoint .pptx, texto, HTML e e-mail .eml), o comando sem atalho e as novas mensagens faladas; a criação de caderno virou a janela Novo caderno, com a escolha da pasta. |
+| 1.9.0 | O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas). |

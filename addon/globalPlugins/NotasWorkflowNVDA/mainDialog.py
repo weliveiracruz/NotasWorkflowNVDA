@@ -81,8 +81,21 @@ class NotesDialog(wx.Dialog):
 		self._pending = False
 		#: (The window is kept hidden after Close; changes reach it the same way while hidden.)
 		sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
-		# Translators: label of the box that chooses which notes are shown.
-		self.filterChoice = sHelper.addLabeledControl(_("&Show:"), wx.Choice, choices=[])
+		#: Show: a tree, as the Location tree: all, loose, recent, each folder (closed, its
+		#: notebooks inside) and the notebooks without folder.
+		self.filterTree = sHelper.addLabeledControl(
+			# Translators: label of the tree that chooses which notes are shown.
+			_("&Show:"),
+			wx.TreeCtrl,
+			size=(620, 130),
+			style=wx.TR_HIDE_ROOT | wx.TR_HAS_BUTTONS | wx.TR_LINES_AT_ROOT | wx.TR_SINGLE,
+		)
+		self.filterRoot = self.filterTree.AddRoot("")
+		#: filter -> item of the Show tree, and what the tree was built from (rebuilt only when it changes).
+		self.filterItems = {}
+		self._filterShape = None
+		#: True while the Show tree is being filled or selected by the window itself.
+		self._fillingFilters = False
 		self.treeLabel = wx.StaticText(self, label="")
 		self.tree = wx.TreeCtrl(self, size=(620, 360), style=wx.TR_HIDE_ROOT | wx.TR_HAS_BUTTONS | wx.TR_LINES_AT_ROOT | wx.TR_SINGLE)
 		self.root = self.tree.AddRoot("")
@@ -117,7 +130,11 @@ class NotesDialog(wx.Dialog):
 		self.SetSizer(main)
 		self.SetEscapeId(wx.ID_CLOSE)
 
-		self.filterChoice.Bind(wx.EVT_CHOICE, self.onFilter)
+		self.filterTree.Bind(wx.EVT_TREE_SEL_CHANGED, self.onFilter)
+		# Enter (or a double click) in Show goes to the notes; its character must not reach the
+		# tree: its type-ahead search would move the selection.
+		self.filterTree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.focusNotes())
+		self.filterTree.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
 		self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.activate())
 		self.tree.Bind(wx.EVT_TREE_SEL_CHANGED, lambda evt: self.updateButtons())
 		self.tree.Bind(wx.EVT_TREE_ITEM_EXPANDED, lambda evt: self.onLaneOpened(evt, True))
@@ -170,16 +187,48 @@ class NotesDialog(wx.Dialog):
 		# Translators: filter: every note.
 		return _("All notes")
 
+	def filterShape(self):
+		"""[(filter, parent filter or None)] in the order of the Show tree: all, loose, recent,
+		each folder followed by its notebooks, then the notebooks without folder."""
+		shape = [(model.FILTER_ALL, None), (model.FILTER_LOOSE, None), (model.FILTER_RECENT, None)]
+		for folder in self.store.folders:
+			flt = ("folder", folder["id"])
+			shape.append((flt, None))
+			shape += [(("notebook", nb["id"]), flt) for nb in self.store.notebooksIn(folder["id"])]
+		shape += [(("notebook", nb["id"]), None) for nb in self.store.notebooksIn(None)]
+		return shape
+
+	def filterLabels(self):
+		"""Texts of the Show tree, in its order (items inside a folder included)."""
+		return [self.filterTree.GetItemText(self.filterItems[flt]) for flt in self.filters]
+
 	def rebuildFilters(self):
-		self.filters = [model.FILTER_ALL, model.FILTER_LOOSE, model.FILTER_RECENT]
-		self.filters += [("notebook", nb["id"]) for nb in self.store.notebooks]
-		self.filters += [("folder", f["id"]) for f in self.store.folders]
+		"""Builds the Show tree again only when its folders, notebooks or names changed; then
+		selects the filter shown (its folder opens)."""
+		shape = self.filterShape()
+		self.filters = [flt for flt, _parent in shape]
 		if self.activeFilter not in self.filters:
 			self.activeFilter = model.FILTER_ALL
-		labels = [self.filterLabel(f) for f in self.filters]
-		if labels != self.filterChoice.GetItems():
-			self.filterChoice.SetItems(labels)
-		self.filterChoice.SetSelection(self.filters.index(self.activeFilter))
+		labels = [self.filterLabel(flt) for flt in self.filters]
+		tree = self.filterTree
+		self._fillingFilters = True
+		try:
+			if (shape, labels) != self._filterShape:
+				tree.Freeze()
+				try:
+					tree.DeleteChildren(self.filterRoot)
+					self.filterItems = {}
+					for (flt, parent), label in zip(shape, labels):
+						owner = self.filterItems.get(parent, self.filterRoot)
+						self.filterItems[flt] = tree.AppendItem(owner, label, data=flt)
+				finally:
+					tree.Thaw()
+				self._filterShape = (shape, labels)
+			item = self.filterItems[self.activeFilter]
+			if tree.GetSelection() != item:
+				selectItem(tree, item)
+		finally:
+			self._fillingFilters = False
 
 	def setFilter(self, flt):
 		self.activeFilter = flt
@@ -187,7 +236,13 @@ class NotesDialog(wx.Dialog):
 		self.refresh()
 
 	def onFilter(self, evt):
-		self.setFilter(self.filters[max(0, self.filterChoice.GetSelection())])
+		"""An item of Show was selected (arrows, mouse): its notes are shown."""
+		if self._closing or self._fillingFilters:
+			return
+		item = self.filterTree.GetSelection()
+		flt = self.filterTree.GetItemData(item) if item.IsOk() else None
+		if flt in self.filters and flt != self.activeFilter:
+			self.setFilter(flt)
 
 	# -- content ------------------------------------------------------------------------------
 

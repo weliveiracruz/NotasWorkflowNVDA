@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="manual" content="versao=1.8.0; fonte-sha256=70e81ff1b9b6e9eb8e0e38a3e117faf7c23b74e53b135473a5cba4b3d3f5e2d7">
+<meta name="manual" content="versao=1.9.0; fonte-sha256=17e59b145f068674c7f6fe4b29f2145199191964a9aaa4c3a45c25ba116322c8">
 <title>Notas Workflow NVDA — Manual de uso</title>
 <style>
 body{font-family:Segoe UI,Calibri,sans-serif;line-height:1.5;max-width:60em;margin:1em auto;padding:0 1em}
@@ -15,7 +15,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <body>
 <main lang="pt-BR">
 <h1 id="secao1">Notas Workflow NVDA</h1>
-<p>Manual de uso — versão 1.8.0</p>
+<p>Manual de uso — versão 1.9.0</p>
 <nav aria-label="Sumário">
 <h2>Sumário</h2>
 <ul>
@@ -42,7 +42,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </ul>
 </nav>
 <h2 id="secao2">Sobre este manual</h2>
-<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.8.0. Ele é atualizado a cada nova versão do complemento.</p>
+<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.9.0. Ele é atualizado a cada nova versão do complemento.</p>
 <p>O manual vem dentro do complemento: o botão <strong>Manual de uso… (Alt+N)</strong> da janela principal o abre na janela de leitura do NVDA, onde dá para navegar como numa página: <strong>H</strong> passa pelos títulos, <strong>2</strong> pelos capítulos, <strong>3</strong> pelas seções, <strong>T</strong> pelas tabelas e <strong>K</strong> pelos links do sumário. <strong>Esc</strong> fecha o manual.</p>
 <p>O Notas Workflow NVDA organiza <strong>folhas</strong> (anotações e tarefas) em <strong>raias</strong> de status, agrupadas em <strong>cadernos</strong> e <strong>pastas</strong>, com conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.</p>
 <aside class="destaque"><p><strong>Dica:</strong> os nomes de botões e campos deste manual são os da interface em português. Entre parênteses aparece a letra de atalho com Alt de cada um, por exemplo <strong>Criar… (Alt+C)</strong>.</p></aside>
@@ -69,12 +69,12 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>Windows 10 ou 11.</li>
 <li>Não precisa de internet, de conta nem de navegador.</li>
 </ul>
-<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.8.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
+<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.9.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
 <p>Para desinstalar, use o menu do NVDA, Ferramentas, Loja de complementos, aba Complementos instalados. <strong>Desinstalar não apaga as suas folhas</strong>: elas continuam na pasta das folhas (veja Onde ficam as folhas).</p>
 <h3 id="secao8">Quem usava o NotasWorkflow 1.0.0</h3>
 <p>Até a versão 1.0.0, o complemento se chamava <strong>NotasWorkflow</strong>. A partir da 1.1.0 ele se chama <strong>Notas Workflow NVDA</strong>, e o NVDA o trata como um complemento novo, que fica instalado ao lado do antigo. Para trocar sem perder nada:</p>
 <ol>
-<li>Instale o <code>NotasWorkflowNVDA-1.8.0.nvda-addon</code> e reinicie o NVDA.</li>
+<li>Instale o <code>NotasWorkflowNVDA-1.9.0.nvda-addon</code> e reinicie o NVDA.</li>
 <li>No primeiro início, o complemento copia as folhas da pasta antiga (<code>%APPDATA%\nvda\NotasWorkflow</code>) e as configurações (pasta das folhas, salvamento automático e anúncio). O NVDA fala "Folhas da versão anterior trazidas para o Notas Workflow NVDA" e o número de folhas.</li>
 <li>Pressione <strong>NVDA+Alt+N</strong> e confira as suas folhas.</li>
 <li>Desinstale o <strong>NotasWorkflow</strong> antigo na Loja de complementos e reinicie o NVDA. Enquanto os dois estiverem instalados, os atalhos NVDA+Alt+N, NVDA+Alt+F e NVDA+Alt+B ficam repetidos.</li>
@@ -96,7 +96,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <table>
 <thead><tr><th scope="col">Controle</th><th scope="col">Atalho</th><th scope="col">O que faz</th></tr></thead>
 <tbody>
-<tr><td>Mostrar</td><td>Alt+O</td><td>Escolhe quais folhas aparecem (veja Filtros).</td></tr>
+<tr><td>Mostrar</td><td>Alt+O</td><td>Uma árvore que escolhe quais folhas aparecem, com as pastas e os cadernos dentro delas (veja Filtros).</td></tr>
 <tr><td>Folhas</td><td>Alt+F</td><td>A lista de folhas em raias. O rótulo diz o filtro e a quantidade, por exemplo "Folhas: Caderno: Trabalho (4)". Enter abre a folha selecionada.</td></tr>
 <tr><td>Criar…</td><td>Alt+C</td><td>Abre um menu para criar uma <strong>Folha…</strong>, um <strong>Caderno…</strong> ou uma <strong>Pasta…</strong> (veja Criar folhas, cadernos e pastas).</td></tr>
 <tr><td>Atualizar o status da tarefa…</td><td>Alt+A</td><td>Abre um menu com os outros status e muda o status da folha selecionada.</td></tr>
@@ -130,15 +130,24 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </table>
 <p>No primeiro status, ir para o anterior faz o NVDA dizer "Já está na primeira raia"; no último, "Já está na última raia". Depois da mudança, a seleção acompanha a folha.</p>
 <h3 id="secao15">Filtros</h3>
-<p>A caixa <strong>Mostrar</strong> oferece:</p>
+<p>O campo <strong>Mostrar (Alt+O)</strong> é uma árvore, organizada como o campo Local: primeiro Todas as folhas, Folhas soltas e Folhas recentes; depois cada pasta, com os cadernos dela dentro; por último os cadernos que não estão em nenhuma pasta. As pastas começam fechadas, e só abre a pasta do caderno que está sendo mostrado.</p>
 <table>
 <thead><tr><th scope="col">Opção</th><th scope="col">Mostra</th></tr></thead>
 <tbody>
 <tr><td>Todas as folhas</td><td>Todas as folhas.</td></tr>
 <tr><td>Folhas soltas</td><td>As folhas que não estão em nenhum caderno nem em nenhuma pasta.</td></tr>
 <tr><td>Folhas recentes</td><td>As 10 folhas alteradas por último.</td></tr>
-<tr><td>Caderno: nome</td><td>As folhas daquele caderno. Há uma opção para cada caderno.</td></tr>
 <tr><td>Pasta: nome</td><td>As folhas guardadas direto na pasta e as dos cadernos dela. Há uma opção para cada pasta.</td></tr>
+<tr><td>Caderno: nome</td><td>As folhas daquele caderno. Há uma opção para cada caderno, dentro da pasta dele quando ele está numa pasta.</td></tr>
+</tbody>
+</table>
+<table>
+<thead><tr><th scope="col">Tecla</th><th scope="col">Ação</th></tr></thead>
+<tbody>
+<tr><td>Seta para cima e Seta para baixo</td><td>Passam pelas opções; as folhas da opção selecionada aparecem na hora na lista de folhas.</td></tr>
+<tr><td>Seta para a direita</td><td>Abre a pasta selecionada, mostrando os cadernos dela.</td></tr>
+<tr><td>Seta para a esquerda</td><td>Fecha a pasta, ou volta de um caderno para a pasta dele.</td></tr>
+<tr><td>Enter</td><td>Vai para a lista de folhas.</td></tr>
 </tbody>
 </table>
 <h2 id="secao16">Criar folhas, cadernos e pastas</h2>
@@ -316,7 +325,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <p>A seleção acompanha a folha, o NVDA lê a folha e diz a nova posição, por exemplo "Posição 2 de 5". A ordem é salva na hora, como qualquer outra mudança, e a data de alteração da folha não muda.</p>
 <ul>
 <li>Na primeira folha da raia, Ctrl+Shift+Seta para cima faz o NVDA dizer "Já está no topo da raia"; na última, Ctrl+Shift+Seta para baixo diz "Já está no fim da raia".</li>
-<li>Com um caderno ou uma pasta na caixa <strong>Mostrar</strong>, a folha passa a vizinha que aparece na lista; as folhas de outros lugares ficam onde estão.</li>
+<li>Com um caderno ou uma pasta no campo <strong>Mostrar</strong>, a folha passa a vizinha que aparece na lista; as folhas de outros lugares ficam onde estão.</li>
 <li>Em <strong>Folhas recentes</strong> a ordem é sempre a da última alteração, e o NVDA avisa que ali a ordem não pode ser mudada.</li>
 <li>Numa raia longa, a última folha de uma página pode descer: ela passa a primeira das folhas ainda não mostradas, e a página seguinte aparece.</li>
 </ul>
@@ -375,7 +384,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Fechar</td><td>Alt+H ou Esc</td><td>Fecha a janela.</td></tr>
 </tbody>
 </table>
-<p>Excluir uma pasta ou um caderno <strong>nunca apaga folhas</strong>: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções da caixa Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.</p>
+<p>Excluir uma pasta ou um caderno <strong>nunca apaga folhas</strong>: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções do campo Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.</p>
 <h2 id="secao37">Exportar como documento</h2>
 <p>O botão <strong>Exportar… (Alt+E)</strong> da janela principal grava folhas como documentos para ler, imprimir ou enviar a outras pessoas: um documento do <strong>Word</strong>, um arquivo <strong>Markdown</strong> ou uma <strong>página HTML</strong>, que abre em qualquer navegador. É diferente de Exportar folhas… das configurações, que grava a cópia de segurança <code>.json</code> (veja Importar e exportar).</p>
 <h3 id="secao38">O que exportar</h3>
@@ -384,7 +393,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <thead><tr><th scope="col">Opção</th><th scope="col">O que exporta</th></tr></thead>
 <tbody>
 <tr><td>Folha selecionada…</td><td>A folha selecionada na lista. Só aparece quando uma folha está selecionada.</td></tr>
-<tr><td>Caderno…</td><td>Todas as folhas de um caderno. Uma lista pergunta qual caderno, começando no caderno mostrado na caixa Mostrar ou no caderno da folha selecionada.</td></tr>
+<tr><td>Caderno…</td><td>Todas as folhas de um caderno. Uma lista pergunta qual caderno, começando no caderno mostrado no campo Mostrar ou no caderno da folha selecionada.</td></tr>
 <tr><td>Pasta…</td><td>Todas as folhas de uma pasta: as guardadas direto nela e as dos cadernos dela. Uma lista pergunta qual pasta, começando na pasta mostrada ou na pasta da folha selecionada.</td></tr>
 </tbody>
 </table>
@@ -550,7 +559,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <h3 id="secao57">O arquivo estava danificado</h3>
 <p>O complemento guardou o arquivo danificado com o nome <code>NotasWorkflowNVDA-data.corrupt-</code> seguido da data e usou a cópia de segurança. Se quiser, envie o arquivo guardado para análise; ele nunca é apagado.</p>
 <h3 id="secao58">Não encontro uma folha numa raia com muitas folhas</h3>
-<p>Cada raia mostra 200 folhas por vez. Use "Mostrar mais" no fim da raia, a caixa Mostrar para ver só um caderno ou uma pasta, ou a busca (NVDA+Alt+B), que encontra a folha na hora e a mostra selecionada ao voltar.</p>
+<p>Cada raia mostra 200 folhas por vez. Use "Mostrar mais" no fim da raia, o campo Mostrar para ver só um caderno ou uma pasta, ou a busca (NVDA+Alt+B), que encontra a folha na hora e a mostra selecionada ao voltar.</p>
 <h3 id="secao59">Escrevi um asterisco e ele sumiu</h3>
 <p>Pares de asteriscos em volta de uma palavra viram itálico (<code>*palavra*</code>). Para mostrar asteriscos, use-os no meio de palavras ou números, como <code>2*3</code>.</p>
 <h2 id="secao60">Histórico deste manual</h2>
@@ -566,6 +575,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>1.6.0</td><td>Ctrl+Shift+Seta para cima e para baixo mudam a ordem da folha dentro da raia (nova seção "Mudar a ordem das folhas na raia"), com as novas mensagens faladas e os atalhos nas tabelas.</td></tr>
 <tr><td>1.7.0</td><td>O campo Tags saiu da janela da folha: o Tab vai de Status direto para Conteúdo. As tags também deixaram de aparecer na lista de folhas, em Cadernos e pastas e nos documentos exportados, e a busca não procura mais nelas (seção "Tags" retirada).</td></tr>
 <tr><td>1.8.0</td><td>Nova opção Criar &gt; Folha a partir de documento… e novo botão Inserir documento… na janela da folha, com as novas seções "Folha a partir de documento" e "Inserir documento" (Word .docx, PowerPoint .pptx, texto, HTML e e-mail .eml), o comando sem atalho e as novas mensagens faladas; a criação de caderno virou a janela Novo caderno, com a escolha da pasta.</td></tr>
+<tr><td>1.9.0</td><td>O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas).</td></tr>
 </tbody>
 </table>
 </main>

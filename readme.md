@@ -6,7 +6,7 @@ NVDA add-on to organize notes and tasks in status lanes (To do, In progress, Blo
 
 Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The window has:
 
-* **Show**: all notes, loose notes (neither in a notebook nor in a folder), recent notes (the 10 changed last), one notebook or one folder.
+* **Show**: a tree with all notes, loose notes (neither in a notebook nor in a folder), recent notes (the 10 changed last), each folder with its notebooks inside, and the notebooks without folder. Choosing an item shows its notes; Enter goes to the notes.
 * **Notes**: the notes in a tree with one branch per lane ("To do, 3 notes"). Lanes start closed: Right Arrow opens one, Left Arrow closes it. Enter opens the note, Delete deletes it (after confirming), **Alt+Shift+Right Arrow** and **Alt+Shift+Left Arrow** change its status, **Ctrl+Shift+Up Arrow** and **Ctrl+Shift+Down Arrow** move it up or down inside its lane. Each lane shows 200 notes at a time; "Show more notes" at the end shows the next ones.
 * **Create…**: a menu to create a note, a notebook (New notebook asks the name and the folder), a folder or a **note from a document**.
 * **Update the task status…**: a menu with the other statuses.
