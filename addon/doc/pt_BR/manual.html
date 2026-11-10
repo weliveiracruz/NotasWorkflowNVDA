@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="manual" content="versao=1.11.0; fonte-sha256=88e8053a04678b3303a8f49a5c51ab8b337e957bc89995285b6ebe8a74ef7376">
+<meta name="manual" content="versao=1.12.0; fonte-sha256=88e217cc12fa4d85299fe96383e8d875a49434ccb395e5a813f1bd3a2b7b33e6">
 <title>Notas Workflow NVDA — Manual de uso</title>
 <style>
 body{font-family:Segoe UI,Calibri,sans-serif;line-height:1.5;max-width:60em;margin:1em auto;padding:0 1em}
@@ -15,7 +15,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <body>
 <main lang="pt-BR">
 <h1 id="secao1">Notas Workflow NVDA</h1>
-<p>Manual de uso — versão 1.11.0</p>
+<p>Manual de uso — versão 1.12.0</p>
 <nav aria-label="Sumário">
 <h2>Sumário</h2>
 <ul>
@@ -42,7 +42,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 </ul>
 </nav>
 <h2 id="secao2">Sobre este manual</h2>
-<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.11.0. Ele é atualizado a cada nova versão do complemento.</p>
+<p>Este manual descreve, em detalhe, todas as funcionalidades do complemento <strong>Notas Workflow NVDA</strong> para o leitor de telas NVDA, versão 1.12.0. Ele é atualizado a cada nova versão do complemento.</p>
 <p>O manual vem dentro do complemento: o botão <strong>Manual de uso… (Alt+N)</strong> da janela principal o abre na janela de leitura do NVDA, onde dá para navegar como numa página: <strong>H</strong> passa pelos títulos, <strong>2</strong> pelos capítulos, <strong>3</strong> pelas seções, <strong>T</strong> pelas tabelas e <strong>K</strong> pelos links do sumário. <strong>Esc</strong> fecha o manual.</p>
 <p>O Notas Workflow NVDA organiza <strong>folhas</strong> (anotações e tarefas) em <strong>raias</strong> de status, agrupadas em <strong>cadernos</strong> e <strong>pastas</strong>, com conteúdo com formatação, salvamento automático e busca. Tudo funciona pelo teclado, com respostas faladas, e continua rápido mesmo com dezenas de milhares de folhas.</p>
 <aside class="destaque"><p><strong>Dica:</strong> os nomes de botões e campos deste manual são os da interface em português. Entre parênteses aparece a letra de atalho com Alt de cada um, por exemplo <strong>Criar… (Alt+C)</strong>.</p></aside>
@@ -69,12 +69,12 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>Windows 10 ou 11.</li>
 <li>Não precisa de internet, de conta nem de navegador.</li>
 </ul>
-<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.11.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
+<p>Para instalar, abra o arquivo <code>NotasWorkflowNVDA-1.12.0.nvda-addon</code> com o NVDA em execução, confirme a instalação e reinicie o NVDA quando ele pedir.</p>
 <p>Para desinstalar, use o menu do NVDA, Ferramentas, Loja de complementos, aba Complementos instalados. <strong>Desinstalar não apaga as suas folhas</strong>: elas continuam na pasta das folhas (veja Onde ficam as folhas).</p>
 <h3 id="secao8">Quem usava o NotasWorkflow 1.0.0</h3>
 <p>Até a versão 1.0.0, o complemento se chamava <strong>NotasWorkflow</strong>. A partir da 1.1.0 ele se chama <strong>Notas Workflow NVDA</strong>, e o NVDA o trata como um complemento novo, que fica instalado ao lado do antigo. Para trocar sem perder nada:</p>
 <ol>
-<li>Instale o <code>NotasWorkflowNVDA-1.11.0.nvda-addon</code> e reinicie o NVDA.</li>
+<li>Instale o <code>NotasWorkflowNVDA-1.12.0.nvda-addon</code> e reinicie o NVDA.</li>
 <li>No primeiro início, o complemento copia as folhas da pasta antiga (<code>%APPDATA%\nvda\NotasWorkflow</code>) e as configurações (pasta das folhas, salvamento automático e anúncio). O NVDA fala "Folhas da versão anterior trazidas para o Notas Workflow NVDA" e o número de folhas.</li>
 <li>Pressione <strong>NVDA+Alt+N</strong> e confira as suas folhas.</li>
 <li>Desinstale o <strong>NotasWorkflow</strong> antigo na Loja de complementos e reinicie o NVDA. Enquanto os dois estiverem instalados, os atalhos NVDA+Alt+N, NVDA+Alt+F e NVDA+Alt+B ficam repetidos.</li>
@@ -99,9 +99,6 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Mostrar</td><td>Alt+O</td><td>Uma árvore que escolhe quais folhas aparecem, com as pastas e os cadernos dentro delas (veja Filtros).</td></tr>
 <tr><td>Folhas</td><td>Alt+F</td><td>A lista de folhas em raias. O rótulo diz o filtro e a quantidade, por exemplo "Folhas: Caderno: Trabalho (4)". Enter abre a folha selecionada.</td></tr>
 <tr><td>Criar…</td><td>Alt+C</td><td>Abre um menu para criar uma <strong>Folha…</strong>, um <strong>Caderno…</strong> ou uma <strong>Pasta…</strong> (veja Criar folhas, cadernos e pastas).</td></tr>
-<tr><td>Atualizar o status da tarefa…</td><td>Alt+A</td><td>Abre um menu com os outros status e muda o status da folha selecionada.</td></tr>
-<tr><td>Mover para…</td><td>Alt+M</td><td>Move a folha selecionada para um caderno, para uma pasta ou a deixa solta.</td></tr>
-<tr><td>Excluir</td><td>Alt+X</td><td>Exclui a folha selecionada, depois de confirmar.</td></tr>
 <tr><td>Buscar…</td><td>Alt+B</td><td>Abre a janela Buscar folhas.</td></tr>
 <tr><td>Cadernos e pastas…</td><td>Alt+T</td><td>Abre a janela Cadernos e pastas, que também lista e abre as folhas.</td></tr>
 <tr><td>Exportar…</td><td>Alt+E</td><td>Exporta a folha selecionada, um caderno ou uma pasta como documento do Word, Markdown ou HTML (veja Exportar como documento).</td></tr>
@@ -109,7 +106,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Fechar</td><td>Alt+H ou Esc</td><td>Fecha a janela.</td></tr>
 </tbody>
 </table>
-<p>Os botões Atualizar o status da tarefa…, Mover para… e Excluir só ficam disponíveis (e só entram na tabulação) quando uma folha está selecionada.</p>
+<p>A janela não tem botões para mudar o status, mover ou excluir a folha selecionada: na lista de folhas, <strong>Alt+Shift+Seta para a direita ou para a esquerda</strong> muda o status e <strong>Delete</strong> exclui; o status e o local também mudam pelos campos <strong>Status</strong> e <strong>Local</strong> da janela da folha (Enter abre a folha), e <strong>Mover para…</strong> também fica na janela Cadernos e pastas.</p>
 <h3 id="secao12">A lista de folhas em raias</h3>
 <p>As raias <strong>começam fechadas</strong>: cada uma é um ramo com o nome e o número de folhas, por exemplo "A fazer, 3 folhas", e você só ouve as folhas da raia que abrir. Dentro de uma raia aberta, cada folha é lida assim:</p>
 <p><code>Título, caderno Trabalho, atualizada em 12/10/2026</code></p>
@@ -310,7 +307,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <p>Há duas formas:</p>
 <ul>
 <li><strong>Alt+Shift+Seta para a direita ou para a esquerda</strong> na lista: status seguinte ou anterior.</li>
-<li><strong>Atualizar o status da tarefa… (Alt+A)</strong>: um menu com os três outros status.</li>
+<li>O campo <strong>Status</strong> da janela da folha (Enter na folha abre a janela).</li>
 </ul>
 <p>O NVDA fala "Status atualizado para" e o nome do status, e a seleção acompanha a folha.</p>
 <h3 id="secao29">Trabalhar a pilha de uma raia</h3>
@@ -334,16 +331,16 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <li>Numa raia longa, a última folha de uma página pode descer: ela passa a primeira das folhas ainda não mostradas, e a página seguinte aparece.</li>
 </ul>
 <h3 id="secao31">Mover para um caderno ou uma pasta</h3>
-<p><strong>Mover para… (Alt+M)</strong> abre a janela "Mover … para" (com o título da folha) e a árvore <strong>Local</strong>, a mesma da janela da folha (veja O campo Local), começando no lugar atual da folha:</p>
+<p>Na janela principal, mude o lugar da folha pelo campo <strong>Local</strong> da janela da folha (Enter na folha abre a janela). Na janela <strong>Cadernos e pastas</strong>, <strong>Mover para… (Alt+M)</strong> sobre uma folha abre a janela "Mover … para" (com o título da folha) e a árvore <strong>Local</strong>, a mesma da janela da folha (veja O campo Local), começando no lugar atual da folha:</p>
 <ul>
 <li>Folha solta (sem caderno nem pasta);</li>
 <li>cada pasta ("Pasta Projetos, 2 cadernos"), para guardar a folha direto nela; Seta para a direita abre a pasta;</li>
 <li>dentro de cada pasta, os cadernos dela ("Caderno Site");</li>
 <li>no fim, os cadernos sem pasta.</li>
 </ul>
-<p><strong>Enter</strong> ou <strong>OK</strong> move a folha; <strong>Cancelar</strong> ou <strong>Esc</strong> deixa a folha onde estava. O NVDA confirma com "Agora em:" e o lugar escolhido, com a pasta do caderno ("Caderno Site (pasta Projetos)"). Se o filtro em uso deixar de mostrar a folha, a seleção vai para a folha vizinha. O mesmo botão existe na janela Cadernos e pastas, e o campo Local da janela da folha faz o mesmo.</p>
+<p><strong>Enter</strong> ou <strong>OK</strong> move a folha; <strong>Cancelar</strong> ou <strong>Esc</strong> deixa a folha onde estava. O NVDA confirma com "Agora em:" e o lugar escolhido, com a pasta do caderno ("Caderno Site (pasta Projetos)"). O campo Local da janela da folha faz o mesmo.</p>
 <h3 id="secao32">Excluir</h3>
-<p><strong>Excluir (Alt+X)</strong> ou a tecla <strong>Delete</strong> perguntam "Excluir a folha …? Isso não pode ser desfeito.", com <strong>Não</strong> como resposta padrão. Ao confirmar, o NVDA fala "Folha excluída:" e o título, e a seleção vai para a folha vizinha.</p>
+<p>Na lista de folhas, a tecla <strong>Delete</strong> pergunta "Excluir a folha …? Isso não pode ser desfeito.", com <strong>Não</strong> como resposta padrão. Ao confirmar, o NVDA fala "Folha excluída:" e o título, e a seleção vai para a folha vizinha.</p>
 <h2 id="secao33">Buscar folhas</h2>
 <p>Use <strong>NVDA+Alt+B</strong> de qualquer lugar, ou <strong>Buscar… (Alt+B)</strong> na janela principal.</p>
 <table>
@@ -388,7 +385,12 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>Fechar</td><td>Alt+H ou Esc</td><td>Fecha a janela.</td></tr>
 </tbody>
 </table>
-<p>Excluir uma pasta ou um caderno <strong>nunca apaga folhas</strong>: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções do campo Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.</p>
+<p>Excluir uma pasta ou um caderno <strong>exclui tudo o que está dentro</strong>:</p>
+<ul>
+<li>ao excluir um <strong>caderno</strong>, as folhas dele também são excluídas;</li>
+<li>ao excluir uma <strong>pasta</strong>, são excluídos os cadernos dela, as folhas desses cadernos e as folhas guardadas direto na pasta.</li>
+</ul>
+<p>Antes, o NVDA pergunta, dizendo quanto será excluído, por exemplo "Excluir a pasta Projetos e tudo o que está nela: 2 cadernos e 5 folhas? Isso não pode ser desfeito.", com <strong>Não</strong> como resposta padrão; numa pasta ou num caderno vazio, a pergunta diz que está vazio. As folhas de outras pastas e cadernos e as folhas soltas não mudam. Para guardar alguma folha, mova-a para outro lugar antes de excluir. As opções do campo Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.</p>
 <h2 id="secao37">Exportar como documento</h2>
 <p>O botão <strong>Exportar… (Alt+E)</strong> da janela principal grava folhas como documentos para ler, imprimir ou enviar a outras pessoas: um documento do <strong>Word</strong>, um arquivo <strong>Markdown</strong> ou uma <strong>página HTML</strong>, que abre em qualquer navegador. É diferente de Exportar folhas… das configurações, que grava a cópia de segurança <code>.json</code> (veja Importar e exportar).</p>
 <h3 id="secao38">O que exportar</h3>
@@ -549,7 +551,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <ul>
 <li>O complemento <strong>não usa a internet</strong>: nenhuma folha sai do computador, e não há conta nem senha.</li>
 <li>O título e o conteúdo das folhas <strong>nunca</strong> vão para o log do NVDA.</li>
-<li>Excluir sempre pede confirmação, com Não como padrão; excluir caderno ou pasta nunca apaga folhas.</li>
+<li>Excluir sempre pede confirmação, com Não como padrão; ao excluir um caderno ou uma pasta, a pergunta diz quantos cadernos e folhas serão excluídos junto.</li>
 <li>Arquivos importados são conferidos: tamanhos, tipos e identificadores inválidos são corrigidos ou descartados, e o conteúdo nunca é exibido como página nem executado.</li>
 <li>O complemento fica desligado nas telas seguras do Windows (tela de logon e controle de conta de usuário).</li>
 <li>As folhas ficam num arquivo de texto legível na pasta do seu perfil do Windows.</li>
@@ -582,6 +584,7 @@ aside.destaque{border-left:6px solid #1F4E79;background:#EAF1F8;padding:.2em 1em
 <tr><td>1.9.0</td><td>O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas).</td></tr>
 <tr><td>1.10.0</td><td>A janela Nova folha ganhou os botões Novo caderno… (Alt+C) e Nova pasta… (Alt+P): o caderno ou a pasta criada aparece no campo Local já escolhida (seção "Criar folhas, cadernos e pastas").</td></tr>
 <tr><td>1.11.0</td><td>A janela Novo caderno ganhou o botão Nova pasta… (Alt+V): a pasta criada entra na lista Pasta já escolhida (seção "Criar folhas, cadernos e pastas").</td></tr>
+<tr><td>1.12.0</td><td>A janela principal não tem mais os botões Atualizar o status da tarefa…, Mover para… e Excluir (as teclas Alt+Shift+Setas e Delete e a janela da folha continuam). Excluir uma pasta ou um caderno agora exclui tudo o que está dentro, com a contagem na pergunta (seção "Cadernos e pastas").</td></tr>
 </tbody>
 </table>
 </main>

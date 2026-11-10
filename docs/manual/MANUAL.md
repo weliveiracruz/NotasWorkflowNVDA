@@ -76,16 +76,13 @@ Os controles aparecem nesta ordem de tabulação:
 | Mostrar | Alt+O | Uma árvore que escolhe quais folhas aparecem, com as pastas e os cadernos dentro delas (veja Filtros). |
 | Folhas | Alt+F | A lista de folhas em raias. O rótulo diz o filtro e a quantidade, por exemplo "Folhas: Caderno: Trabalho (4)". Enter abre a folha selecionada. |
 | Criar… | Alt+C | Abre um menu para criar uma **Folha…**, um **Caderno…** ou uma **Pasta…** (veja Criar folhas, cadernos e pastas). |
-| Atualizar o status da tarefa… | Alt+A | Abre um menu com os outros status e muda o status da folha selecionada. |
-| Mover para… | Alt+M | Move a folha selecionada para um caderno, para uma pasta ou a deixa solta. |
-| Excluir | Alt+X | Exclui a folha selecionada, depois de confirmar. |
 | Buscar… | Alt+B | Abre a janela Buscar folhas. |
 | Cadernos e pastas… | Alt+T | Abre a janela Cadernos e pastas, que também lista e abre as folhas. |
 | Exportar… | Alt+E | Exporta a folha selecionada, um caderno ou uma pasta como documento do Word, Markdown ou HTML (veja Exportar como documento). |
 | Manual de uso… | Alt+N | Abre este manual na janela de leitura do NVDA (veja Sobre este manual). |
 | Fechar | Alt+H ou Esc | Fecha a janela. |
 
-Os botões Atualizar o status da tarefa…, Mover para… e Excluir só ficam disponíveis (e só entram na tabulação) quando uma folha está selecionada.
+A janela não tem botões para mudar o status, mover ou excluir a folha selecionada: na lista de folhas, **Alt+Shift+Seta para a direita ou para a esquerda** muda o status e **Delete** exclui; o status e o local também mudam pelos campos **Status** e **Local** da janela da folha (Enter abre a folha), e **Mover para…** também fica na janela Cadernos e pastas.
 
 ### A lista de folhas em raias
 
@@ -306,7 +303,7 @@ vira um título, seguido de uma lista com dois itens, com "orçamento" em negrit
 Há duas formas:
 
 - **Alt+Shift+Seta para a direita ou para a esquerda** na lista: status seguinte ou anterior.
-- **Atualizar o status da tarefa… (Alt+A)**: um menu com os três outros status.
+- O campo **Status** da janela da folha (Enter na folha abre a janela).
 
 O NVDA fala "Status atualizado para" e o nome do status, e a seleção acompanha a folha.
 
@@ -334,18 +331,18 @@ A seleção acompanha a folha, o NVDA lê a folha e diz a nova posição, por ex
 
 ### Mover para um caderno ou uma pasta
 
-**Mover para… (Alt+M)** abre a janela "Mover … para" (com o título da folha) e a árvore **Local**, a mesma da janela da folha (veja O campo Local), começando no lugar atual da folha:
+Na janela principal, mude o lugar da folha pelo campo **Local** da janela da folha (Enter na folha abre a janela). Na janela **Cadernos e pastas**, **Mover para… (Alt+M)** sobre uma folha abre a janela "Mover … para" (com o título da folha) e a árvore **Local**, a mesma da janela da folha (veja O campo Local), começando no lugar atual da folha:
 
 - Folha solta (sem caderno nem pasta);
 - cada pasta ("Pasta Projetos, 2 cadernos"), para guardar a folha direto nela; Seta para a direita abre a pasta;
 - dentro de cada pasta, os cadernos dela ("Caderno Site");
 - no fim, os cadernos sem pasta.
 
-**Enter** ou **OK** move a folha; **Cancelar** ou **Esc** deixa a folha onde estava. O NVDA confirma com "Agora em:" e o lugar escolhido, com a pasta do caderno ("Caderno Site (pasta Projetos)"). Se o filtro em uso deixar de mostrar a folha, a seleção vai para a folha vizinha. O mesmo botão existe na janela Cadernos e pastas, e o campo Local da janela da folha faz o mesmo.
+**Enter** ou **OK** move a folha; **Cancelar** ou **Esc** deixa a folha onde estava. O NVDA confirma com "Agora em:" e o lugar escolhido, com a pasta do caderno ("Caderno Site (pasta Projetos)"). O campo Local da janela da folha faz o mesmo.
 
 ### Excluir
 
-**Excluir (Alt+X)** ou a tecla **Delete** perguntam "Excluir a folha …? Isso não pode ser desfeito.", com **Não** como resposta padrão. Ao confirmar, o NVDA fala "Folha excluída:" e o título, e a seleção vai para a folha vizinha.
+Na lista de folhas, a tecla **Delete** pergunta "Excluir a folha …? Isso não pode ser desfeito.", com **Não** como resposta padrão. Ao confirmar, o NVDA fala "Folha excluída:" e o título, e a seleção vai para a folha vizinha.
 
 ## Buscar folhas
 
@@ -395,7 +392,12 @@ Cada folha é lida com o título, o status e a data. **Enter sobre uma folha abr
 | Excluir | Alt+X ou Delete | Exclui a pasta, o caderno ou a folha selecionada, depois de confirmar. |
 | Fechar | Alt+H ou Esc | Fecha a janela. |
 
-Excluir uma pasta ou um caderno **nunca apaga folhas**: ao excluir um caderno, as folhas dele viram folhas soltas; ao excluir uma pasta, os cadernos e as folhas dela ficam sem pasta. As opções do campo Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.
+Excluir uma pasta ou um caderno **exclui tudo o que está dentro**:
+
+- ao excluir um **caderno**, as folhas dele também são excluídas;
+- ao excluir uma **pasta**, são excluídos os cadernos dela, as folhas desses cadernos e as folhas guardadas direto na pasta.
+
+Antes, o NVDA pergunta, dizendo quanto será excluído, por exemplo "Excluir a pasta Projetos e tudo o que está nela: 2 cadernos e 5 folhas? Isso não pode ser desfeito.", com **Não** como resposta padrão; numa pasta ou num caderno vazio, a pergunta diz que está vazio. As folhas de outras pastas e cadernos e as folhas soltas não mudam. Para guardar alguma folha, mova-a para outro lugar antes de excluir. As opções do campo Mostrar acompanham os cadernos e pastas criados, renomeados e excluídos.
 
 ## Exportar como documento
 
@@ -575,7 +577,7 @@ Todos podem ser mudados em NVDA, Preferências, Definir comandos, categoria **No
 
 - O complemento **não usa a internet**: nenhuma folha sai do computador, e não há conta nem senha.
 - O título e o conteúdo das folhas **nunca** vão para o log do NVDA.
-- Excluir sempre pede confirmação, com Não como padrão; excluir caderno ou pasta nunca apaga folhas.
+- Excluir sempre pede confirmação, com Não como padrão; ao excluir um caderno ou uma pasta, a pergunta diz quantos cadernos e folhas serão excluídos junto.
 - Arquivos importados são conferidos: tamanhos, tipos e identificadores inválidos são corrigidos ou descartados, e o conteúdo nunca é exibido como página nem executado.
 - O complemento fica desligado nas telas seguras do Windows (tela de logon e controle de conta de usuário).
 - As folhas ficam num arquivo de texto legível na pasta do seu perfil do Windows.
@@ -619,3 +621,4 @@ Pares de asteriscos em volta de uma palavra viram itálico (`*palavra*`). Para m
 | 1.9.0 | O campo Mostrar da janela principal virou uma árvore, como o campo Local: cada pasta com os cadernos dela dentro, as pastas fechadas no início, e Enter vai para a lista de folhas (seção "Filtros", com a tabela de teclas). |
 | 1.10.0 | A janela Nova folha ganhou os botões Novo caderno… (Alt+C) e Nova pasta… (Alt+P): o caderno ou a pasta criada aparece no campo Local já escolhida (seção "Criar folhas, cadernos e pastas"). |
 | 1.11.0 | A janela Novo caderno ganhou o botão Nova pasta… (Alt+V): a pasta criada entra na lista Pasta já escolhida (seção "Criar folhas, cadernos e pastas"). |
+| 1.12.0 | A janela principal não tem mais os botões Atualizar o status da tarefa…, Mover para… e Excluir (as teclas Alt+Shift+Setas e Delete e a janela da folha continuam). Excluir uma pasta ou um caderno agora exclui tudo o que está dentro, com a contagem na pergunta (seção "Cadernos e pastas"). |

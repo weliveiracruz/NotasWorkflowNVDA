@@ -105,18 +105,14 @@ class NotesDialog(wx.Dialog):
 		actions = guiHelper.ButtonHelper(wx.HORIZONTAL)
 		# Translators: button that opens the menu to create a note, a notebook or a folder.
 		self.createButton = actions.addButton(self, label=_("&Create…"))
-		# Translators: button that changes the status (lane) of the selected note.
-		self.statusButton = actions.addButton(self, label=_("&Update the task status…"))
-		# Translators: button that moves the selected note to a notebook or a folder.
-		self.moveButton = actions.addButton(self, label=_("&Move to…"))
-		# Translators: button that deletes the selected note.
-		self.deleteButton = actions.addButton(self, label=_("&Delete"))
+		# The status, the place and the deletion of a note are done in the list (Alt+Shift+Arrows,
+		# Delete) and in the note window: the window has no buttons for them (1.12.0).
+		# Translators: button that opens the search window.
+		self.searchButton = actions.addButton(self, label=_("Searc&h…"))
+		# Translators: button that opens the window of notebooks and folders.
+		self.organizeButton = actions.addButton(self, label=_("Notebooks and &folders…"))
 		sHelper.addItem(actions)
 		actions2 = guiHelper.ButtonHelper(wx.HORIZONTAL)
-		# Translators: button that opens the search window.
-		self.searchButton = actions2.addButton(self, label=_("Searc&h…"))
-		# Translators: button that opens the window of notebooks and folders.
-		self.organizeButton = actions2.addButton(self, label=_("Notebooks and &folders…"))
 		# Translators: button that opens the menu to export the selected note, a notebook or a folder.
 		self.exportButton = actions2.addButton(self, label=_("E&xport…"))
 		# Translators: button that opens the user manual of the add-on.
@@ -136,7 +132,6 @@ class NotesDialog(wx.Dialog):
 		self.filterTree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.focusNotes())
 		self.filterTree.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
 		self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.activate())
-		self.tree.Bind(wx.EVT_TREE_SEL_CHANGED, lambda evt: self.updateButtons())
 		self.tree.Bind(wx.EVT_TREE_ITEM_EXPANDED, lambda evt: self.onLaneOpened(evt, True))
 		self.tree.Bind(wx.EVT_TREE_ITEM_COLLAPSED, lambda evt: self.onLaneOpened(evt, False))
 		self.tree.Bind(wx.EVT_TREE_KEY_DOWN, lambda evt: self.onKey(evt.GetKeyEvent()))
@@ -146,9 +141,6 @@ class NotesDialog(wx.Dialog):
 		# The character of Enter must not reach the tree: its type-ahead search would move the selection.
 		self.tree.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
 		self.createButton.Bind(wx.EVT_BUTTON, self.onCreate)
-		self.statusButton.Bind(wx.EVT_BUTTON, self.onStatus)
-		self.moveButton.Bind(wx.EVT_BUTTON, self.onMove)
-		self.deleteButton.Bind(wx.EVT_BUTTON, self.onDelete)
 		self.searchButton.Bind(wx.EVT_BUTTON, self.onSearch)
 		self.organizeButton.Bind(wx.EVT_BUTTON, self.onOrganize)
 		self.exportButton.Bind(wx.EVT_BUTTON, self.onExport)
@@ -277,7 +269,6 @@ class NotesDialog(wx.Dialog):
 		finally:
 			self.tree.Thaw()
 		self.Layout()
-		self.updateButtons()
 
 	def refreshLanes(self, changed, selectId=None, selectLane=None):
 		"""Rebuilds only some lanes (a status change touches two): fast with many notes."""
@@ -308,7 +299,6 @@ class NotesDialog(wx.Dialog):
 				selectItem(self.tree, toSelect)
 		finally:
 			self.tree.Thaw()
-		self.updateButtons()
 
 	def fillLane(self, node, lane, notes, selectId):
 		"""Adds the shown page of a lane. Returns the item of selectId, if it is there."""
@@ -385,7 +375,6 @@ class NotesDialog(wx.Dialog):
 			self.refreshLanes({oldLane, note["laneId"]}, noteId)
 		else:
 			self.tree.SetItemText(item, messages.noteDescription(note, messages.placeOf(self.store, note)))
-			self.updateButtons()
 
 	def selectedData(self):
 		item = self.tree.GetSelection()
@@ -402,14 +391,6 @@ class NotesDialog(wx.Dialog):
 		if note:
 			return note["laneId"]
 		return data.get("lane") or data.get("more") or model.DEFAULT_LANE
-
-	def updateButtons(self):
-		# Also while Python ends: the tree may send events after the buttons are gone.
-		if self._closing or not self.statusButton:
-			return
-		hasNote = self.selectedNoteId() is not None
-		for button in (self.statusButton, self.moveButton, self.deleteButton):
-			button.Enable(hasNote)
 
 	def neighbourOf(self, noteId):
 		"""The note that takes the place of noteId in the list (next, otherwise previous)."""
@@ -598,29 +579,7 @@ class NotesDialog(wx.Dialog):
 		else:
 			# The other note is in a page not shown yet.
 			self.refreshLanes({note["laneId"]}, noteId)
-		self.updateButtons()
 		self.plugin.speak(messages.positionInLane(j + 1, len(ids)))
-		self.focusNotes()
-
-	def onStatus(self, evt):
-		noteId = self.selectedNoteId()
-		if not noteId:
-			return
-		current = self.store.getNote(noteId)["laneId"]
-		others = [lane for lane in model.LANE_IDS if lane != current]
-		index = prompts.chooseFromMenu(self.statusButton, [messages.laneName(lane) for lane in others])
-		if index is None:
-			self.focusNotes()
-			return
-		self.setStatus(noteId, others[index])
-
-	def onMove(self, evt):
-		noteId = self.selectedNoteId()
-		if not noteId:
-			return
-		following = self.neighbourOf(noteId)
-		if self.plugin.moveNote(self, self.store.getNote(noteId)):
-			self.noteChanged(noteId, fallback=following)
 		self.focusNotes()
 
 	def onDelete(self, evt):

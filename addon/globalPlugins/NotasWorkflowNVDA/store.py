@@ -563,17 +563,24 @@ class NotesStore:
 		folder["name"] = name
 		self.save()
 
+	def folderContents(self, folderId):
+		"""(notebooks, notes) that deleting the folder deletes: its notebooks, the notes put
+		directly in it and the notes of its notebooks."""
+		notebookIds = {nb["id"] for nb in self.notebooks if nb["folderId"] == folderId}
+		notes = sum(1 for n in self.notes if n["folderId"] == folderId or n["notebookId"] in notebookIds)
+		return len(notebookIds), notes
+
 	def deleteFolder(self, folderId):
-		"""Notebooks and notes of the folder become loose (nothing is deleted)."""
+		"""Deletes the folder and everything in it (1.12.0): its notebooks, the notes put
+		directly in it and the notes of its notebooks. Returns (notebooks, notes) deleted."""
 		folder = self._need(self.getFolder(folderId), "folder")
+		notebookIds = {nb["id"] for nb in self.notebooks if nb["folderId"] == folderId}
 		self.folders.remove(folder)
-		for nb in self.notebooks:
-			if nb["folderId"] == folderId:
-				nb["folderId"] = None
-		for note in self.notes:
-			if note["folderId"] == folderId:
-				note["folderId"] = None
+		self.notebooks = [nb for nb in self.notebooks if nb["id"] not in notebookIds]
+		before = len(self.notes)
+		self.notes = [n for n in self.notes if n["folderId"] != folderId and n["notebookId"] not in notebookIds]
 		self.save()
+		return len(notebookIds), before - len(self.notes)
 
 	# -- notebooks ----------------------------------------------------------------------------
 
@@ -609,11 +616,15 @@ class NotesStore:
 		notebook["folderId"] = folderId
 		self.save()
 
+	def notebookContents(self, notebookId):
+		"""Number of notes that deleting the notebook deletes."""
+		return sum(1 for n in self.notes if n["notebookId"] == notebookId)
+
 	def deleteNotebook(self, notebookId):
-		"""The notes of the notebook become loose (nothing is deleted)."""
+		"""Deletes the notebook and its notes (1.12.0). Returns the number of notes deleted."""
 		notebook = self._need(self.getNotebook(notebookId), "notebook")
 		self.notebooks.remove(notebook)
-		for note in self.notes:
-			if note["notebookId"] == notebookId:
-				note["notebookId"] = None
+		before = len(self.notes)
+		self.notes = [n for n in self.notes if n["notebookId"] != notebookId]
 		self.save()
+		return before - len(self.notes)

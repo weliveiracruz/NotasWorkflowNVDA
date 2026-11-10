@@ -1,5 +1,10 @@
 # Histórico de versões
 
+## 1.12.0
+
+* **Excluir pasta ou caderno exclui o que está dentro** (correção): ao excluir um caderno, as folhas dele também são excluídas; ao excluir uma pasta, são excluídos os cadernos dela, as folhas desses cadernos e as folhas guardadas direto na pasta. Antes, as folhas ficavam soltas. A pergunta antes de excluir diz quanto será excluído ("Excluir a pasta Projetos e tudo o que está nela: 2 cadernos e 5 folhas? Isso não pode ser desfeito."), com Não como padrão.
+* **Janela principal mais enxuta**: saíram os botões **Atualizar o status da tarefa…**, **Mover para…** e **Excluir**. Na lista de folhas, Alt+Shift+Setas mudam o status e Delete exclui; o status e o local também mudam na janela da folha, e Mover para… continua em Cadernos e pastas.
+
 ## 1.11.0
 
 * **Nova pasta no Novo caderno**: a janela Novo caderno ganhou o botão **Nova pasta… (Alt+V)**. A pasta criada entra na hora na lista **Pasta**, já escolhida, com o foco nela, e o nome digitado do caderno continua lá.

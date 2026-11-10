@@ -1,18 +1,18 @@
 # Última execução dos testes
 
-* Execução nº 32 (4 nesta versão) em 2026-11-09T20:56:25-03:00
-* Versão: 1.11.0
+* Execução nº 34 (2 nesta versão) em 2026-11-09T21:23:10-03:00
+* Versão: 1.12.0
 * Python: 3.11, 3.13
 * Observação: build.py --release
-* **Testes: 796 · Aprovados: 796 · Falharam: 0 · Corrigidos desde a execução anterior: 0**
+* **Testes: 800 · Aprovados: 800 · Falharam: 0 · Corrigidos desde a execução anterior: 0**
 
 | Suíte | Testes | Aprovados | Falharam |
 |---|---|---|---|
-| unit (python 3.11) | 115 | 115 | 0 |
-| unit (python 3.13) | 115 | 115 | 0 |
-| interface (test_gui) | 232 | 232 | 0 |
-| accessibility (test_accessibility) | 107 | 107 | 0 |
-| accessibility (test_accessibility, pt_BR) | 107 | 107 | 0 |
+| unit (python 3.11) | 117 | 117 | 0 |
+| unit (python 3.13) | 117 | 117 | 0 |
+| interface (test_gui) | 234 | 234 | 0 |
+| accessibility (test_accessibility) | 106 | 106 | 0 |
+| accessibility (test_accessibility, pt_BR) | 106 | 106 | 0 |
 | translation (test_translation) | 10 | 10 | 0 |
 | security (test_security) | 45 | 45 | 0 |
 | NVDA installed (test_nvda_runtime) | 6 | 6 | 0 |

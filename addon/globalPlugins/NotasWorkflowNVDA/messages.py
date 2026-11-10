@@ -56,6 +56,26 @@ def notebooksCount(count):
 	return _("{count} notebooks").format(count=count)
 
 
+def confirmDeleteFolder(name, notebooks, notes):
+	"""Question before deleting a folder: everything in it is deleted too (1.12.0)."""
+	if not notebooks and not notes:
+		# Translators: confirmation before deleting an empty folder.
+		return _("Delete the folder {name}? It is empty.").format(name=name)
+	# Translators: confirmation before deleting a folder; {notebooks} is "2 notebooks" and {notes} is "5 notes", all deleted with it.
+	return _("Delete the folder {name} and everything in it: {notebooks} and {notes}? This cannot be undone.").format(
+		name=name, notebooks=notebooksCount(notebooks), notes=notesCount(notes)
+	)
+
+
+def confirmDeleteNotebook(name, notes):
+	"""Question before deleting a notebook: its notes are deleted too (1.12.0)."""
+	if not notes:
+		# Translators: confirmation before deleting an empty notebook.
+		return _("Delete the notebook {name}? It is empty.").format(name=name)
+	# Translators: confirmation before deleting a notebook; {notes} is "5 notes", deleted with it.
+	return _("Delete the notebook {name} and everything in it: {notes}? This cannot be undone.").format(name=name, notes=notesCount(notes))
+
+
 def looseNote():
 	# Translators: place of a note that is neither in a notebook nor in a folder.
 	return _("Loose note (no notebook or folder)")

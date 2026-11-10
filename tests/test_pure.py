@@ -424,22 +424,52 @@ class FUN09_NotebooksAndFolders(unittest.TestCase):
 		self.assertEqual(colors, list(model.NOTEBOOK_COLORS) + [model.NOTEBOOK_COLORS[0]])
 		self.assertEqual(s.addFolder("f")["color"], model.FOLDER_COLORS[0])
 
-	def test_deleting_a_notebook_keeps_its_notes(self):
+	def test_deleting_a_notebook_deletes_its_notes(self):
 		s = newStore()
 		nb = s.addNotebook("x")
-		n = s.addNote("a", notebookId=nb["id"])
-		s.deleteNotebook(nb["id"])
-		self.assertEqual(s.notes, [n])
-		self.assertIsNone(n["notebookId"])
+		other = s.addNotebook("y")
+		s.addNote("a", notebookId=nb["id"])
+		s.addNote("b", notebookId=nb["id"])
+		kept = [s.addNote("loose"), s.addNote("c", notebookId=other["id"])]
+		self.assertEqual(s.notebookContents(nb["id"]), 2)
+		self.assertEqual(s.deleteNotebook(nb["id"]), 2)
+		self.assertEqual(s.notes, kept)
+		self.assertEqual(s.notebooks, [other])
+		self.assertTrue(all(s.getNote(n["id"]) is n for n in kept))
 
-	def test_deleting_a_folder_keeps_notebooks_and_notes(self):
+	def test_deleting_a_folder_deletes_everything_in_it(self):
 		s = newStore()
 		f = s.addFolder("f")
+		g = s.addFolder("g")
 		nb = s.addNotebook("x", f["id"])
+		otherNb = s.addNotebook("y", g["id"])
+		free = s.addNotebook("z")
+		s.addNote("in notebook", notebookId=nb["id"])
+		s.addNote("in folder", folderId=f["id"])
+		kept = [s.addNote("loose"), s.addNote("other folder", folderId=g["id"]), s.addNote("other notebook", notebookId=otherNb["id"]), s.addNote("free", notebookId=free["id"])]
+		self.assertEqual(s.folderContents(f["id"]), (1, 2))
+		self.assertEqual(s.deleteFolder(f["id"]), (1, 2))
+		self.assertEqual((s.folders, s.notebooks, s.notes), ([g], [otherNb, free], kept))
+
+	def test_deleting_an_empty_folder_or_notebook(self):
+		s = newStore()
+		f = s.addFolder("f")
+		nb = s.addNotebook("x")
 		n = s.addNote("a")
-		n["folderId"] = f["id"]
+		self.assertEqual((s.folderContents(f["id"]), s.notebookContents(nb["id"])), ((0, 0), 0))
+		self.assertEqual((s.deleteFolder(f["id"]), s.deleteNotebook(nb["id"])), ((0, 0), 0))
+		self.assertEqual(s.notes, [n])
+
+	def test_deleting_is_saved(self):
+		folder = _helpers.tempFolder()
+		s = newStore(folder)
+		f = s.addFolder("f")
+		nb = s.addNotebook("x", f["id"])
+		s.addNote("a", notebookId=nb["id"])
+		kept = s.addNote("b")
 		s.deleteFolder(f["id"])
-		self.assertEqual((nb["folderId"], n["folderId"], len(s.notebooks), len(s.notes)), (None, None, 1, 1))
+		again = newStore(folder)
+		self.assertEqual(([x["id"] for x in again.notes], again.notebooks, again.folders), ([kept["id"]], [], []))
 
 	def test_rename_move_and_empty_names(self):
 		s = newStore()

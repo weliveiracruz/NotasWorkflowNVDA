@@ -324,9 +324,9 @@ def run():
 	R.check("SEG-09 any answer other than Yes keeps the note", plugin.store.getNote(n["id"]) is not None)
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.OK
 	nb = plugin.store.addNotebook("C")
-	plugin.store.moveNoteToNotebook(n["id"], nb["id"])
+	inside = plugin.store.addNote("Dentro", notebookId=nb["id"])
 	plugin.store.deleteNotebook(nb["id"])
-	R.check("SEG-09 deleting a notebook never deletes notes", plugin.store.getNote(n["id"]) is not None)
+	R.check("SEG-09 deleting a notebook deletes only its own notes (1.12.0); the other notes stay", plugin.store.getNote(inside["id"]) is None and plugin.store.getNote(n["id"]) is not None)
 
 	# -- SEG-10 secure screens / SEG-11 uninstall ---------------------------------------------------------------------
 	import globalPluginHandler

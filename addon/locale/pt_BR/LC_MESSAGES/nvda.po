@@ -114,10 +114,6 @@ msgstr "Folhas recentes"
 msgid "&Create…"
 msgstr "&Criar…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:93
-msgid "&Update the task status…"
-msgstr "&Atualizar o status da tarefa…"
-
 #: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py:95 addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:49
 msgid "&Move to…"
 msgstr "&Mover para…"
@@ -469,13 +465,25 @@ msgstr "Sem pasta"
 msgid "Folder of the notebook {name}:"
 msgstr "Pasta do caderno {name}:"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:386
-msgid "Delete the folder {name}? Its notebooks and notes are not deleted: they stay without folder."
-msgstr "Excluir a pasta {name}? Os cadernos e as folhas dela não são apagados: ficam sem pasta."
+#. Translators: confirmation before deleting an empty folder.
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Delete the folder {name}? It is empty."
+msgstr "Excluir a pasta {name}? Ela está vazia."
 
-#: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:390
-msgid "Delete the notebook {name}? Its notes are not deleted: they become loose notes."
-msgstr "Excluir o caderno {name}? As folhas dele não são apagadas: viram folhas soltas."
+#. Translators: confirmation before deleting a folder; {notebooks} is "2 notebooks" and {notes} is "5 notes", all deleted with it.
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Delete the folder {name} and everything in it: {notebooks} and {notes}? This cannot be undone."
+msgstr "Excluir a pasta {name} e tudo o que está nela: {notebooks} e {notes}? Isso não pode ser desfeito."
+
+#. Translators: confirmation before deleting an empty notebook.
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Delete the notebook {name}? It is empty."
+msgstr "Excluir o caderno {name}? Ele está vazio."
+
+#. Translators: confirmation before deleting a notebook; {notes} is "5 notes", deleted with it.
+#: addon/globalPlugins/NotasWorkflowNVDA/messages.py
+msgid "Delete the notebook {name} and everything in it: {notes}? This cannot be undone."
+msgstr "Excluir o caderno {name} e tudo o que está nele: {notes}? Isso não pode ser desfeito."
 
 #: addon/globalPlugins/NotasWorkflowNVDA/organizeDialog.py:117
 msgid "Folder {name}, {notebooks}, {notes}"

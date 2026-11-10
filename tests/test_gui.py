@@ -43,7 +43,7 @@ def run():
 	lanes = treeTexts(dlg.tree)
 	R.check("FUN-05 tree has the 4 status lanes, empty", [t for t, _k in lanes] == ["To do, 0 notes", "In progress, 0 notes", "Blocked, 0 notes", "Done, 0 notes"], lanes)
 	R.check("FUN-14 only the lanes view: no View box, no table, no Open button", not any(hasattr(dlg, a) for a in ("viewChoice", "table", "openButton", "notebookButton")))
-	R.check("FUN-14 note buttons disabled without a note", not dlg.statusButton.IsEnabled() and not dlg.deleteButton.IsEnabled() and not dlg.moveButton.IsEnabled())
+	R.check("FUN-39 the main window has no Update the task status, Move to or Delete buttons (1.12.0)", not any(hasattr(dlg, a) for a in ("statusButton", "moveButton", "deleteButton")) and [b.GetLabel() for b in (dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.manualButton, dlg.closeButton)] == ["&Create…", "Searc&h…", "Notebooks and &folders…", "E&xport…", "User ma&nual…", "C&lose"])
 	R.check("FUN-14 the button that creates is called Create", dlg.createButton.GetLabel() == "&Create…")
 	again = openWindow(plugin)
 	R.check("FUN-14 opening again reuses the window", again is dlg)
@@ -78,7 +78,6 @@ def run():
 	R.check("FUN-14 new note selected in the tree", dlg.selectedNoteId() == note["id"])
 	lanes = treeTexts(dlg.tree)
 	R.check("FUN-05 note under its lane with title and date", lanes[0][0] == "To do, 1 note" and lanes[0][1][0].startswith("Planejar sprint, updated on "), lanes)
-	R.check("FUN-14 note buttons enabled with a note", dlg.statusButton.IsEnabled() and dlg.moveButton.IsEnabled() and dlg.deleteButton.IsEnabled())
 	with fakeModal(noteDialog.NewNoteDialog, lambda d: wx.ID_CANCEL), menu(0):
 		click(dlg.createButton)
 	R.check("FUN-01 cancelling New note creates nothing", len(plugin.store.notes) == 1)
@@ -197,7 +196,6 @@ def run():
 
 	# -- FUN-07 update the task status ---------------------------------------------------------------
 	dlg.refresh(note["id"])
-	R.check("FUN-07 the status button is called Update the task status", dlg.statusButton.GetLabel() == "&Update the task status…")
 	n = mark()
 	dlg.onKey(Key(wx.WXK_RIGHT, alt=True, shift=True))
 	R.check("FUN-07 Alt+Shift+Right: next status, announced", note["laneId"] == "inprogress" and "Status updated to In progress" in spokenSince(n), (note["laneId"], spokenSince(n)))
@@ -206,18 +204,11 @@ def run():
 	n = mark()
 	dlg.onKey(Key(wx.WXK_LEFT, alt=True, shift=True))
 	R.check("FUN-07 first lane: nothing changes and it is said", note["laneId"] == "todo" and spokenSince(n) == ["Already in the first lane"], spokenSince(n))
-	offered = []
-
-	def chooseDone(window, labels):
-		offered.append(labels)
-		return labels.index("Done")
-
-	with replaced(prompts, "chooseFromMenu", chooseDone):
-		click(dlg.statusButton)
-	R.check("FUN-07 Update the task status offers the other statuses and changes it", note["laneId"] == "done" and offered == [["In progress", "Blocked", "Done"]], (note["laneId"], offered))
-	with menu(None):
-		click(dlg.statusButton)
-	R.check("FUN-07 status menu closed keeps the status", note["laneId"] == "done")
+	for _i in range(3):
+		dlg.onKey(Key(wx.WXK_RIGHT, alt=True, shift=True))
+	n = mark()
+	dlg.onKey(Key(wx.WXK_RIGHT, alt=True, shift=True))
+	R.check("FUN-07 Alt+Shift+Right up to Done; in the last lane it is said", note["laneId"] == "done" and spokenSince(n) == ["Already in the last lane"], (note["laneId"], spokenSince(n)))
 	key = Key(wx.WXK_DOWN)
 	dlg.onKey(key)
 	R.check("FUN-14 arrows still move in the list", key.skipped)
@@ -245,15 +236,15 @@ def run():
 	dlg.activate()
 	R.check("FUN-23 Enter again opens it", dlg.tree.IsExpanded(lane))
 
-	# -- FUN-08 Move to: notebook, folder or loose ------------------------------------------------------
+	# -- FUN-08 Move to (of Notebooks and folders): notebook, folder or loose ------------------------------
 	dlg.refresh(note["id"])
 	n = mark()
 	with replaced(prompts, "choosePlace", lambda parent, caption, store, current=0: labels.index("Notebook Trabalho")):
-		click(dlg.moveButton)
+		plugin.moveNote(dlg, note)
 	R.check("FUN-08 Move to a notebook", note["notebookId"] == nb["id"] and note["folderId"] is None and "Moved to Notebook Trabalho" in spokenSince(n), spokenSince(n))
 	n = mark()
 	with replaced(prompts, "choosePlace", lambda parent, caption, store, current=0: labels.index("Folder Projetos")):
-		click(dlg.moveButton)
+		plugin.moveNote(dlg, note)
 	R.check("FUN-08 Move to a folder (directly)", note["folderId"] == f["id"] and note["notebookId"] is None and "Moved to Folder Projetos" in spokenSince(n), spokenSince(n))
 	seen = []
 
@@ -263,10 +254,10 @@ def run():
 
 	n = mark()
 	with replaced(prompts, "choosePlace", keep):
-		click(dlg.moveButton)
+		plugin.moveNote(dlg, note)
 	R.check("FUN-08 Move to starts on the current place; choosing it changes nothing", seen == [1] and not spokenSince(n), (seen, spokenSince(n)))
 	with replaced(prompts, "choosePlace", lambda *a, **k: 0):
-		click(dlg.moveButton)
+		plugin.moveNote(dlg, note)
 	R.check("FUN-08 Move to loose", note["folderId"] is None and note["notebookId"] is None)
 
 	# -- FUN-10 filters -----------------------------------------------------------------------------
@@ -334,7 +325,7 @@ def run():
 	R.check("FUN-09 Delete asks and No keeps the note", plugin.store.getNote(extraNote["id"]) is not None and RECORD["messageBoxes"][-1].startswith("Delete the note Apagar?"))
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.YES
 	n = mark()
-	click(dlg.deleteButton)
+	dlg.onKey(Key(wx.WXK_DELETE))
 	R.check("FUN-09 Yes deletes and announces", plugin.store.getNote(extraNote["id"]) is None and "Note deleted: Apagar" in spokenSince(n))
 	R.check("FUN-09 selection goes to a neighbour", dlg.selectedNoteId() is not None)
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.OK
@@ -479,12 +470,34 @@ def run():
 	with replaced(prompts, "chooseItem", lambda *a, **k: 2):
 		click(od.moveButton)
 	R.check("FUN-12 move notebook to another folder", pessoal["folderId"] == arquivo["id"])
-	od.refresh(("notebook", nb["id"]))
+	# -- FUN-40 deleting a notebook or a folder deletes what is in it (1.12.0) --------------------------
+	store_ = plugin.store
+	velho = store_.addNotebook("Velho")
+	v1, v2 = store_.addNote("Velha 1", notebookId=velho["id"]), store_.addNote("Velha 2", notebookId=velho["id"])
+	keptCount = len(store_.notes) - 2
+	od.refresh(("notebook", velho["id"]))
+	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.NO
 	click(od.deleteButton)
-	R.check("FUN-12 deleting a notebook keeps its notes (loose)", plugin.store.getNotebook(nb["id"]) is None and note["notebookId"] is None and plugin.store.getNote(bug["id"]) is not None)
-	od.refresh(("folder", arquivo["id"]))
+	R.check("FUN-40 deleting a notebook asks, saying its notes are deleted too; No keeps everything", store_.getNotebook(velho["id"]) is not None and store_.getNote(v1["id"]) is not None and RECORD["messageBoxes"][-1] == "Delete the notebook Velho and everything in it: 2 notes? This cannot be undone.", RECORD["messageBoxes"][-1])
+	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.YES
+	n = mark()
+	click(od.deleteButton)
+	R.check("FUN-40 Yes deletes the notebook and its notes; the other notes stay", store_.getNotebook(velho["id"]) is None and store_.getNote(v1["id"]) is None and store_.getNote(v2["id"]) is None and len(store_.notes) == keptCount and "Velho deleted" in spokenSince(n), (len(store_.notes), keptCount, spokenSince(n)))
+	R.check("FUN-40 the tree of notebooks no longer has the notebook or its notes", ("notebook", velho["id"]) not in od.nodes and ("note", v1["id"]) not in od.nodes)
+	morta = store_.addFolder("Morta")
+	dentro = store_.addNotebook("Dentro", morta["id"])
+	d1 = store_.addNote("Do caderno", notebookId=dentro["id"])
+	d2 = store_.addNote("Direto na pasta", folderId=morta["id"])
+	keptCount = len(store_.notes) - 2
+	od.refresh(("folder", morta["id"]))
 	od.handleTreeKey(Key(wx.WXK_DELETE))
-	R.check("FUN-12 deleting a folder (Delete key) keeps its notebooks", plugin.store.getFolder(arquivo["id"]) is None and pessoal["folderId"] is None)
+	R.check("FUN-40 deleting a folder (Delete key) asks, saying its notebooks and notes", RECORD["messageBoxes"][-1] == "Delete the folder Morta and everything in it: 1 notebook and 2 notes? This cannot be undone.", RECORD["messageBoxes"][-1])
+	R.check("FUN-40 the folder, its notebooks, the notes of its notebooks and the notes put directly in it are deleted", store_.getFolder(morta["id"]) is None and store_.getNotebook(dentro["id"]) is None and store_.getNote(d1["id"]) is None and store_.getNote(d2["id"]) is None and len(store_.notes) == keptCount)
+	R.check("FUN-40 the notebooks of other folders stay", store_.getNotebook(pessoal["id"]) is not None and pessoal["folderId"] == arquivo["id"])
+	vazia = store_.addFolder("Vazia")
+	od.refresh(("folder", vazia["id"]))
+	click(od.deleteButton)
+	R.check("FUN-40 an empty folder: the question says it is empty", RECORD["messageBoxes"][-1] == "Delete the folder Vazia? It is empty." and store_.getFolder(vazia["id"]) is None, RECORD["messageBoxes"][-1])
 	nvda_stubs.MESSAGEBOX_ANSWER["value"] = wx.OK
 	od.tree.SelectItem(od.nodes[("none", None)])
 	R.check("FUN-12 Without folder: rename and delete unavailable", not od.renameButton.IsEnabled() and not od.deleteButton.IsEnabled())
@@ -502,7 +515,7 @@ def run():
 	plugin.store.save()
 	od.close()
 	dlg.refresh()
-	R.check("FUN-10 filters follow the notebooks and folders", "Notebook: Casa" in dlg.filterLabels() and "Notebook: Trabalho" not in dlg.filterLabels())
+	R.check("FUN-10 filters follow the notebooks and folders", "Notebook: Casa" in dlg.filterLabels() and "Notebook: Velho" not in dlg.filterLabels() and "Folder: Morta" not in dlg.filterLabels())
 
 	# -- FUN-15 settings ------------------------------------------------------------------------------
 	frame = wx.Frame(None, title="NVDA settings")

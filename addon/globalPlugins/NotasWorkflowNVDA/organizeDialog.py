@@ -392,14 +392,14 @@ class OrganizeDialog(wx.Dialog):
 			return
 		if kind not in ("folder", "notebook"):
 			return
+		# Deleting a folder or a notebook deletes everything in it (1.12.0): the question says how much.
 		if kind == "folder":
 			item = self.store.getFolder(ident)
-			# Translators: confirmation before deleting a folder.
-			question = _("Delete the folder {name}? Its notebooks and notes are not deleted: they stay without folder.").format(name=item["name"])
+			notebooks, notes = self.store.folderContents(ident)
+			question = messages.confirmDeleteFolder(item["name"], notebooks, notes)
 		else:
 			item = self.store.getNotebook(ident)
-			# Translators: confirmation before deleting a notebook.
-			question = _("Delete the notebook {name}? Its notes are not deleted: they become loose notes.").format(name=item["name"])
+			question = messages.confirmDeleteNotebook(item["name"], self.store.notebookContents(ident))
 		# Translators: title of the confirmation before deleting a notebook or folder.
 		answer = gui.messageBox(question, _("Delete"), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_WARNING, self)
 		if answer != wx.YES:

@@ -9,8 +9,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 * **Mostrar**: uma árvore com todas as folhas, folhas soltas (sem caderno nem pasta), folhas recentes (as 10 alteradas por último), cada pasta com os cadernos dela dentro e os cadernos sem pasta. Escolher um item mostra as folhas dele; Enter vai para a lista de folhas.
 * **Folhas**: as folhas numa árvore com um ramo por raia ("A fazer, 3 folhas"). As raias começam fechadas: Seta para a direita abre, Seta para a esquerda fecha. Enter abre a folha, Delete exclui (depois de confirmar), **Alt+Shift+Seta para a direita** e **Alt+Shift+Seta para a esquerda** mudam o status, **Ctrl+Shift+Seta para cima** e **Ctrl+Shift+Seta para baixo** sobem ou descem a folha dentro da raia. Cada raia mostra 200 folhas por vez; "Mostrar mais folhas" no fim mostra as próximas.
 * **Criar…**: um menu para criar uma folha, um caderno (Novo caderno pede o nome e a pasta, e tem Nova pasta…), uma pasta ou uma **folha a partir de documento**.
-* **Atualizar o status da tarefa…**: um menu com os outros status.
-* **Mover para…**: move a folha para um caderno, direto para uma pasta ou a deixa solta.
+* O status, o lugar e a exclusão de uma folha são feitos na lista (Alt+Shift+Setas, Delete) e na janela da folha (Status e Local); a janela não tem botões para isso.
 * **Local** (na Nova folha, na janela da folha e em Mover para) é uma árvore que se abre como as raias: cada pasta começa fechada, com os cadernos dela dentro; escolher a própria pasta guarda a folha direto nela. A Nova folha também tem **Novo caderno…** e **Nova pasta…**: o que é criado ali aparece em Local, já escolhido.
 * **Excluir**, **Buscar…**, **Cadernos e pastas…** e **Fechar** (Esc).
 * **Exportar…**: exporta a folha selecionada, um caderno ou uma pasta como documento (veja abaixo).
@@ -42,7 +41,7 @@ O botão **Formatação…** abre um menu com todos os formatos; ele vale para o
 
 ## Cadernos e pastas
 
-A janela **Cadernos e pastas…** mostra cada pasta com os seus cadernos e as suas folhas, um ramo "Sem pasta" com os outros cadernos e um ramo "Folhas soltas". Enter abre uma folha. **Criar…** cria uma folha, um caderno ou uma pasta no lugar selecionado; **Renomear…** (F2) renomeia uma pasta ou um caderno ou muda o título de uma folha; **Mover para…** move uma folha ou um caderno; **Excluir** (tecla Delete) exclui. Excluir um caderno ou uma pasta nunca apaga folhas: elas ficam soltas.
+A janela **Cadernos e pastas…** mostra cada pasta com os seus cadernos e as suas folhas, um ramo "Sem pasta" com os outros cadernos e um ramo "Folhas soltas". Enter abre uma folha. **Criar…** cria uma folha, um caderno ou uma pasta no lugar selecionado; **Renomear…** (F2) renomeia uma pasta ou um caderno ou muda o título de uma folha; **Mover para…** move uma folha ou um caderno; **Excluir** (tecla Delete) exclui. Excluir um caderno exclui também as folhas dele; excluir uma pasta exclui os cadernos dela, as folhas desses cadernos e as folhas guardadas direto nela. A pergunta diz quanto será excluído.
 
 ## Folha a partir de documento
 

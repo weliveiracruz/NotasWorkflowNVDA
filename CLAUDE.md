@@ -27,4 +27,4 @@ Nunca apague nem edite à mão execuções antigas em `reports/execucoes.json`.
 * Letras de atalho (&) únicas em cada janela, em inglês e em português.
 * Nunca registrar título, conteúdo ou tags das folhas no log.
 * Desempenho: toda mudança precisa continuar passando em `tests/test_performance.py` (100 mil folhas). Nada demorado na linha principal do NVDA: leitura, preparação da busca e gravação ficam em segundo plano; a árvore só refaz o que mudou.
-* Nunca apagar folhas do usuário: excluir caderno ou pasta solta as folhas; desinstalar não apaga nada.
+* Nunca apagar folhas do usuário sem confirmação: só excluir a folha, ou excluir o caderno ou a pasta em que ela está (desde a 1.12.0 isso exclui tudo o que está dentro, com a contagem na pergunta), apaga folhas; desinstalar não apaga nada.
