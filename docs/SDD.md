@@ -3,7 +3,7 @@
 Documento de projeto de software (Software Design Document) do complemento **NotasWorkflowNVDA** para o leitor de telas NVDA. Ele define **o que** o complemento faz, **como** é construído, **como** é testado e **como** uma versão é liberada. Vale para todas as versões a partir da 1.0.0.
 
 * Pasta do projeto: `C:\git\ADDONS NVDA\NotasWorkflowNVDA`
-* Projeto de referência: aplicação web **Notas Workflow** (`C:\git\notasworkflow`, Next.js), cujo SDD está em `C:\git\notasworkflow\SDD.md`
+* Origem: aplicação web **Notas Workflow** (repositório `weliveiracruz/notasworkflow`, Next.js). Desde novembro de 2026 o complemento é um **projeto independente**: não acompanha mais o web.
 * Nome interno do complemento: `NotasWorkflowNVDA` (pacote `dist/NotasWorkflowNVDA-<versão>.nvda-addon`)
 * Autor: Wellington Cruz
 * Licença: GPL 2 (a mesma do NVDA)
@@ -16,7 +16,9 @@ Levar para dentro do NVDA o mesmo fluxo de trabalho do Notas Workflow web: **fol
 
 O complemento não é uma cópia visual do quadro kanban: ele traduz cada parte do quadro para controles nativos do Windows que o NVDA lê sem esforço (árvore, tabela, campos e botões), mantendo **o mesmo modelo de dados** do web, de forma que as folhas possam ir e voltar entre os dois.
 
-## 2. Correspondência com o projeto web
+## 2. Correspondência com o projeto web (histórico)
+
+Esta seção registra como o complemento foi criado a partir do web. Hoje os dois projetos são **independentes**: mudanças no web não precisam ser trazidas para cá, e o complemento pode funcionar diferente (por exemplo, a exclusão em cascata da 1.12.0, RF-35). O formato do arquivo de folhas continua o mesmo até alguma versão mudar isso.
 
 O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente no complemento:
 

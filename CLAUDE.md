@@ -1,6 +1,6 @@
 # Instruções para quem trabalha neste repositório (pessoas e agentes de IA)
 
-O NotasWorkflowNVDA é o complemento do NVDA equivalente à aplicação web Notas Workflow (`C:\git\notasworkflow`). O modelo de dados (`model.py`, `store.py`) segue `types/index.ts` e `lib/store.ts` do web: mudou lá, mude aqui e nos testes (`docs/SDD.md`, seção 2).
+O NotasWorkflowNVDA é um complemento do NVDA para folhas e tarefas em raias de status, cadernos e pastas. Ele nasceu da aplicação web Notas Workflow, mas hoje é um **projeto independente**: não é preciso acompanhar o web nem manter o modelo de dados igual ao dele. As decisões de funcionamento são da pessoa responsável pelo complemento; a correspondência com o web em `docs/SDD.md` (seção 2) fica só como histórico.
 
 ## Regra obrigatória: testes a cada nova versão
 
