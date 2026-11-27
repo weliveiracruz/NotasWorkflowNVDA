@@ -460,6 +460,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.speak(messages.notebookCreated(notebook["name"]))
 		return notebook
 
+	def shiftPlace(self, kind, ident, step):
+		"""Ctrl+Shift+Up (step -1) or Down (+1) on a folder or a notebook (Show, Notebooks and
+		folders): one place up or down among its siblings (1.13.0). Says the new position, or
+		that it is already at the end. True when the order changed."""
+		func = self.store.moveFolderBy if kind == "folder" else self.store.moveNotebookBy
+		ok, result = self.safe(func, ident, step)
+		if not ok:
+			return False
+		if result is None:
+			self.speak(messages.alreadyTopOfList() if step < 0 else messages.alreadyBottomOfList())
+			return False
+		self.speak(messages.positionInLane(*result))
+		return True
+
 	def createFolder(self, parent):
 		"""Asks the name and creates a folder. Returns it or None."""
 		# Translators: question and title of the dialog that creates a folder.

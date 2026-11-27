@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # NotasWorkflowNVDA - settingsPanel.py
 # NVDA settings > Notas Workflow NVDA: where the notes
-# are stored, automatic saving, import and export.
+# are stored, automatic saving, import and export, and the user manual.
 # Copyright (C) 2026 Wellington Cruz <weliveiracruz@gmail.com>
 # This file is covered by the GNU General Public License, version 2.
 
@@ -93,13 +93,19 @@ class NotasSettingsPanel(SettingsPanel):
 		# Translators: button that exports every note to a file.
 		self.exportButton = dataButtons.addButton(self, label=_("&Export notes…"))
 		sHelper.addItem(dataButtons)
+		helpButtons = guiHelper.ButtonHelper(wx.HORIZONTAL)
+		# Translators: button of the settings that opens the user manual of the add-on (1.13.0).
+		self.manualButton = helpButtons.addButton(self, label=_("User ma&nual…"))
+		sHelper.addItem(helpButtons)
 		self.browseButton.Bind(wx.EVT_BUTTON, self.onBrowse)
 		self.defaultButton.Bind(wx.EVT_BUTTON, self.onDefault)
 		self.importButton.Bind(wx.EVT_BUTTON, self.onImport)
 		self.exportButton.Bind(wx.EVT_BUTTON, self.onExport)
+		self.manualButton.Bind(wx.EVT_BUTTON, self.onManual)
 		hasPlugin = self.plugin is not None
 		self.importButton.Enable(hasPlugin)
 		self.exportButton.Enable(hasPlugin)
+		self.manualButton.Enable(hasPlugin)
 
 	def onBrowse(self, evt):
 		path = askFolder(self, self.folderEdit.GetValue())
@@ -123,6 +129,11 @@ class NotasSettingsPanel(SettingsPanel):
 		if path and self.plugin:
 			self.plugin.exportNotes(path)
 		self.exportButton.SetFocus()
+
+	def onManual(self, evt):
+		"""Shows the user manual in NVDA's browseable window."""
+		if self.plugin:
+			self.plugin.openManual()
 
 	def chosenFolder(self):
 		path = self.folderEdit.GetValue().strip()

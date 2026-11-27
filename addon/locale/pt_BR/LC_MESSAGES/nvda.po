@@ -171,6 +171,18 @@ msgstr "Já está no fim da raia"
 msgid "Position {position} of {total}"
 msgstr "Posição {position} de {total}"
 
+#. Translators: spoken by Ctrl+Shift+Up Arrow when the folder or notebook is already the first one of its list.
+msgid "Already at the top of the list"
+msgstr "Já está no topo da lista"
+
+#. Translators: spoken by Ctrl+Shift+Down Arrow when the folder or notebook is already the last one of its list.
+msgid "Already at the bottom of the list"
+msgstr "Já está no fim da lista"
+
+#. Translators: spoken by Ctrl+Shift+Up or Down Arrow on an item that is not a folder or a notebook (Show, Notebooks and folders).
+msgid "Here only folders and notebooks change order"
+msgstr "Aqui só pastas e cadernos mudam de ordem"
+
 msgid "Recent notes are ordered by the last change; the order cannot be changed here"
 msgstr "Folhas recentes ficam na ordem da última alteração; aqui a ordem não pode ser mudada"
 
@@ -597,7 +609,7 @@ msgstr "&Anunciar o salvamento automático"
 msgid "E&xport…"
 msgstr "&Exportar…"
 
-#: addon/globalPlugins/NotasWorkflowNVDA/mainDialog.py
+#: addon/globalPlugins/NotasWorkflowNVDA/settingsPanel.py
 msgid "User ma&nual…"
 msgstr "Ma&nual de uso…"
 

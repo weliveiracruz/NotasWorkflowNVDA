@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 """Gera o manual de uso em HTML (addon/doc/pt_BR/manual.html) a partir de
 docs/manual/MANUAL.md. Só biblioteca padrão do Python, como o resto do projeto.
-O manual vai dentro do pacote: o botão Manual de uso… da janela principal o mostra
+O manual vai dentro do pacote: o botão Manual de uso… das configurações do complemento o mostra
 na janela de navegação do NVDA.
 
 Uso:  python docs/manual/gerar_manual.py   (o build.py também roda este script)

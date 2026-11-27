@@ -43,7 +43,8 @@ def run():
 	lanes = treeTexts(dlg.tree)
 	R.check("FUN-05 tree has the 4 status lanes, empty", [t for t, _k in lanes] == ["To do, 0 notes", "In progress, 0 notes", "Blocked, 0 notes", "Done, 0 notes"], lanes)
 	R.check("FUN-14 only the lanes view: no View box, no table, no Open button", not any(hasattr(dlg, a) for a in ("viewChoice", "table", "openButton", "notebookButton")))
-	R.check("FUN-39 the main window has no Update the task status, Move to or Delete buttons (1.12.0)", not any(hasattr(dlg, a) for a in ("statusButton", "moveButton", "deleteButton")) and [b.GetLabel() for b in (dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.manualButton, dlg.closeButton)] == ["&Create…", "Searc&h…", "Notebooks and &folders…", "E&xport…", "User ma&nual…", "C&lose"])
+	R.check("FUN-39 the main window has no Update the task status, Move to or Delete buttons (1.12.0)", not any(hasattr(dlg, a) for a in ("statusButton", "moveButton", "deleteButton")) and [b.GetLabel() for b in (dlg.createButton, dlg.searchButton, dlg.organizeButton, dlg.exportButton, dlg.closeButton)] == ["&Create…", "Searc&h…", "Notebooks and &folders…", "E&xport…", "C&lose"])
+	R.check("FUN-29 the main window has no User manual button (1.13.0: it is in the settings)", not hasattr(dlg, "manualButton") and "User ma&nual…" not in [c.GetLabel() for c in dlg.GetChildren()])
 	R.check("FUN-14 the button that creates is called Create", dlg.createButton.GetLabel() == "&Create…")
 	again = openWindow(plugin)
 	R.check("FUN-14 opening again reuses the window", again is dlg)
@@ -54,10 +55,14 @@ def run():
 
 	gerar_manual.build()
 	shown = len(nvda_stubs.RECORD["browseable"])
-	click(dlg.manualButton)
+	manualFrame = wx.Frame(None, title="NVDA settings")
+	manualPanel = settingsPanel.NotasSettingsPanel(manualFrame)
+	R.check("FUN-29 the settings have the button User manual…, available", manualPanel.manualButton.GetLabel() == "User ma&nual…" and manualPanel.manualButton.IsEnabled())
+	click(manualPanel.manualButton)
+	manualFrame.Destroy()
 	got = nvda_stubs.RECORD["browseable"][shown:]
 	page = got[0][0] if got else ""
-	R.check("FUN-29 User manual shows the manual in NVDA's browseable window (HTML)", len(got) == 1 and got[0][2] is True and got[0][1] == "Notas Workflow NVDA user manual", [g[1:] for g in got])
+	R.check("FUN-29 User manual… of the settings shows the manual in NVDA's browseable window (HTML)", len(got) == 1 and got[0][2] is True and got[0][1] == "Notas Workflow NVDA user manual", [g[1:] for g in got])
 	R.check("FUN-29 the manual shown is the whole manual, in Portuguese, with its headings and tables", page.startswith('<main lang="pt-BR">') and page.endswith("</main>") and "<h1" in page and page.count("<h2") >= 10 and "<th scope=\"col\">" in page and "<script" not in page, page[:80])
 	n = mark()
 	with replaced(NotasWorkflowNVDA, "manualPath", lambda: None):
@@ -620,6 +625,7 @@ def run():
 	closeWindow()
 	collapsedLanesAndPile()
 	orderInLane()
+	orderOfPlaces()
 	legacyMigration()
 	locationTree()
 	newNotePlaces()
@@ -912,6 +918,100 @@ def orderInLane():
 	press(wx.WXK_DOWN)
 	lane = [x["id"] for x in model.byLane(s.notes)["todo"]]
 	R.check("FUN-30 at the end of a page the note passes the first one not shown yet", lane.index(last) == mainDialog.PAGE_SIZE and dlg.selectedNoteId() == last, (lane.index(last), len(extra)))
+	plugin.terminate()
+
+
+def orderOfPlaces():
+	"""FUN-40 (1.13.0): Ctrl+Shift+Up and Down Arrow change the order of folders and notebooks
+	in Show and in Notebooks and folders, with the same keys as the notes."""
+	plugin = newPlugin()
+	s = plugin.store
+	pa, pb, pc = s.addFolder("Pasta A"), s.addFolder("Pasta B"), s.addFolder("Pasta C")
+	x, y = s.addNotebook("X", pb["id"]), s.addNotebook("Y", pb["id"])
+	solto1, solto2 = s.addNotebook("Solto 1"), s.addNotebook("Solto 2")
+	note = s.addNote("Folha da Y", notebookId=y["id"])
+	dlg = openWindow(plugin)
+	ft = dlg.filterTree
+
+	def folders():
+		return [f["name"] for f in s.folders]
+
+	def press(code, handler=dlg.onFilterKey):
+		handler(Key(code, ctrl=True, shift=True))
+
+	def showTop():
+		return [t for t, _k in treeTexts(ft)]
+
+	# -- Show (main window) --
+	selectItem = mainDialog.selectItem
+	selectItem(ft, dlg.filterItems[("folder", pc["id"])])
+	R.check("FUN-40 selecting a folder in Show shows it", dlg.activeFilter == ("folder", pc["id"]))
+	n = mark()
+	press(wx.WXK_UP)
+	R.check("FUN-40 Show: Ctrl+Shift+Up moves the folder up and says its position", folders() == ["Pasta A", "Pasta C", "Pasta B"] and "Position 2 of 3" in spokenSince(n), (folders(), spokenSince(n)))
+	R.check("FUN-40 Show is built in the new order, the folder still selected and shown", showTop()[3:6] == ["Folder: Pasta A", "Folder: Pasta C", "Folder: Pasta B"] and ft.GetItemData(ft.GetSelection()) == ("folder", pc["id"]) and dlg.activeFilter == ("folder", pc["id"]), (showTop(), ft.GetItemData(ft.GetSelection())))
+	press(wx.WXK_UP)
+	n = mark()
+	press(wx.WXK_UP)
+	R.check("FUN-40 Show: at the top nothing changes and it is said", folders() == ["Pasta C", "Pasta A", "Pasta B"] and spokenSince(n) == ["Already at the top of the list"], (folders(), spokenSince(n)))
+	selectItem(ft, dlg.filterItems[("notebook", y["id"])])
+	n = mark()
+	press(wx.WXK_UP)
+	inside = [t for t, _k in treeTexts(ft, dlg.filterItems[("folder", pb["id"])])]
+	R.check("FUN-40 Show: a notebook moves among the notebooks of its folder; its folder stays open", [nb["name"] for nb in s.notebooksIn(pb["id"])] == ["Y", "X"] and inside == ["Notebook: Y", "Notebook: X"] and ft.IsExpanded(dlg.filterItems[("folder", pb["id"])]) and "Position 1 of 2" in spokenSince(n), (inside, spokenSince(n)))
+	R.check("FUN-40 Show: the notes shown do not change and the note keeps its place", dlg.activeFilter == ("notebook", y["id"]) and note["notebookId"] == y["id"] and dlg.treeLabel.GetLabel().startswith("Not&es: Notebook: Y (1)"), dlg.treeLabel.GetLabel())
+	n = mark()
+	press(wx.WXK_UP)
+	R.check("FUN-40 Show: the first notebook of a folder does not leave it", spokenSince(n) == ["Already at the top of the list"] and y["folderId"] == pb["id"], spokenSince(n))
+	selectItem(ft, dlg.filterItems[("notebook", solto2["id"])])
+	press(wx.WXK_UP)
+	R.check("FUN-40 Show: notebooks without folder change order among themselves", [nb["name"] for nb in s.notebooksIn(None)] == ["Solto 2", "Solto 1"] and showTop()[-2:] == ["Notebook: Solto 2", "Notebook: Solto 1"], showTop())
+	selectItem(ft, dlg.filterItems[model.FILTER_ALL])
+	n = mark()
+	press(wx.WXK_DOWN)
+	R.check("FUN-40 Show: on All notes nothing changes and it is said", spokenSince(n) == ["Here only folders and notebooks change order"] and folders() == ["Pasta C", "Pasta A", "Pasta B"], spokenSince(n))
+	key = Key(wx.WXK_DOWN, ctrl=True, shift=True)
+	dlg.onFilterKey(key)
+	R.check("FUN-40 Show: the key is used (not passed on to the tree)", not key.skipped)
+	other = Key(wx.WXK_DOWN)
+	dlg.onFilterKey(other)
+	R.check("FUN-40 Show: other keys go on to the tree", other.skipped)
+
+	# -- Notebooks and folders --
+	od = organizeDialog.OrganizeDialog(dlg, plugin)
+	od.Show()
+	od.expandKey(("folder", pb["id"]))
+	od.refresh(("folder", pb["id"]))
+	n = mark()
+	press(wx.WXK_UP, od.onKey)
+	top = [t for t, _k in treeTexts(od.tree)]
+	R.check("FUN-40 Notebooks and folders: Ctrl+Shift+Up moves the folder up and says its position", folders() == ["Pasta C", "Pasta B", "Pasta A"] and top[1].startswith("Folder Pasta B") and "Position 2 of 3" in spokenSince(n), (top, spokenSince(n)))
+	R.check("FUN-40 Notebooks and folders: the folder stays selected and open", od.selected() == ("folder", pb["id"]) and od.tree.IsExpanded(od.nodes[("folder", pb["id"])]), od.selected())
+	for _i in range(2):
+		press(wx.WXK_DOWN, od.onKey)
+	R.check("FUN-40 Notebooks and folders: at the bottom it is said", folders() == ["Pasta C", "Pasta A", "Pasta B"] and spokenSince(n)[-1] == "Already at the bottom of the list", (folders(), spokenSince(n)))
+	od.refresh(("notebook", x["id"]))
+	press(wx.WXK_UP, od.onKey)
+	kids = [t for t, _k in treeTexts(od.tree, od.nodes[("folder", pb["id"])])]
+	R.check("FUN-40 Notebooks and folders: a notebook moves inside its folder and stays selected", [nb["name"] for nb in s.notebooksIn(pb["id"])] == ["X", "Y"] and kids[0].startswith("X,") and od.selected() == ("notebook", x["id"]), (kids, od.selected()))
+	od.refresh(("note", note["id"]))
+	n = mark()
+	press(wx.WXK_DOWN, od.onKey)
+	R.check("FUN-40 Notebooks and folders: on a note nothing changes and it is said", spokenSince(n) == ["Here only folders and notebooks change order"] and [nb["name"] for nb in s.notebooksIn(pb["id"])] == ["X", "Y"], spokenSince(n))
+	od.refresh(("none", None))
+	n = mark()
+	press(wx.WXK_DOWN, od.onKey)
+	R.check("FUN-40 Notebooks and folders: on Without folder nothing changes", spokenSince(n) == ["Here only folders and notebooks change order"])
+	od.Destroy()
+
+	# -- the order is the same everywhere and stays --
+	labels, _places = organizeDialog.messages.locationChoices(s)
+	R.check("FUN-40 the Location tree follows the new order", [lbl for lbl in labels if lbl.startswith("Folder")][:3] == ["Folder Pasta C", "Folder Pasta A", "Folder Pasta B"], labels)
+	s.flush()
+	again = store.NotesStore(s.folder)
+	again.load()
+	R.check("FUN-40 the new order is saved", [f["name"] for f in again.folders] == ["Pasta C", "Pasta A", "Pasta B"] and [nb["name"] for nb in again.notebooks if nb["folderId"] is None] == ["Solto 2", "Solto 1"])
+	R.check("FUN-40 no real menu or dialog opened without an answer", not RECORD["blocked"], RECORD["blocked"])
 	plugin.terminate()
 
 

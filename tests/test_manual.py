@@ -109,7 +109,10 @@ def run():
 	info = gerar_manual.builtInfo(path)
 	R.check("DOC-02 the manual was generated from the current MANUAL.md (run python build.py)", info is not None and info[1] == gerar_manual.sourceHash(md), info)
 	R.check("DOC-02 the manual is of the current version %s" % version, info is not None and info[0] == version, info)
-	R.check("DOC-02 the manual history has a row for version %s" % version, re.search(r"^\|\s*%s\s*\|" % re.escape(version), md, re.M) is not None)
+	# 1.13.0: the manual describes the add-on as it is, with the news of the version, and no history.
+	news = re.search(r"^## Novidades da versão \{\{versao\}\}\n(.*?)(?=^## )", md, re.M | re.S)
+	R.check("DOC-02 the manual has the chapter Novidades da versão, with the news of this version", news is not None and news.group(1).count("\n- ") >= 1 and "Novidades da versão %s" % version in page, news.group(0)[:120] if news else None)
+	R.check("DOC-02 the manual has no version history", "Histórico deste manual" not in md and not re.search(r"^\|\s*1\.\d+\.\d+\s*\|", md, re.M))
 	R.check("DOC-02 the top of the manual shows the version", "versão %s" % version in page)
 
 	# -- DOC-03 every control of the interface is documented ------------------------------------------
@@ -130,7 +133,7 @@ def run():
 	# -- DOC-04 shortcuts ------------------------------------------------------------------------------------
 	gestures = defaultGestures()
 	R.check("DOC-04 every default shortcut is in the manual", gestures and all(g in md for g in gestures), (gestures, [g for g in gestures if g not in md]))
-	keys = ("Alt+Shift+Seta para a direita", "Alt+Shift+Seta para a esquerda", "Ctrl+S", "Ctrl+B", "Ctrl+I", "F2", "Delete", "Esc", "Enter")
+	keys = ("Alt+Shift+Seta para a direita", "Alt+Shift+Seta para a esquerda", "Ctrl+Shift+Seta para cima", "Ctrl+Shift+Seta para baixo", "Ctrl+S", "Ctrl+B", "Ctrl+I", "F2", "Delete", "Esc", "Enter")
 	R.check("DOC-04 the keys inside the windows are in the manual", all(k in md for k in keys), [k for k in keys if k not in md])
 
 	# -- DOC-05 accessible document ---------------------------------------------------------------------------------

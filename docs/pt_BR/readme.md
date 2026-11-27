@@ -13,7 +13,7 @@ Pressione **NVDA+Alt+N** (ou menu do NVDA, Ferramentas, **Notas Workflow NVDA…
 * **Local** (na Nova folha, na janela da folha e em Mover para) é uma árvore que se abre como as raias: cada pasta começa fechada, com os cadernos dela dentro; escolher a própria pasta guarda a folha direto nela. A Nova folha também tem **Novo caderno…** e **Nova pasta…**: o que é criado ali aparece em Local, já escolhido.
 * **Excluir**, **Buscar…**, **Cadernos e pastas…** e **Fechar** (Esc).
 * **Exportar…**: exporta a folha selecionada, um caderno ou uma pasta como documento (veja abaixo).
-* **Manual de uso…** (Alt+N): abre o manual de uso detalhado na janela de leitura do NVDA, com títulos, tabelas e sumário. Um comando sem atalho em Definir comandos também o abre.
+* **Manual de uso…** (Alt+N), nas configurações do complemento (menu do NVDA, Preferências, Configurações, Notas Workflow NVDA): abre o manual de uso detalhado na janela de leitura do NVDA, com títulos, tabelas e sumário. Um comando sem atalho em Definir comandos também o abre.
 
 ## Folhas
 
@@ -60,6 +60,7 @@ A janela **Cadernos e pastas…** mostra cada pasta com os seus cadernos e as su
 | NVDA+Alt+B | Buscar nas folhas |
 | Alt+Shift+Seta para a direita e para a esquerda | Status seguinte ou anterior da folha |
 | Ctrl+Shift+Seta para cima e para baixo | Sobe ou desce a folha dentro da raia |
+| Ctrl+Shift+Seta para cima e para baixo (Mostrar, Cadernos e pastas) | Sobe ou desce a pasta ou o caderno na lista |
 | Ctrl+S, Ctrl+B, Ctrl+I | Salvar, negrito e itálico na janela da folha |
 
 Eles podem ser mudados em NVDA, Preferências, Definir comandos, categoria Notas Workflow NVDA, onde também há um comando, sem atalho, que diz quantas folhas cada raia tem.
