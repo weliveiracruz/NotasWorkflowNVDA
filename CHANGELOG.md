@@ -1,5 +1,14 @@
 # Histórico de versões
 
+## 1.13.0
+
+* **Ordem das pastas e dos cadernos**: com as mesmas teclas das folhas, **Ctrl+Shift+Seta para cima** sobe e **Ctrl+Shift+Seta para baixo** desce a pasta ou o caderno selecionado uma posição, no campo **Mostrar** da janela principal e na árvore **Organização** de Cadernos e pastas.
+* A pasta muda de lugar entre as pastas; o caderno, entre os cadernos da mesma pasta (ou entre os cadernos sem pasta). Para levar um caderno a outra pasta continua o **Mover para…**.
+* A seleção acompanha o item, as pastas abertas continuam abertas e o NVDA diz a nova posição ("Posição 2 de 3"); nas pontas, "Já está no topo da lista" ou "Já está no fim da lista". Em outros itens (Todas as folhas, Sem pasta, uma folha em Cadernos e pastas), o NVDA avisa que ali só pastas e cadernos mudam de ordem.
+* A nova ordem vale em todas as listas (Mostrar, Local, Mover para, Cadernos e pastas, Exportar) e é salva na hora; nada mais muda nas pastas, nos cadernos ou nas folhas.
+* **Manual de uso nas configurações**: o botão **Manual de uso… (Alt+N)** saiu da janela principal e agora fica nas configurações do complemento (Preferências, Configurações, Notas Workflow NVDA). O comando sem atalho em Definir comandos continua.
+* **Manual reescrito**: organizado por tarefa, com todas as funções, atalhos e mensagens faladas e o capítulo "Novidades da versão"; sem o histórico de versões.
+
 ## 1.12.0
 
 * **Excluir pasta ou caderno exclui o que está dentro** (correção): ao excluir um caderno, as folhas dele também são excluídas; ao excluir uma pasta, são excluídos os cadernos dela, as folhas desses cadernos e as folhas guardadas direto na pasta. Antes, as folhas ficavam soltas. A pergunta antes de excluir diz quanto será excluído ("Excluir a pasta Projetos e tudo o que está nela: 2 cadernos e 5 folhas? Isso não pode ser desfeito."), com Não como padrão.

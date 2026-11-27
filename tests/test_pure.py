@@ -264,6 +264,70 @@ class FUN30_OrderInLane(unittest.TestCase):
 		self.assertEqual([n["title"] for n in again.notes], ["b", "a"])
 
 
+class FUN40_OrderOfFoldersAndNotebooks(unittest.TestCase):
+	"""1.13.0: Ctrl+Shift+Up and Down change the order of folders and notebooks."""
+
+	def test_folder_up_and_down(self):
+		s = newStore()
+		a, b, c = s.addFolder("A"), s.addFolder("B"), s.addFolder("C")
+		self.assertEqual(s.moveFolderBy(c["id"], -1), (2, 3))
+		self.assertEqual([f["name"] for f in s.folders], ["A", "C", "B"])
+		self.assertEqual(s.moveFolderBy(a["id"], 1), (2, 3))
+		self.assertEqual([f["name"] for f in s.folders], ["C", "A", "B"])
+
+	def test_folder_at_the_ends_changes_nothing(self):
+		s = newStore()
+		a, b = s.addFolder("A"), s.addFolder("B")
+		self.assertIsNone(s.moveFolderBy(a["id"], -1))
+		self.assertIsNone(s.moveFolderBy(b["id"], 1))
+		self.assertEqual([f["name"] for f in s.folders], ["A", "B"])
+
+	def test_notebook_moves_only_among_the_notebooks_of_its_folder(self):
+		s = newStore()
+		f = s.addFolder("Pasta")
+		x = s.addNotebook("X", f["id"])
+		solto1 = s.addNotebook("Solto 1")
+		y = s.addNotebook("Y", f["id"])
+		solto2 = s.addNotebook("Solto 2")
+		self.assertEqual(s.moveNotebookBy(y["id"], -1), (1, 2))
+		self.assertEqual([nb["name"] for nb in s.notebooksIn(f["id"])], ["Y", "X"])
+		self.assertEqual([nb["name"] for nb in s.notebooksIn(None)], ["Solto 1", "Solto 2"])
+		self.assertIsNone(s.moveNotebookBy(y["id"], -1))
+		self.assertEqual(s.moveNotebookBy(solto2["id"], -1), (1, 2))
+		self.assertEqual([nb["name"] for nb in s.notebooksIn(None)], ["Solto 2", "Solto 1"])
+		self.assertIsNone(s.moveNotebookBy(solto1["id"], 1))
+		self.assertEqual(x["folderId"], f["id"])
+
+	def test_notes_and_places_do_not_change(self):
+		s = newStore()
+		f = s.addFolder("Pasta")
+		x, y = s.addNotebook("X", f["id"]), s.addNotebook("Y", f["id"])
+		n = s.addNote("n", notebookId=y["id"])
+		stamp = n["updatedAt"]
+		s.moveNotebookBy(y["id"], -1)
+		self.assertEqual((n["notebookId"], n["updatedAt"]), (y["id"], stamp))
+		self.assertEqual([nb["id"] for nb in s.notebooks], [y["id"], x["id"]])
+
+	def test_unknown_folder_or_notebook(self):
+		s = newStore()
+		with self.assertRaises(store.StoreError):
+			s.moveFolderBy("nope", 1)
+		with self.assertRaises(store.StoreError):
+			s.moveNotebookBy("nope", 1)
+
+	def test_order_is_saved(self):
+		folder = _helpers.tempFolder()
+		s = newStore(folder)
+		a, b = s.addFolder("A"), s.addFolder("B")
+		x, y = s.addNotebook("X"), s.addNotebook("Y")
+		s.moveFolderBy(b["id"], -1)
+		s.moveNotebookBy(y["id"], -1)
+		s.flush()
+		again = newStore(folder)
+		self.assertEqual([f["name"] for f in again.folders], ["B", "A"])
+		self.assertEqual([nb["name"] for nb in again.notebooks], ["Y", "X"])
+
+
 class FUN33_ReadDocument(unittest.TestCase):
 	"""1.8.0: the text of a document becomes the light markup of the editor."""
 

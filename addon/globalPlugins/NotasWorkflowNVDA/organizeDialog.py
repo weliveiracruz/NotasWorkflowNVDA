@@ -243,6 +243,9 @@ class OrganizeDialog(wx.Dialog):
 
 	def handleTreeKey(self, evt):
 		key = evt.GetKeyCode()
+		if evt.ControlDown() and evt.ShiftDown() and not evt.AltDown() and key in (wx.WXK_UP, wx.WXK_DOWN):
+			self.reorder(1 if key == wx.WXK_DOWN else -1)
+			return True
 		if evt.HasAnyModifiers():
 			return False
 		if key in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER):
@@ -255,6 +258,18 @@ class OrganizeDialog(wx.Dialog):
 			self.onRename(None)
 			return True
 		return False
+
+	def reorder(self, step):
+		"""Ctrl+Shift+Up (step -1) or Down (+1) (1.13.0): the selected folder goes up or down
+		among the folders, a notebook among the notebooks of its folder (or of Without folder).
+		The tree is built again in the new order, with the same branches open."""
+		kind, ident = self.selected()
+		if kind not in ("folder", "notebook"):
+			self.plugin.speak(messages.onlyFoldersAndNotebooksMove())
+			return
+		if self.plugin.shiftPlace(kind, ident, step):
+			self.refresh((kind, ident))
+		self.tree.SetFocus()
 
 	def activate(self):
 		"""Enter or double click: opens the note, shows more notes or opens/closes the branch."""

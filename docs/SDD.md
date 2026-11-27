@@ -68,6 +68,8 @@ O projeto web foi explorado módulo a módulo. Cada módulo tem um equivalente n
 | RF-32 | Folha a partir de documento e Inserir documento (1.8.0) | Criar > **Folha a partir de documento…** (também comando sem atalho) e botão **Inserir documento…** (Alt+D) da janela da folha. `importer.py` (só biblioteca padrão, sem wx/NVDA) lê .docx (estilos de título, numeração, negrito/itálico/tachado, tabelas), .pptx (ordem da apresentação, título do slide, marcadores, tabelas, anotações do orador), .txt (BOM, UTF-8, cp1252), .html/.htm (charset, título) e .eml (De, Para, Cc, Data, Anexos, corpo HTML ou texto) como a marcação leve do editor; tabelas viram linhas "a \| b"; leitura em thread (`plugin.readDocument`), corte para caber em 1 MB (`fitContent`) com aviso; arquivo até 50 MB, partes do zip até 100 MB (300 MB no total), XML com DTD recusado; .doc, .ppt, .rtf, .pdf e .msg ficam de fora (decisão da pessoa responsável) |
 | RF-33 | Criar caderno e pasta na Nova folha (1.10.0) | Botões **Novo caderno…** e **Nova pasta…** na janela Nova folha, depois de Local (`NewNoteDialog` recebe o complemento: `plugin.createNotebook` com a pasta do item escolhido em Local, `plugin.createFolder`); a árvore Local é refeita (`LocationTree.rebuild`) com o novo lugar escolhido e o foco nela; a janela principal (Mostrar) e Cadernos e pastas se atualizam mesmo se a Nova folha for cancelada |
 | RF-34 | Nova pasta no Novo caderno (1.11.0) | Botão **Nova pasta…** (Alt+V) na janela Novo caderno (`askNotebook(..., createFolder=plugin.createFolder)`): a lista Pasta é refeita com a pasta nova escolhida e o foco nela. |
+| RF-36 | Ordem das pastas e dos cadernos (1.13.0) | Ctrl+Shift+Seta para cima/baixo (as mesmas teclas de RF-30) na árvore **Mostrar** (`NotesDialog.reorderFilter`) e na árvore **Organização** (`OrganizeDialog.reorder`): `store.moveFolderBy` troca a pasta com a vizinha na lista `folders`; `store.moveNotebookBy` troca o caderno com o vizinho entre os cadernos da mesma pasta (ou sem pasta) na lista `notebooks`. Sem campo novo no arquivo: a ordem das listas é a ordem de todas as árvores (Mostrar, Local, Mover para, Organização, Exportar). `plugin.shiftPlace` fala "Posição n de total", "Já está no topo/fim da lista"; em outros itens, "Aqui só pastas e cadernos mudam de ordem". A seleção acompanha o item e as pastas abertas continuam abertas; no Mostrar, as folhas mostradas não mudam |
+| RF-37 | Manual de uso nas configurações e manual reescrito (1.13.0) | O botão **Manual de uso…** (Alt+N) sai da janela principal e vai para o painel das configurações (`NotasSettingsPanel.manualButton`, depois de Exportar folhas…, indisponível sem o complemento); o comando sem atalho continua. O `MANUAL.md` foi reescrito por tarefa: descreve o complemento como ele é, com o capítulo "Novidades da versão" e sem o histórico de versões (`test_manual` DOC-02 confere os dois) |
 | RF-35 | Janela principal sem botões da folha e exclusão em cascata (1.12.0) | A janela principal não tem **Atualizar o status da tarefa…**, **Mover para…** nem **Excluir** (Alt+Shift+Setas, Delete e a janela da folha fazem isso; Mover para… continua em Cadernos e pastas). `store.deleteNotebook` exclui o caderno e as folhas dele; `store.deleteFolder` exclui a pasta, os cadernos dela, as folhas desses cadernos e as folhas direto na pasta; `folderContents`/`notebookContents` dão a contagem da pergunta. **Diferente do web** (`lib/store.ts` solta as folhas): decisão da pessoa responsável |
 
 ### 3.2 Requisitos de acessibilidade (RA)
@@ -226,7 +228,7 @@ Ordem de tabulação:
 
 1. **Mostrar** (árvore): Todas as folhas, Folhas soltas, Folhas recentes, Pasta: <nome>… (com os Caderno: <nome> dela dentro), Caderno: <nome>… sem pasta. Enter vai para Folhas.
 2. **Folhas** (árvore de raias; o rótulo diz o filtro e quantas folhas há): ramos "A fazer, 2 folhas"… fechados no início (só a raia da folha selecionada abre); cada folha: "Título, caderno Trabalho, y, atualizada em 12/10/2026"; 200 folhas por raia e o item "Mostrar mais". Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda o status.
-3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Exportar…** (menu Folha selecionada…, Caderno…, Pasta…; RF-19), **Fechar** (Esc).
+3. Botões: **Criar…** (menu Folha…, Caderno…, Pasta…), **Atualizar o status da tarefa…**, **Mover para…**, **Excluir**, **Buscar…**, **Cadernos e pastas…**, **Exportar…** (menu Folha selecionada…, Caderno…, Pasta…; RF-19), **Fechar** (Esc). Sem Manual de uso… desde a 1.13.0 (fica nas configurações, RF-37).
 
 A janela é única. Fechar só a esconde; abrir de novo a mostra na hora, lendo o arquivo de novo se outro computador o mudou.
 
@@ -248,7 +250,7 @@ Título da janela = título da folha. Ordem: **Título**, **Local**, **Status**,
 
 ### 5.6 Configurações do NVDA > Notas Workflow NVDA
 
-**Pasta das folhas** (campo), **Procurar…**, **Usar a pasta padrão**, **Salvar automaticamente depois de (segundos)** (1–30, padrão 2), **Anunciar o salvamento automático** (padrão desligado, para não interromper a digitação), **Importar folhas…**, **Exportar folhas…**.
+**Pasta das folhas** (campo), **Procurar…**, **Usar a pasta padrão**, **Salvar automaticamente depois de (segundos)** (1–30, padrão 2), **Anunciar o salvamento automático** (padrão desligado, para não interromper a digitação), **Importar folhas…**, **Exportar folhas…**, **Manual de uso…** (1.13.0; abre o manual na janela de leitura do NVDA).
 
 ## 6. Atalhos padrão
 
@@ -261,11 +263,11 @@ Verificados contra o NVDA 2026.1.1 instalado (NVDA+Alt+C, M, R, S, T, Home, End 
 | Buscar folhas | NVDA+Alt+B |
 | Falar o resumo das raias | sem atalho (pode ser definido em Definir comandos) |
 
-Dentro das janelas: Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda a raia, Ctrl+Shift+Seta para cima/baixo muda a ordem na raia, Ctrl+S salva, Ctrl+B negrito, Ctrl+I itálico, Esc fecha.
+Dentro das janelas: Enter abre, Delete exclui, Alt+Shift+Seta para a direita/esquerda muda a raia, Ctrl+Shift+Seta para cima/baixo muda a ordem na raia (e, em Mostrar e Organização, a ordem da pasta ou do caderno, 1.13.0), Ctrl+S salva, Ctrl+B negrito, Ctrl+I itálico, Esc fecha.
 
 ## 7. Dados guardados
 
-A documentação de uso tem duas formas: o `readme` curto, que vai dentro do pacote (ajuda do complemento no NVDA), e o **manual detalhado**, `addon/doc/pt_BR/manual.html`, gerado de `docs/manual/MANUAL.md` por `docs/manual/gerar_manual.py` (só biblioteca padrão) e também dentro do pacote. Desde a 1.5.0 não há mais manual em Word: o botão **Manual de uso…** da janela principal (e o comando sem atalho "abre o manual de uso") mostra o `<main>` do `manual.html` com `ui.browseableMessage(..., isHtml=True)`, a janela de leitura do NVDA. O manual tem idioma pt-BR, um h1, capítulos em h2, seções em h3, sumário com links e tabelas com `th scope="col"`, sem script nem imagem; se o arquivo faltar, o NVDA fala que o manual não foi encontrado.
+A documentação de uso tem duas formas: o `readme` curto, que vai dentro do pacote (ajuda do complemento no NVDA), e o **manual detalhado**, `addon/doc/pt_BR/manual.html`, gerado de `docs/manual/MANUAL.md` por `docs/manual/gerar_manual.py` (só biblioteca padrão) e também dentro do pacote. Desde a 1.5.0 não há mais manual em Word: o botão **Manual de uso…** (desde a 1.13.0 nas configurações do complemento, não mais na janela principal) e o comando sem atalho "abre o manual de uso" mostram o `<main>` do `manual.html` com `ui.browseableMessage(..., isHtml=True)`, a janela de leitura do NVDA. O manual tem idioma pt-BR, um h1, capítulos em h2, seções em h3, sumário com links e tabelas com `th scope="col"`, sem script nem imagem; se o arquivo faltar, o NVDA fala que o manual não foi encontrado.
 
 | Dado | Onde | Proteção |
 |---|---|---|
@@ -293,7 +295,7 @@ O que não é automatizável (fala real do NVDA, pasta sincronizada com OneDrive
 ## 9. Processo de versão (obrigatório em toda nova versão)
 
 1. Atualizar `version` e `changelog` em `addon/manifest.ini` e `addon/locale/pt_BR/manifest.ini`, e o `CHANGELOG.md`.
-2. Atualizar o manual de uso: editar `docs/manual/MANUAL.md` (fonte) e acrescentar a versão em "Histórico deste manual"; o `build.py` gera `addon/doc/pt_BR/manual.html`, aberto pelo botão Manual de uso…. Vale para toda alteração de comportamento ou de interface.
+2. Atualizar o manual de uso: editar `docs/manual/MANUAL.md` (fonte) para descrever o complemento como ele é, sem histórico de versões, e reescrever o capítulo "Novidades da versão {{versao}}"; o `build.py` gera `addon/doc/pt_BR/manual.html`, aberto pelo botão Manual de uso… das configurações. Vale para toda alteração de comportamento ou de interface.
 3. Escrever ou atualizar os testes das funções novas ou alteradas e acrescentar os casos no `SDD-TESTES.md`.
 4. Rodar **todas** as suítes: `python tests/run_all.py --note "o que mudou"`.
 5. Se algo falhar: registrar em `reports/PROBLEMAS-<versão>.md` (ID, gravidade, causa, correção), corrigir e rodar de novo até **0 falhas**.

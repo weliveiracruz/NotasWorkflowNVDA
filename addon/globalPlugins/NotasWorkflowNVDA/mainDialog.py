@@ -115,8 +115,8 @@ class NotesDialog(wx.Dialog):
 		actions2 = guiHelper.ButtonHelper(wx.HORIZONTAL)
 		# Translators: button that opens the menu to export the selected note, a notebook or a folder.
 		self.exportButton = actions2.addButton(self, label=_("E&xport…"))
-		# Translators: button that opens the user manual of the add-on.
-		self.manualButton = actions2.addButton(self, label=_("User ma&nual…"))
+		# The user manual opens from the settings (User manual…) and from a command without a
+		# default gesture: the window has no button for it (1.13.0).
 		# Translators: button that closes the window.
 		self.closeButton = actions2.addButton(self, id=wx.ID_CLOSE, label=_("C&lose"))
 		sHelper.addItem(actions2)
@@ -131,6 +131,8 @@ class NotesDialog(wx.Dialog):
 		# tree: its type-ahead search would move the selection.
 		self.filterTree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.focusNotes())
 		self.filterTree.Bind(wx.EVT_CHAR, lambda evt: None if evt.GetKeyCode() in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER) else evt.Skip())
+		# Ctrl+Shift+Up and Down change the order of a folder or a notebook (1.13.0).
+		self.filterTree.Bind(wx.EVT_TREE_KEY_DOWN, lambda evt: self.onFilterKey(evt.GetKeyEvent()))
 		self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, lambda evt: self.activate())
 		self.tree.Bind(wx.EVT_TREE_ITEM_EXPANDED, lambda evt: self.onLaneOpened(evt, True))
 		self.tree.Bind(wx.EVT_TREE_ITEM_COLLAPSED, lambda evt: self.onLaneOpened(evt, False))
@@ -144,7 +146,6 @@ class NotesDialog(wx.Dialog):
 		self.searchButton.Bind(wx.EVT_BUTTON, self.onSearch)
 		self.organizeButton.Bind(wx.EVT_BUTTON, self.onOrganize)
 		self.exportButton.Bind(wx.EVT_BUTTON, self.onExport)
-		self.manualButton.Bind(wx.EVT_BUTTON, lambda evt: self.plugin.openManual())
 		self.closeButton.Bind(wx.EVT_BUTTON, lambda evt: self.Close())
 		self.Bind(wx.EVT_CLOSE, self.onClose)
 
@@ -427,9 +428,54 @@ class NotesDialog(wx.Dialog):
 	# -- keyboard -------------------------------------------------------------------------------
 
 	def onCharHook(self, evt):
-		if self.FindFocus() is self.tree and self.handleTreeKey(evt):
+		focus = self.FindFocus()
+		if focus is self.tree and self.handleTreeKey(evt):
+			return
+		if focus is self.filterTree and self.handleFilterKey(evt):
 			return
 		evt.Skip()
+
+	def onFilterKey(self, evt):
+		if not self.handleFilterKey(evt):
+			evt.Skip()
+
+	def handleFilterKey(self, evt):
+		"""Ctrl+Shift+Up/Down in Show: the folder or notebook goes up or down. True when handled."""
+		key = evt.GetKeyCode()
+		if evt.ControlDown() and evt.ShiftDown() and not evt.AltDown() and key in (wx.WXK_UP, wx.WXK_DOWN):
+			self.reorderFilter(1 if key == wx.WXK_DOWN else -1)
+			return True
+		return False
+
+	def reorderFilter(self, step):
+		"""Ctrl+Shift+Up (step -1) or Down (+1) in Show (1.13.0): the selected folder goes up or
+		down among the folders, a notebook among the notebooks of its folder (or without
+		folder). Show is built again in the new order, with the same folders open and the item
+		still selected; the notes shown do not change."""
+		tree = self.filterTree
+		item = tree.GetSelection()
+		flt = tree.GetItemData(item) if item.IsOk() else None
+		if not flt or flt[0] not in ("folder", "notebook"):
+			self.plugin.speak(messages.onlyFoldersAndNotebooksMove())
+			return
+		opened = [f for f, node in self.filterItems.items() if f[0] == "folder" and node.IsOk() and tree.IsExpanded(node)]
+		if not self.plugin.shiftPlace(flt[0], flt[1], step):
+			return
+		if flt != self.activeFilter:
+			self.activeFilter = flt
+			self.shown = {}
+			self.refresh()
+		else:
+			self.rebuildFilters()
+		self._fillingFilters = True
+		try:
+			for f in opened:
+				if f in self.filterItems:
+					tree.Expand(self.filterItems[f])
+			selectItem(tree, self.filterItems[flt])
+		finally:
+			self._fillingFilters = False
+		tree.SetFocus()
 
 	def onKey(self, evt):
 		if not self.handleTreeKey(evt):

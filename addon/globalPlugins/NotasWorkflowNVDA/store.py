@@ -616,6 +616,32 @@ class NotesStore:
 		notebook["folderId"] = folderId
 		self.save()
 
+	def _shiftAmong(self, items, item, siblings, step):
+		"""Swaps item with the sibling just before (step -1) or after (step +1) it in items:
+		the order of the list is the order of every tree. Returns (position, total) after the
+		move (counted among the siblings, from 1), or None at the ends (nothing changes)."""
+		i = next(k for k, x in enumerate(siblings) if x is item)
+		j = i + step
+		if not 0 <= j < len(siblings):
+			return None
+		other = siblings[j]
+		a = next(k for k, x in enumerate(items) if x is item)
+		b = next(k for k, x in enumerate(items) if x is other)
+		items[a], items[b] = other, item
+		self.save()
+		return j + 1, len(siblings)
+
+	def moveFolderBy(self, folderId, step):
+		"""Folder one place up (step -1) or down (+1) among the folders (1.13.0)."""
+		folder = self._need(self.getFolder(folderId), "folder")
+		return self._shiftAmong(self.folders, folder, list(self.folders), step)
+
+	def moveNotebookBy(self, notebookId, step):
+		"""Notebook one place up (step -1) or down (+1) among the notebooks of the same folder
+		(or among the notebooks without folder) (1.13.0)."""
+		notebook = self._need(self.getNotebook(notebookId), "notebook")
+		return self._shiftAmong(self.notebooks, notebook, self.notebooksIn(notebook["folderId"]), step)
+
 	def notebookContents(self, notebookId):
 		"""Number of notes that deleting the notebook deletes."""
 		return sum(1 for n in self.notes if n["notebookId"] == notebookId)

@@ -399,6 +399,21 @@ def positionInLane(position, total):
 	return _("Position {position} of {total}").format(position=position, total=total)
 
 
+def alreadyTopOfList():
+	# Translators: spoken by Ctrl+Shift+Up Arrow when the folder or notebook is already the first one of its list.
+	return _("Already at the top of the list")
+
+
+def alreadyBottomOfList():
+	# Translators: spoken by Ctrl+Shift+Down Arrow when the folder or notebook is already the last one of its list.
+	return _("Already at the bottom of the list")
+
+
+def onlyFoldersAndNotebooksMove():
+	# Translators: spoken by Ctrl+Shift+Up or Down Arrow on an item that is not a folder or a notebook (Show, Notebooks and folders).
+	return _("Here only folders and notebooks change order")
+
+
 def noOrderInRecent():
 	# Translators: spoken by Ctrl+Shift+Up or Down Arrow in Recent notes (always ordered by the last change).
 	return _("Recent notes are ordered by the last change; the order cannot be changed here")

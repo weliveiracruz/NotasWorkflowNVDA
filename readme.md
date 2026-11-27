@@ -13,7 +13,7 @@ Press **NVDA+Alt+N** (or NVDA menu, Tools, **Notas Workflow NVDA…**). The wind
 * **Location** (in New note, in the note window and in Move to) is a tree that opens like the lanes: each folder starts closed, with its notebooks inside; choosing the folder itself puts the note directly in it. New note also has **New notebook…** and **New folder…**: what is created there appears in Location, already chosen.
 * **Delete**, **Search…**, **Notebooks and folders…** and **Close** (Esc).
 * **Export…**: exports the selected note, a notebook or a folder as a document (see below).
-* **User manual…** (Alt+N): opens the detailed user manual (in Brazilian Portuguese) in NVDA's browseable window, with headings, tables and a table of contents. A command without a default shortcut in Input gestures opens it too.
+* **User manual…** (Alt+N), in the add-on settings (NVDA menu, Preferences, Settings, Notas Workflow NVDA): opens the detailed user manual (in Brazilian Portuguese) in NVDA's browseable window, with headings, tables and a table of contents. A command without a default shortcut in Input gestures opens it too.
 
 ## Notes
 
@@ -60,6 +60,7 @@ The **Notebooks and folders…** window shows each folder with its notebooks and
 | NVDA+Alt+B | Search the notes |
 | Alt+Shift+Right and Left Arrow | Next or previous status of the note |
 | Ctrl+Shift+Up and Down Arrow | Move the note up or down inside its lane |
+| Ctrl+Shift+Up and Down Arrow (Show, Notebooks and folders) | Move the folder or notebook up or down in its list |
 | Ctrl+S, Ctrl+B, Ctrl+I | Save, bold and italic in the note window |
 
 They can be changed in NVDA, Preferences, Input gestures, Notas Workflow NVDA category, where there is also a command, without shortcut, that says how many notes each lane has.
